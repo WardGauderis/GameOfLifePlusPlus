@@ -5,4 +5,5 @@ gebruik:
 - setCellColor
 - getCellColor
 
-wanneer je op de play button duwt wordt de functie onPlay in Gui.cpp uitgevoert, beschouw dit dus als je main functie.
+Qt werkt met na u main de app in een oneindige loop te steken, dus de Play knop vervangt de main functie
+De onPlay wordt dus opgeroepen als je op play duwt, behandel deze als je main functie ;)
