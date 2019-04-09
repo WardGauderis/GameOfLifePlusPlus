@@ -39,7 +39,6 @@ ui::Cell::Cell(const ui::Color &c) {
 ui::Grid::Grid(QWidget *parent) : QWidget(parent)
 {
     this->setWindowTitle("GameOfLife++");
-    this->resize(500, 500);
 }
 
 void ui::Grid::init(int gridWidth, int gridHeight, ui::Color color)
