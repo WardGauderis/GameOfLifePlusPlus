@@ -11,6 +11,7 @@
 
 #include "../automata/fa.h"
 #include "../automata/pda.h"
+#include "../automata/tm.h"
 #include "json/json.h"
 
 using nlohmann::json;
@@ -44,6 +45,19 @@ public:
 
         return {alphabet, stackAlphabet, states, transition};
     }
+    static TM parseTM(const std::string& path)
+    {
+        std::ifstream file(path);
+        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
+        auto json = json::parse(file);
+
+        std::vector<char> alphabet      = parseAlphabet(json["alphabet"], nullptr);
+        std::vector<char> tapeAlphabet  = parseAlphabet(json["tape_alphabet"], nullptr);
+        std::vector<TMState*> states    = parseTMStates(json["states"]);
+        TMTransition transition         = parseTMTransitions(json["transitions"], json["states"], states);
+
+        return {alphabet, tapeAlphabet, states, transition};
+    }
 
 private:
     static std::vector<char> parseAlphabet(const json& alphabet_values, const json& epsilon)
@@ -53,6 +67,7 @@ private:
         if(epsilon != nullptr) alphabet.push_back(static_cast<std::string>(epsilon)[0]);
         return alphabet;
     }
+
     static std::vector<State*> parseStates(const json& state_values)
     {
         std::vector<State*> states(state_values.size());
@@ -66,6 +81,25 @@ private:
         }
         return states;
     }
+
+    static std::vector<TMState*> parseTMStates(const json& state_values)
+    {
+        std::vector<TMState*> states(state_values.size());
+        for(uint32_t i = 0; i < states.size(); i++)
+        {
+            states[i] = new TMState;
+            states[i]->name = state_values[i]["name"];
+
+            const std::string& type = state_values[i]["type"];
+            if     (type == "accepting") states[i]->type = TMState::Type::accept;
+            else if(type == "normal"   ) states[i]->type = TMState::Type::normal;
+            else if(type == "rejecting") states[i]->type = TMState::Type::reject;
+            else if(type == "starting" ) states[i]->type = TMState::Type::start ;
+            else throw std::runtime_error("unknown TM type\n");
+        }
+        return states;
+    }
+
     static Transition parseFATransitions(const json& transition_values, const json& state_values, const std::vector<State*>& states)
     {
         Transition result;
@@ -98,6 +132,24 @@ private:
             char push  = static_cast<std::string> (transition["push" ])[0];
             char pop   = static_cast<std::string> (transition["pop"  ])[0];
             result(input, from).emplace_back(to, push, pop);
+        }
+        return result;
+    }
+    static TMTransition parseTMTransitions(const json& transition_values, const json& state_values, const std::vector<TMState*>& states)
+    {
+        TMTransition result;
+
+        std::map<std::string, uint32_t> converter;
+        for(uint32_t i = 0; i < state_values.size(); i++) converter[ state_values[i]["name"] ] = i;
+
+        for(const auto& transition : transition_values)
+        {
+            TMState const* from = states[converter[transition["from"]]];
+            TMState const* to   = states[converter[transition["to"  ]]];
+            char input = static_cast<std::string> (transition["input"    ])[0];
+            char dir   = static_cast<std::string> (transition["direction"])[0];
+            char write = static_cast<std::string> (transition["write"    ])[0];
+            result(input, from) = {to, dir, write};
         }
         return result;
     }

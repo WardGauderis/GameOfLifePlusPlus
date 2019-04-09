@@ -69,7 +69,7 @@ namespace ui {
         /*
          * Destructor
          */
-        ~Cell()= default;
+        ~Cell() = default;
     };
 
     typedef std::vector<std::vector<Cell>> gridOfCells;

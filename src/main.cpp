@@ -10,8 +10,15 @@
 #include "../src/gui/GUI.h"
 
 
+// dit mag weg als ik dit ben vergeten
+#include "input-output/parser.h"
+
+
 int main(int argc, char* argv[])
 {
+    TM test = Parser::parseTM("../input/tm.json");
+
+
     // deze 4 lijnen laten staan
     QApplication a(argc, argv);
 

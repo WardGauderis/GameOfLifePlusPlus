@@ -10,9 +10,13 @@
 #include "tm.h"
 #include <tuple>
 #include <iostream>
+#include <algorithm>
 
 TM::TM(const std::vector<char>& alphabet, const std::vector<char>& tapeAlphabet, const std::vector<TMState*>& states, const TMTransition& transition) :
-    alphabet(alphabet), tapeAlphabet(tapeAlphabet), states(states), transition(transition) {}
+    alphabet(alphabet), tapeAlphabet(tapeAlphabet), states(states), transition(transition)
+    {
+        start = *std::find_if(begin(states), end(states), [](const auto& state){ return state->type == TMState::Type::start; });
+    }
 
 bool TM::operator()(const std::string& word) const
 {
@@ -28,8 +32,8 @@ bool TM::operator()(const std::string& word) const
 
         // new state
         current = std::get<0>(next);
-        if     (current->type == accept) return true;
-        else if(current->type == reject) return false;
+        if     (current->type == TMState::Type::accept) return true;
+        else if(current->type == TMState::Type::reject) return false;
 
         // new index
         if     (std::get<1>(next) == 'L') index--;

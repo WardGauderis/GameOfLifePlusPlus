@@ -20,9 +20,11 @@ struct State
 };
 
 
-enum TMType{normal, accept, reject};
+
 struct TMState
 {
+    enum Type{start, normal, accept, reject};
+
     std::string name;
-    TMType type;
+    Type type;
 };

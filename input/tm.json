@@ -1,0 +1,42 @@
+{
+  "type": "TM",
+  "alphabet": [
+    "0",
+    "1"
+  ],
+  "tape_alphabet":
+  [
+    "0",
+    "1"
+  ],
+  "states": [
+    {
+      "name": "Q0",
+      "type": "starting"
+    },
+    {
+      "name": "Q1",
+      "type": "accepting"
+    },
+    {
+      "name": "Q2",
+      "type": "rejecting"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "Q0",
+      "to": "Q0",
+      "input": "1",
+      "direction": "L",
+      "write": "0"
+    },
+    {
+      "from": "Q0",
+      "to": "Q2",
+      "input": "0",
+      "direction": "R",
+      "write": "1"
+    }
+  ]
+}
