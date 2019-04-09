@@ -25,11 +25,16 @@ public:
     }
     ~Simulation() = default;
 
-    bool execute()
+    bool simulate()
     {
-        // some kind of while loop here
-        //ca.update();
-        window.simulate();
+        bool done = false;
+        while(!done)
+        {
+            //ca.update();
+            window(rand()%20, rand()%20) = Color(0, 0, 255);
+            Window::delay(500);
+            window.repaint();
+        }
 
         return true;
     }
@@ -38,6 +43,8 @@ public:
 private:
     Window window;
     CA ca;
+
+
 };
 
 

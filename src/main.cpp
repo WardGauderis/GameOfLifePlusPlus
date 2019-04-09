@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     QApplication application(argc, argv);
     Simulation simulation = {20, 20};
 
-    simulation.execute();
+    simulation.simulate();
 
     return QApplication::exec();
 }

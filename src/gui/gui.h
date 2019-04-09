@@ -52,19 +52,10 @@ public:
     */
     bool checkProperlyInitialized();
 
-
     const Color& operator()(uint32_t x, uint32_t y) const;
     Color& operator()(uint32_t x, uint32_t y);
 
-    void execute(uint32_t ticks);
-
-    /*
-    * acts as the main function
-    */
-    void simulate();
-
     static void delay(uint32_t ms);
-
 
 protected:
     /*
