@@ -1,2 +1,0 @@
-install qt:
-ubuntu: sudo apt-get install qtbase5-dev

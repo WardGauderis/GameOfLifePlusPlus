@@ -19,22 +19,51 @@
 
 #include <assert.h>
 #include <vector>
+#include <cmath>
 
 namespace ui {
 
     /*
-     * Struct to represent a color
+     * Class to represent a color
      */
-    struct Color {
+    class Color {
+    private:
+    public:
         double red, green, blue;
+        /*
+         * Constructors
+         */
+        Color()= default;
         Color(double r, double g, double b);
+        /*
+         * Convert the color to a Qcolor object (loss of precision due to Qcolor using int values)
+         */
+        QColor getAsQColor();
+        /*
+         * Operators
+         */
+        ui::Color& operator=(const Color &other);
+        /*
+         * Destructor
+         */
+        ~Color()= default;
     };
 
     /*
-     * Struct to represent cells in our application
+     * Class to represent cells in our application
      */
-    struct Cell {
+    class Cell {
+    private:
+    public:
         ui::Color color;
+        /*
+         * Constructors
+         */
+        explicit Cell(const ui::Color &c);
+        /*
+         * Destructor
+         */
+        ~Cell()= default;
     };
 
     typedef std::vector<std::vector<Cell>> gridOfCells;
@@ -50,17 +79,21 @@ namespace ui {
 
         bool properlyInitialized=false;
 
-        QWidget *mainWidget = nullptr;
+        gridOfCells cells;
 
     public:
         /*
          * Constructor, gridwidth and height indicate the amount of cells that the grid is supposed to have
          */
-        explicit Grid(QWidget *parent = 0, int gridWidth=100, int gridHeight=100);
+        explicit Grid(QWidget *parent = 0);
         /*
          * Destructor
          */
         ~Grid()= default;
+        /*
+         * Used to initialize the grid
+         */
+        void init(int gridWidth, int gridHeight, ui::Color color);
         /*
          * Used to check if the grid is properly initialized and can be used
          */

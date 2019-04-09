@@ -17,6 +17,8 @@ int main(int argc, char* argv[])
 
     ui::Grid mainwindow;
 
+    mainwindow.init(100,100, ui::Color(255,0,0));
+
     mainwindow.show();
 
     return a.exec();
