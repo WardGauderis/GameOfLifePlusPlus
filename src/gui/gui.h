@@ -45,7 +45,7 @@ public:
     /*
     * Used to initialize the grid
     */
-    void init(uint32_t width, uint32_t height, const Color& color);
+    void init(uint32_t _xCells, uint32_t _yCells, const Color& color);
 
     /*
     * Used to check if the grid is properly initialized and can be used
@@ -63,6 +63,8 @@ public:
     */
     void simulate();
 
+    static void delay(uint32_t ms);
+
 
 protected:
     /*
@@ -77,8 +79,8 @@ private:
     void createButtons();
 
 
-    uint32_t width;
-    uint32_t height;
+    uint32_t xCells;
+    uint32_t yCells;
 
     bool properlyInitialized = false;
 

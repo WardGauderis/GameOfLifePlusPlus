@@ -8,7 +8,6 @@
 //============================================================================
 
 #include "fa.h"
-#include "json/json.h"
 #include <algorithm>
 #include <iostream>
 #include <queue>
