@@ -73,6 +73,7 @@ const Color& Window::operator()(uint32_t x, uint32_t y) const
 Window::~Window()
 {
     for (auto widget:widgetsToDelete) delete widget;
+    delete this;
 }
 
 
