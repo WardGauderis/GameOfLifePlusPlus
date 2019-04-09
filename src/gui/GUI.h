@@ -13,10 +13,13 @@
 
 #include <QApplication>
 #include <QRect>
-#include <QLabel>
+#include <QPushButton>
 #include <QPainter>
 #include <QMainWindow>
 
+#include <random>
+#include <unistd.h>
+#include <iostream>
 #include <assert.h>
 #include <vector>
 #include <cmath>
@@ -79,6 +82,8 @@ namespace ui {
 
         bool properlyInitialized=false;
 
+        std::vector<QWidget*> widgetsToDelete;
+
         gridOfCells cells;
 
     public:
@@ -89,7 +94,7 @@ namespace ui {
         /*
          * Destructor
          */
-        ~Grid()= default;
+        ~Grid();
         /*
          * Used to initialize the grid
          */
@@ -106,6 +111,10 @@ namespace ui {
          * Function to get the color of a cell
          */
         ui::Color getCellColor(int x, int y);
+        /*
+         * Play event
+         */
+        void onPlay();
 
 
     protected:

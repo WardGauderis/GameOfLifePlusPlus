@@ -49,6 +49,7 @@ void ui::Grid::init(int gridWidth, int gridHeight, ui::Color color)
     height = gridHeight;
     width = gridHeight;
 
+    // create our matrix with cells
     for (int y=0 ; y<width ; ++y) {
 
         std::vector<Cell> cellRow;
@@ -60,6 +61,14 @@ void ui::Grid::init(int gridWidth, int gridHeight, ui::Color color)
 
         cells.emplace_back(cellRow);
     }
+
+    // create the play button
+    QPushButton *playBtn = new QPushButton("Play", this);
+    widgetsToDelete.emplace_back(playBtn);
+    playBtn->show();
+
+    // connect to play button
+    connect(playBtn, &QPushButton::clicked, this, &Grid::onPlay);
 
     properlyInitialized = true;
 }
@@ -81,6 +90,24 @@ void ui::Grid::paintEvent(QPaintEvent *event)
     }
 }
 
+void ui::Grid::onPlay() {
+
+    std::cout << "Starting Simulation" << std::endl;
+
+    while (true) {
+
+        int x = rand() % width;
+        int y = rand() % height;
+
+        this->setCellColor(x, y, ui::Color(0,0,255));
+
+        this->repaint();
+
+        usleep(5);
+    }
+}
+
+
 bool ui::Grid::checkProperlyInitialized()
 {
     return properlyInitialized;
@@ -88,15 +115,21 @@ bool ui::Grid::checkProperlyInitialized()
 
 void ui::Grid::setCellColor(int x, int y, const ui::Color &c) {
 
-    assert(x > 0 && x < width && y > 0 && y < height);
+    assert(x >= 0 && x <= width && y >= 0 && y <= height);
 
     cells[x][y].color = c;
 }
 
 ui::Color ui::Grid::getCellColor(int x, int y) {
 
-    assert(x > 0 && x < width && y > 0 && y < height);
+    assert(x >= 0 && x < width && y >= 0 && y <= height);
 
     return cells[x][y].color;
 }
 
+ui::Grid::~Grid() {
+
+    for (auto widget:widgetsToDelete) {
+        delete widget;
+    }
+}
