@@ -1,17 +1,21 @@
 //============================================================================
-// @name        : Automaton.h
+// @name        : fsm.cpp
 // @author      : Thomas Dooms
-// @date        : 3/28/19
+// @date        : 4/9/19
 // @version     : 
 // @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
 // @description : 
 //============================================================================
 
-#pragma once
+#include "fsm.h"
 
-#include <string>
 
-struct Automaton
+void FSM::operator()(const std::string& word) const
 {
-    virtual bool operator()(const std::string& word) const = 0;
-};
+    current = transition((*current)(word), current);
+}
+
+const std::string& FSM::getState() const
+{
+    return converter.at(current);
+}

@@ -7,28 +7,15 @@
 // @description : 
 //============================================================================
 #include <QApplication>
-#include "../src/gui/GUI.h"
-
-
-// dit mag weg als ik dit ben vergeten
-#include "input-output/parser.h"
+#include "system/simulation.h"
 
 
 int main(int argc, char* argv[])
 {
-    TM test = Parser::parseTM("../input/tm.json");
+    QApplication application(argc, argv);
+    Simulation simulation = {20, 20};
 
+    simulation.execute();
 
-    // deze 4 lijnen laten staan
-    QApplication a(argc, argv);
-
-    ui::Grid mainwindow;
-
-    mainwindow.init(20,20, ui::Color(255,0,0));
-
-    mainwindow.show();
-
-    mainwindow.simulation();
-
-    return a.exec();
+    return QApplication::exec();
 }

@@ -25,13 +25,13 @@ public:
     bool operator()(const std::string& word) const override;
 
 private:
-    bool checkRecursive(const std::stack<char>& stack, const std::string& word, const State* current, uint32_t index) const;
-
     std::vector<char> alphabet;
     std::vector<char> stackAlphabet;
 
     std::vector<State*> states;
     PDATransition transition;
     const State* start;
+
+    mutable std::stack<char> stack;
 };
 

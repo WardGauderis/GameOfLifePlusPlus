@@ -8,4 +8,4 @@ gebruik:
 - execute(int ticks)
 
 met repaint() repaint je het scherm (dus alles update tegelijk)
-gebruik ui::Grid::simulation als main
+gebruik ui::Grid::simulate als main

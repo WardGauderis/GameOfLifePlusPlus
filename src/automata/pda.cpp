@@ -13,43 +13,25 @@ PDA::PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphab
 : alphabet(alphabet), stackAlphabet(stackAlphabet), states(states), transition(transition)
 {
     start = *std::find_if(begin(states), end(states), [](const auto& state){ return state->starting; });
+    stack.push(stackAlphabet.back());
 }
 
 bool PDA::operator()(const std::string& word) const
 {
-    std::stack<char> stack;
-    stack.push(stackAlphabet.back());
-    return checkRecursive(stack, word, start, 0);
-}
+    const State* current = start;
 
-bool PDA::checkRecursive(const std::stack<char>& stack, const std::string& word, const State* current, const uint32_t index) const
-{
-    if(index >= word.size()) return current->accepting and stack.top() == stackAlphabet.back();
-    const char characters[2] = { alphabet.back(), word[index] };
-
-    for(uint32_t i = 0; i < 2; i++)
+    for(char c : word)
     {
-        const auto next = transition(characters[i], current);
-        for(const auto& tuple : next)
-        {
-            char push = std::get<1>(tuple);
-            char pop  = std::get<2>(tuple);
+        const auto next = transition(c, current);
+        current = std::get<0>(next);
+        char push = std::get<1>(next);
+        char pop = std::get<2>(next);
 
-            std::stack<char> newStack = stack;
-            if(push != alphabet.back())
-            {
-                newStack.push(push);
-            }
-            if(pop != alphabet.back())
-            {
-                // if pop != epsilon, we need to ensure the top of the stack is identical
-                if(newStack.top() != pop) continue;
-                newStack.pop();
-            }
-            if(checkRecursive(newStack, word, std::get<0>(tuple), index + i)) return true;
-        }
+        if(push != alphabet.back()) stack.push(push);
+
+        if(pop  != alphabet.back() and stack.top() == pop) stack.pop();
+        else return false;
     }
-
-    // if all fails return false, this means there may be no transitions or something
-    return false;
+    return current->accepting;
 }
+

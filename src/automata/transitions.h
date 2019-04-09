@@ -12,6 +12,7 @@
 #include <map>
 #include <vector>
 #include "states.h"
+#include "automaton.h"
 
 struct Transition
 {
@@ -44,27 +45,27 @@ private:
 struct PDATransition
 {
 public:
-    std::vector<std::tuple<const State*, char, char>>& operator()(char c, const State* state)
+    std::tuple<const State*, char, char>& operator()(char c, const State* state)
     {
         return transition[ {state, c} ];
     }
-    const std::vector<std::tuple<const State*, char, char>>& operator()(char c, const State* state) const
+    const std::tuple<const State*, char, char>& operator()(char c, const State* state) const
     {
         try{ return transition.at( {state, c} ); }
         catch(std::exception& e){ return empty; }
     }
-    const std::map<std::pair<const State*, char>, std::vector<std::tuple<const State*, char, char>>>& getMap() const
+    const std::map<std::pair<const State*, char>, std::tuple<const State*, char, char>>& getMap() const
     {
         return transition;
     }
-    std::map<std::pair<const State*, char>, std::vector<std::tuple<const State*, char, char>>>& getMap()
+    std::map<std::pair<const State*, char>, std::tuple<const State*, char, char>>& getMap()
     {
         return transition;
     }
 private:
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
-    std::map<std::pair<const State*, char>, std::vector<std::tuple<const State*, char, char>>> transition;
-    const std::vector<std::tuple<const State*, char, char>> empty;
+    std::map<std::pair<const State*, char>, std::tuple<const State*, char, char>> transition;
+    const std::tuple<const State*, char, char> empty;
 };
 
 
@@ -93,3 +94,40 @@ private:
     std::map<std::pair<const TMState*, char>, std::tuple<const TMState*, char, char>> transition;
     const std::tuple<const TMState*, char, char> empty;
 };
+
+
+struct FSMTransition
+{
+public:
+    Automaton* operator()(bool b, const Automaton* state)
+    {
+        return transition[ {state, b} ];
+    }
+    const Automaton* operator()(bool b, const Automaton* state) const
+    {
+        try{ return transition.at( {state, b} ); }
+        catch(std::exception& e){ return empty; }
+    }
+    const std::map<std::pair<const Automaton*, bool>, Automaton*>& getMap() const
+    {
+        return transition;
+    }
+    std::map<std::pair<const Automaton*, bool>, Automaton*>& getMap()
+    {
+        return transition;
+    }
+private:
+    // this is a map with key a {state and a char}, and a value that contains the transition from that state for that character
+    std::map<std::pair<const Automaton*, bool>, Automaton*> transition;
+    const Automaton* empty = nullptr;
+};
+
+
+
+
+
+
+
+
+
+

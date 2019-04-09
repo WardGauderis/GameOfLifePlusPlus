@@ -32,16 +32,9 @@
     },
     {
       "from": "Q0",
-      "to": "Q0",
-      "input": "1",
-      "push": "1",
-      "pop": "e"
-    },
-    {
-      "from": "Q0",
       "to": "Q1",
-      "input": "e",
-      "push": "e",
+      "input": "1",
+      "push": "0",
       "pop": "e"
     },
     {
@@ -53,7 +46,7 @@
     },
     {
       "from": "Q1",
-      "to": "Q1",
+      "to": "Q0",
       "input": "1",
       "push": "e",
       "pop": "1"
