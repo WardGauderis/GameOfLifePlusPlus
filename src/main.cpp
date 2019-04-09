@@ -17,9 +17,11 @@ int main(int argc, char* argv[])
 
     ui::Grid mainwindow;
 
-    mainwindow.init(100,100, ui::Color(255,0,0));
+    mainwindow.init(20,20, ui::Color(255,0,0));
 
     mainwindow.show();
+
+    mainwindow.simulation();
 
     return a.exec();
 }

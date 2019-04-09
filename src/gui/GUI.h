@@ -16,6 +16,9 @@
 #include <QPushButton>
 #include <QPainter>
 #include <QMainWindow>
+#include <QInputDialog>
+#include <QToolBar>
+
 
 #include <random>
 #include <unistd.h>
@@ -86,6 +89,13 @@ namespace ui {
 
         gridOfCells cells;
 
+        /*
+         * Creates helper buttons
+         */
+        void createButtons();
+
+
+
     public:
         /*
          * Constructor, gridwidth and height indicate the amount of cells that the grid is supposed to have
@@ -112,9 +122,13 @@ namespace ui {
          */
         ui::Color getCellColor(int x, int y);
         /*
-         * Play event
+         * executes the simulation for ticks ticks
          */
-        void onPlay();
+        void execute(int ticks);
+        /*
+         * acts as the main function
+         */
+        void simulation();
 
 
     protected:

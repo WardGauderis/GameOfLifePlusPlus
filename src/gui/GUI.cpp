@@ -62,14 +62,6 @@ void ui::Grid::init(int gridWidth, int gridHeight, ui::Color color)
         cells.emplace_back(cellRow);
     }
 
-    // create the play button
-    QPushButton *playBtn = new QPushButton("Play", this);
-    widgetsToDelete.emplace_back(playBtn);
-    playBtn->show();
-
-    // connect to play button
-    connect(playBtn, &QPushButton::clicked, this, &Grid::onPlay);
-
     properlyInitialized = true;
 }
 
@@ -90,11 +82,9 @@ void ui::Grid::paintEvent(QPaintEvent *event)
     }
 }
 
-void ui::Grid::onPlay() {
+void ui::Grid::execute(int ticks) {
 
-    std::cout << "Starting Simulation" << std::endl;
-
-    while (true) {
+    for (int i=0;i<ticks;++i) {
 
         int x = rand() % width;
         int y = rand() % height;
@@ -103,7 +93,19 @@ void ui::Grid::onPlay() {
 
         this->repaint();
 
-        usleep(5);
+        system("sleep 0.5");
+
+    }
+}
+
+void ui::Grid::simulation() {
+
+    while (true) {
+        bool ok;
+        int t = QInputDialog::getInt(this, tr("#ticks to execute the simulation for"),
+                                           tr("Amount:"), 10, 0, 100000, 2, &ok);
+        if (ok) this->execute(t);
+        else return;
     }
 }
 
@@ -132,4 +134,9 @@ ui::Grid::~Grid() {
     for (auto widget:widgetsToDelete) {
         delete widget;
     }
+}
+
+
+void ui::Grid::createButtons() {
+
 }
