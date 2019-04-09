@@ -1,7 +1,7 @@
 //============================================================================
-// @name        : state.h
+// @name        : Automaton.h
 // @author      : Thomas Dooms
-// @date        : 3/16/19
+// @date        : 3/28/19
 // @version     : 
 // @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
 // @description : 
@@ -11,18 +11,7 @@
 
 #include <string>
 
-struct State
+class Automaton
 {
-    std::string name;
-    bool starting;
-    bool accepting;
-    uint32_t index;
-};
-
-
-enum TMType{normal, accept, reject};
-struct TMState
-{
-    std::string name;
-    TMType type;
+    virtual bool operator()(const std::string& word) const = 0;
 };

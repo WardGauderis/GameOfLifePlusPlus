@@ -1,7 +1,11 @@
-//
-// Created by thomas on 20/03/2019.
-//
-
+//============================================================================
+// @name        : state.h
+// @author      : Thomas Dooms
+// @date        : 3/20/19
+// @version     :
+// @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
+// @description :
+//============================================================================
 #include <algorithm>
 #include "pda.h"
 
