@@ -66,7 +66,7 @@ void ui::Grid::init(int gridWidth, int gridHeight, ui::Color color)
 
 void ui::Grid::paintEvent(QPaintEvent *event)
 {
-    assert(this->properlyInitialized);
+    assert(this->checkProperlyInitialized());
 
     QPainter p(this);
 
@@ -86,7 +86,17 @@ bool ui::Grid::checkProperlyInitialized()
     return properlyInitialized;
 }
 
-int ui::Grid::run()
-{
+void ui::Grid::setCellColor(int x, int y, const ui::Color &c) {
 
+    assert(x > 0 && x < width && y > 0 && y < height);
+
+    cells[x][y].color = c;
 }
+
+ui::Color ui::Grid::getCellColor(int x, int y) {
+
+    assert(x > 0 && x < width && y > 0 && y < height);
+
+    return cells[x][y].color;
+}
+

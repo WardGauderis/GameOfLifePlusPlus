@@ -27,7 +27,7 @@ namespace ui {
      * Class to represent a color
      */
     class Color {
-    private:
+
     public:
         double red, green, blue;
         /*
@@ -53,7 +53,7 @@ namespace ui {
      * Class to represent cells in our application
      */
     class Cell {
-    private:
+
     public:
         ui::Color color;
         /*
@@ -99,9 +99,14 @@ namespace ui {
          */
         bool checkProperlyInitialized();
         /*
-         * Runs the current Application
+         * Function to set the color of a cell
          */
-        int run();
+        void setCellColor(int x, int y, const ui::Color &c);
+        /*
+         * Function to get the color of a cell
+         */
+        ui::Color getCellColor(int x, int y);
+
 
     protected:
         /*

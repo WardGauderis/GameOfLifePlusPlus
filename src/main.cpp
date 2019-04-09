@@ -19,6 +19,8 @@ int main(int argc, char* argv[])
 
     mainwindow.init(100,100, ui::Color(255,0,0));
 
+    mainwindow.setCellColor(50, 50, ui::Color(0,0,255));
+
     mainwindow.show();
 
     return a.exec();
