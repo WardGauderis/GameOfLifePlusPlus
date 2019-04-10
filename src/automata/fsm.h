@@ -20,16 +20,16 @@
 class FSM
 {
 public:
-    FSM() = default;
-    ~FSM() = default;
+    FSM(const std::vector<std::pair<const Automaton*, std::string>>& stateNames, const FSMTransition& transition, const Automaton* start);
+    ~FSM();
 
     void operator()(const std::string& word) const;
     const std::string& getState() const;
 
 private:
     std::vector<const Automaton*> states;
-    mutable const Automaton* current;
     FSMTransition transition;
+    mutable const Automaton* current;
 
     std::map<const Automaton* , std::string> converter;
 };

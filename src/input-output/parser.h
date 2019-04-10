@@ -12,6 +12,7 @@
 #include "../automata/fa.h"
 #include "../automata/pda.h"
 #include "../automata/tm.h"
+#include "../automata/pa.h"
 #include "json/json.h"
 
 using nlohmann::json;
@@ -26,8 +27,8 @@ public:
         auto json = json::parse(file);
 
         std::vector<char>   alphabet    = parseAlphabet(json["alphabet"], json["eps"]);
-        std::vector<State*> states      = parseStates(json["states"]);
-        Transition          transition  = parseFATransitions(json["transitions"], json["states"], states);
+        std::vector<const State*> states = parseStates(json["states"]);
+        FATransition          transition  = parseFATransitions(json["transitions"], json["states"], states);
 
         return {alphabet, states, transition, json["type"] };
     }
@@ -40,7 +41,7 @@ public:
 
         std::vector<char>   alphabet        = parseAlphabet(json["alphabet"], json["eps"]);
         std::vector<char>   stackAlphabet   = parseAlphabet(json["stack_alphabet"], json["stack_start"]);
-        std::vector<State*> states          = parseStates(json["states"]);
+        std::vector<const State*> states    = parseStates(json["states"]);
         PDATransition       transition      = parsePDATransitions(json["transitions"], json["states"], states);
 
         return {alphabet, stackAlphabet, states, transition};
@@ -58,6 +59,17 @@ public:
 
         return {alphabet, tapeAlphabet, states, transition};
     }
+    static PA parsePA(const std::string& path)
+    {
+        std::ifstream file(path);
+        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
+        auto json = json::parse(file);
+
+        std::vector<char> alphabet       = parseAlphabet(json["alphabet"], nullptr);
+        std::vector<const State*> states = parseStates(json["states"]);
+        PATransition transition          = parsePATransitions(json["transitions"], json["states"], states);
+        return {alphabet, states, transition};
+    }
 
 private:
     static std::vector<char> parseAlphabet(const json& alphabet_values, const json& epsilon)
@@ -68,16 +80,13 @@ private:
         return alphabet;
     }
 
-    static std::vector<State*> parseStates(const json& state_values)
+    static std::vector<const State*> parseStates(const json& state_values)
     {
-        std::vector<State*> states(state_values.size());
-        for(uint32_t i = 0; i < states.size(); i++)
+        std::vector<const State*> states;
+        states.resize(state_values.size());
+        for(uint32_t i = 0; i < state_values.size(); i++)
         {
-            states[i] = new State;
-            states[i]->name      = state_values[i]["name"];
-            states[i]->starting  = state_values[i]["starting"];
-            states[i]->accepting = state_values[i]["accepting"];
-            states[i]->index     = i;
+            states[i] = new State{state_values[i]["name"], state_values[i]["starting"], state_values[i]["accepting"], i};
         }
         return states;
     }
@@ -100,9 +109,9 @@ private:
         return states;
     }
 
-    static Transition parseFATransitions(const json& transition_values, const json& state_values, const std::vector<State*>& states)
+    static FATransition parseFATransitions(const json& transition_values, const json& state_values, const std::vector<const State*>& states)
     {
-        Transition result;
+        FATransition result;
 
         std::map<std::string, uint32_t> converter;
         for(uint32_t i = 0; i < state_values.size(); i++) converter[ state_values[i]["name"] ] = i;
@@ -117,7 +126,7 @@ private:
         return result;
     }
 
-    static PDATransition parsePDATransitions(const json& transition_values, const json& state_values, const std::vector<State*>& states)
+    static PDATransition parsePDATransitions(const json& transition_values, const json& state_values, const std::vector<const State*>& states)
     {
         PDATransition result;
 
@@ -131,7 +140,7 @@ private:
             char input = static_cast<std::string> (transition["input"])[0];
             char push  = static_cast<std::string> (transition["push" ])[0];
             char pop   = static_cast<std::string> (transition["pop"  ])[0];
-            result(input, from).emplace_back(to, push, pop);
+            result(input, from) = {to, push, pop};
         }
         return result;
     }
@@ -150,6 +159,24 @@ private:
             char dir   = static_cast<std::string> (transition["direction"])[0];
             char write = static_cast<std::string> (transition["write"    ])[0];
             result(input, from) = {to, dir, write};
+        }
+        return result;
+    }
+
+    static PATransition parsePATransitions(const json& transition_values, const json& state_values, const std::vector<const State*>& states)
+    {
+        PATransition result;
+
+        std::map<std::string, uint32_t> converter;
+        for(uint32_t i = 0; i < state_values.size(); i++) converter[ state_values[i]["name"] ] = i;
+
+        for(const auto& transition : transition_values)
+        {
+            State const* from  = states[converter[transition["from"]]];
+            State const* to    = states[converter[transition["to"  ]]];
+            double probability = transition["probability"];
+            char c = static_cast<std::string> (transition["input"])[0];
+            result(c, from).emplace_back(probability, to);
         }
         return result;
     }

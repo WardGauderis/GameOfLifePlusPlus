@@ -13,13 +13,13 @@
 #include <queue>
 
 
-FA::FA(const std::vector<char>& alphabet, const std::vector<State*>& states, const Transition& transition, const std::string& type) : alphabet(alphabet), states(states), transition(transition), type(type)
+FA::FA(const std::vector<char>& alphabet, const std::vector<const State*>& states, const FATransition& transition, const std::string& type) : alphabet(alphabet), states(states), transition(transition), type(type)
 {
     start = *std::find_if(begin(states), end(states), [](const auto& state){ return state->starting; });
 }
 FA::~FA()
 {
-    for(State* state : states) delete state;
+    for(const State* state : states) delete state;
 }
 
 bool FA::operator()(const std::string& word) const

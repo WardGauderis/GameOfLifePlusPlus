@@ -9,7 +9,7 @@
 #include <algorithm>
 #include "pda.h"
 
-PDA::PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphabet, const std::vector<State*>& states, const PDATransition& transition)
+PDA::PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphabet, const std::vector<const State*>& states, const PDATransition& transition)
 : alphabet(alphabet), stackAlphabet(stackAlphabet), states(states), transition(transition)
 {
     start = *std::find_if(begin(states), end(states), [](const auto& state){ return state->starting; });

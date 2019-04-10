@@ -20,17 +20,17 @@
 class FA : public Automaton
 {
 public:
-    FA(const std::vector<char>& alphabet, const std::vector<State*>& states, const Transition& transition, const std::string& type);
-    ~FA();
+    FA(const std::vector<char>& alphabet, const std::vector<const State*>& states, const FATransition& transition, const std::string& type);
+    ~FA() override;
 
     bool operator()(const std::string& word) const override;
     void ecloseCurrent(std::set<const State*>& current) const;
 
 private:
     std::vector<char> alphabet;
-    std::vector<State*> states;
+    std::vector<const State*> states;
     const State* start;
-    Transition transition;
+    FATransition transition;
     std::string type;
 };
 

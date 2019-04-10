@@ -30,17 +30,26 @@ void Window::paintEvent(QPaintEvent* event)
 {
     assert(this->checkProperlyInitialized());
 
-    uint32_t celWidth  = std::ceil( double(this->size().width() ) / double(xCells) );
-    uint32_t celHeight = std::ceil( double(this->size().height()) / double(yCells) );
+    double celWidth  = double(this->size().width() ) / double(xCells);
+    double celHeight = double(this->size().height()) / double(yCells);
+
+    double xPos = 0;
+    double yPos = 0;
 
     QPainter painter(this);
 
     for (uint32_t x = 0; x < xCells; ++x)
+    {
+        yPos = 0;
         for (uint32_t y = 0; y < yCells; ++y)
         {
-            QRect temp(x * celWidth, y * celHeight, celWidth, celHeight);
+            QRect temp(std::floor(xPos), std::floor(yPos), std::floor(xPos + celWidth), std::floor(yPos + celHeight));
             painter.fillRect(temp, (*this)(x,y));
+            yPos += celHeight;
         }
+        xPos += celWidth;
+    }
+
 }
 
 

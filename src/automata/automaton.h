@@ -13,5 +13,6 @@
 
 struct Automaton
 {
+    virtual ~Automaton() = default;
     virtual bool operator()(const std::string& word) const = 0;
 };

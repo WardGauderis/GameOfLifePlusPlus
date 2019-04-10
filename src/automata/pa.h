@@ -1,37 +1,36 @@
 //============================================================================
-// @name        : state.h
+// @name        : pa.h
 // @author      : Thomas Dooms
-// @date        : 3/20/19
-// @version     :
+// @date        : 4/10/19
+// @version     : 
 // @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
-// @description :
+// @description : 
 //============================================================================
 
-#pragma once
 
-#include <string>
-#include <vector>
-#include <set>
-#include <stack>
+#ifndef GOL_PA_H
+#define GOL_PA_H
 
+#include "automaton.h"
 #include "states.h"
 #include "transitions.h"
-#include "automaton.h"
+#include <vector>
+#include <map>
 
-class PDA : public Automaton
+class PA : public Automaton
 {
 public:
-    PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphabet, const std::vector<const State*>& states, const PDATransition& transition);
+    PA(const std::vector<char>& alphabet, const std::vector<const State*>& states, const PATransition& transition);
+    ~PA();
+
     bool operator()(const std::string& word) const override;
 
 private:
     std::vector<char> alphabet;
-    std::vector<char> stackAlphabet;
-
     std::vector<const State*> states;
-    PDATransition transition;
     const State* start;
-
-    mutable std::stack<char> stack;
+    PATransition transition;
 };
 
+
+#endif //GOL_PA_H
