@@ -56,6 +56,10 @@ public:
     Color& operator()(uint32_t x, uint32_t y);
 
     static void delay(uint32_t ms);
+    /*
+     * Updates the cellular automata with 1 tick
+     */
+    void update();
 
 protected:
     /*

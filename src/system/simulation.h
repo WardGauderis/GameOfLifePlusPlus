@@ -30,8 +30,7 @@ public:
         bool done = false;
         while(!done)
         {
-            //ca.update();
-            window(rand()%20, rand()%20) = Color(0, 0, 255);
+            window.update();
             Window::delay(500);
             window.repaint();
         }
