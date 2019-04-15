@@ -34,7 +34,7 @@ public:
             Window::delay(500);
             window.repaint();
         }
-
+        
         return true;
     }
 
