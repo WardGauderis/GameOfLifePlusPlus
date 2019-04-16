@@ -19,12 +19,16 @@ struct State
     uint32_t index;
 };
 
-
-
 struct TMState
 {
     enum Type{start, normal, accept, reject};
 
     std::string name;
     Type type;
+};
+
+
+struct StatePlusPlus {
+    const std::string name;
+    const std::string type;
 };

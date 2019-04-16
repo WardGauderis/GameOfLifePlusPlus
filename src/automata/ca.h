@@ -11,26 +11,35 @@
 #ifndef GOL_CA_H
 #define GOL_CA_H
 
-#include "fsm.h"
+#include "cell.h"
 #include <vector>
 #include <string>
 #include "../gui/color.h"
+#include <map>
 
-class CA
-{
+class CA {
 public:
-    CA(const uint32_t width, const uint32_t height) : width(width), height(height)
-    {
-        neighbours = {{-1, -1}, {0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}};
+    CA(const uint32_t width, const uint32_t height) : width(width), height(height) {
+        neighbours = {{-1, -1},
+                      {0,  -1},
+                      {1,  -1},
+                      {1,  0},
+                      {1,  1},
+                      {0,  1},
+                      {-1, 1},
+                      {-1, 0}};
     };
+
     ~CA() = default;
 
     void update();
-    const FSM& operator()(uint32_t x, uint32_t y) const;
-    const Color& getColor(uint32_t x, uint32_t y) const;
+
+    const Cell &operator()(uint32_t x, uint32_t y) const;
+
+    const Color &getColor(uint32_t x, uint32_t y) const;
 
 private:
-    std::vector<FSM> cells;
+    std::vector<Cell *> cells;
     std::vector<std::pair<uint32_t, uint32_t>> neighbours;
 
     std::map<std::string, char> charConverter;

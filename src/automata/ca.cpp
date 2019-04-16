@@ -10,9 +10,9 @@
 #include "ca.h"
 
 
-const FSM& CA::operator()(uint32_t x, uint32_t y) const
+const Cell& CA::operator()(uint32_t x, uint32_t y) const
 {
-    return cells.at(y * width + x);
+    return *cells.at(y * width + x);
 }
 
 const Color& CA::getColor(uint32_t x, uint32_t y) const
@@ -23,7 +23,7 @@ const Color& CA::getColor(uint32_t x, uint32_t y) const
 void CA::update()
 {
     std::vector<char> temp(width*height);
-    for(uint32_t i = 0; i < cells.size(); i++) temp[i] = charConverter.at(cells[i].getState());
+    for(uint32_t i = 0; i < cells.size(); i++) temp[i] = charConverter.at(cells[i]->getState());
 
     for(uint32_t x = 0; x < width; x++)
         for(uint32_t y = 0; y < height; y++)

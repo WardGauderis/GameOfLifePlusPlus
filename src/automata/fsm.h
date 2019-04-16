@@ -11,27 +11,29 @@
 #ifndef GOL_FSM_H
 #define GOL_FSM_H
 
-#include <string>
 #include <vector>
 #include <map>
 #include "transitions.h"
 #include "automaton.h"
+#include "cell.h"
 
-class FSM
-{
+class FSM: public Cell {
 public:
-    FSM(const std::vector<std::pair<const Automaton*, std::string>>& stateNames, const FSMTransition& transition, const Automaton* start);
-    ~FSM();
+    FSM(const std::vector<std::pair<const Automaton *, std::string>> &stateNames, const FSMTransition &transition,
+        const Automaton *start);
 
-    void operator()(const std::string& word) const;
-    const std::string& getState() const;
+    ~FSM() override ;
+
+    void operator()(const std::string &word) const override ;
+
+    const std::string &getState() const override;
 
 private:
-    std::vector<const Automaton*> states;
+    std::vector<const Automaton *> states;
     FSMTransition transition;
-    mutable const Automaton* current;
+    mutable const Automaton *current;
 
-    std::map<const Automaton* , std::string> converter;
+    std::map<const Automaton *, std::string> converter;
 };
 
 

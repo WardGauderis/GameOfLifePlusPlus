@@ -149,7 +149,30 @@ private:
     const std::vector<std::pair<double, const State*>> empty;
 };
 
+struct DFAPlusPlusTransition {
+public:
+    const StatePlusPlus *&operator()(char c, const StatePlusPlus *state) {
+        return transition[{state, c}];
+    }
 
+    const StatePlusPlus *const &operator()(char c, const StatePlusPlus *state) const {
+        try { return transition.at({state, c}); }
+        catch (std::exception &e) { return empty; }
+    }
+
+    const std::map<std::pair<const StatePlusPlus *, char>, const StatePlusPlus *> &getMap() const {
+        return transition;
+    }
+
+    std::map<std::pair<const StatePlusPlus *, char>, const StatePlusPlus *> &getMap() {
+        return transition;
+    }
+
+private:
+    // this is a map with key a {state and a char}, and a value that contains the transition from that state for that character
+    std::map<std::pair<const StatePlusPlus *, char>, const StatePlusPlus *> transition;
+    const StatePlusPlus *empty;
+};
 
 
 
