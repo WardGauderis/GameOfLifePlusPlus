@@ -22,7 +22,7 @@ public:
     FSM(const std::vector<std::pair<const Automaton *, std::string>> &stateNames, const FSMTransition &transition,
         const Automaton *start);
 
-    ~FSM() override ;
+    ~FSM();
 
     void operator()(const std::string &word) const override ;
 

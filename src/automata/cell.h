@@ -16,9 +16,6 @@ public:
     virtual void operator()(const std::string &word) const = 0;
 
     virtual const std::string &getState() const = 0;
-
-    virtual ~Cell() = 0;
-
 };
 
 

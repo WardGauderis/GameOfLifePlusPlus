@@ -16,19 +16,22 @@
 
 class dfaPlusPlus : public Cell {
 public:
-    dfaPlusPlus(const std::vector<const StatePlusPlus *const> &states, DFAPlusPlusTransition transition,
-                const StatePlusPlus *current);
+    dfaPlusPlus(std::vector<StatePlusPlus *> states, DFAPlusPlusTransition transition,
+                const StatePlusPlus *current, std::vector<char> alphabet);
 
     void operator()(const std::string &word) const override;
 
     const std::string &getState() const override;
 
-    ~dfaPlusPlus() override;
+    ~dfaPlusPlus();
+
+    void TFAPlusPlus();
 
 private:
-    const std::vector<const StatePlusPlus *const> states;
+    const std::vector<StatePlusPlus *> states;
     const DFAPlusPlusTransition transition;
     mutable const StatePlusPlus *current;
+    const std::vector<char> alphabet;
 
 };
 
