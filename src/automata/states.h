@@ -1,3 +1,7 @@
+#include <utility>
+
+#include <utility>
+
 //============================================================================
 // @name        : state.h
 // @author      : Thomas Dooms
@@ -29,6 +33,8 @@ struct TMState
 
 
 struct StatePlusPlus {
-    const std::string name;
-    const std::string type;
+    std::string name;
+    std::string type;
+
+    StatePlusPlus(std::string name, std::string type) : name(std::move(name)), type(std::move(type)) {}
 };

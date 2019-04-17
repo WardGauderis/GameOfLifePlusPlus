@@ -13,25 +13,30 @@
 #include "states.h"
 #include "transitions.h"
 #include <vector>
+#include <set>
 
-class dfaPlusPlus : public Cell {
+class DFAPlusPlus : public Cell {
 public:
-    dfaPlusPlus(std::vector<StatePlusPlus *> states, DFAPlusPlusTransition transition,
-                const StatePlusPlus *current, std::vector<char> alphabet);
+    static std::vector<char> alphabet;
+
+    static std::vector<StatePlusPlus *> states;
+
+    static DFAPlusPlusTransition transition;
 
     void operator()(const std::string &word) const override;
 
     const std::string &getState() const override;
 
-    ~dfaPlusPlus();
-
     void TFAPlusPlus();
 
+    DFAPlusPlus(const StatePlusPlus *current);
+
 private:
-    const std::vector<StatePlusPlus *> states;
-    const DFAPlusPlusTransition transition;
     mutable const StatePlusPlus *current;
-    const std::vector<char> alphabet;
+
+    StatePlusPlus *upgradeToMin(DFAPlusPlusTransition &minTransition, std::vector<StatePlusPlus *> &minStates,
+                                std::map<std::set<const StatePlusPlus *>, StatePlusPlus *> &minStatesMap,
+                                const std::set<const StatePlusPlus *> &minState);
 
 };
 

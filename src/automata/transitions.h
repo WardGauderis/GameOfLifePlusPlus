@@ -17,18 +17,18 @@
 struct FATransition
 {
 public:
-    std::vector<const State*>& operator()(char c, const State* state) 
-    { 
+    std::vector<const State*>& operator()(char c, const State* state)
+    {
         return transition[ {state, c} ];
     }
     const std::vector<const State*>& operator()(char c, const State* state) const
-    { 
+    {
         try{ return transition.at( {state, c} ); }
-        catch(std::exception& e){ return empty; } 
+        catch(std::exception& e){ return empty; }
     }
     const std::map<std::pair<const State*, char>, std::vector<const State*>>& getMap() const
-    { 
-        return transition; 
+    {
+        return transition;
     }
     std::map<std::pair<const State*, char>, std::vector<const State*>>& getMap()
     {
@@ -156,6 +156,7 @@ public:
     }
 
     const StatePlusPlus *const &operator()(char c, const StatePlusPlus *state) const {
+        return transition.at(std::pair<const StatePlusPlus *, char>{state, c});
         try { return transition.at({state, c}); }
         catch (std::exception &e) { return empty; }
     }
@@ -171,7 +172,7 @@ public:
 private:
     // this is a map with key a {state and a char}, and a value that contains the transition from that state for that character
     std::map<std::pair<const StatePlusPlus *, char>, const StatePlusPlus *> transition;
-    const StatePlusPlus *empty;
+    const StatePlusPlus *empty = nullptr;
 };
 
 
