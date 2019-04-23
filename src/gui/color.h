@@ -42,7 +42,7 @@ public:
      */
     operator QColor()
     {
-        return {(int)(std::round(this->red) * 255.99), (int)(std::round(this->green)*255.99), (int)(std::round(this->blue)*255.99)};
+        return {(int)(std::round(this->red * 255.99)), (int)(std::round(this->green * 255.99)), (int)(std::round(this->blue * 255.99))};
     }
 
     double& operator[](uint32_t index){ switch (index){ case 0: return red; case 1: return green; case 2: return blue; }};
