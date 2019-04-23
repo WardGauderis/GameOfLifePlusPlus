@@ -27,7 +27,7 @@ public:
         auto json = json::parse(file);
 
         std::string type = json["type"];
-        if     (type == "fa" ) return parseFA(path);
+        if     (type == "dfa" or "nfa" or "enfa") return parseFA(path);
         else if(type == "pda") return parsePDA(path);
         else if(type == "tm" ) return parseTM(path);
         else if(type == "pa") return parsePA(path);
