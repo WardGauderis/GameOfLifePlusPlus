@@ -23,11 +23,25 @@ bool Simulation::simulate()
 
     while(!done)
     {
-        while(window.isPlay())
+        while(window.getState() == Window::play)
         {
-
+            draw(++iteration);
+            Window::delay(500);
         }
-
+        while(window.getState() == Window::pause)
+        {
+            Window::delay(10);
+        }
+        if(window.getState() == Window::next)
+        {
+            draw(++iteration);
+            Window::delay(500);
+        }
+        else if(window.getState() == Window::previous)
+        {
+            draw(--iteration);
+            Window::delay(500);
+        }
     }
 
     return true;
