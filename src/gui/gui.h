@@ -20,6 +20,7 @@
 #include <QToolBar>
 #include <QLayout>
 #include <QHBoxLayout>
+#include <QSpacerItem>
 
 
 #include <random>
@@ -69,7 +70,7 @@ public:
     /*
      * Getters and Setters
      */
-    bool isPlayBtnClicked() const;
+    bool isPlay() const;
 
 protected:
     /*
@@ -87,14 +88,17 @@ private:
     uint32_t yCells;
 
     bool properlyInitialized = false;
-    bool playBtnClicked = false;
+    bool play = false;
+
+    QWidget *root = new QWidget(this);
+    QGridLayout *layout = new QGridLayout;
 
     std::vector<QWidget*> widgetsToDelete;
     std::vector<Color> cells;
 
 private slots:
-
     void onPlay();
+    void onPause();
 
 };
 

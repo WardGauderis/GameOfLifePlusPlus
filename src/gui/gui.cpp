@@ -14,11 +14,15 @@
 
 Window::Window(QWidget *parent) : QMainWindow(parent)
 {
-    this->setWindowTitle("GameOfLife++");
 }
 
 void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
 {
+    this->setWindowTitle("GameOfLife++");
+    this->setCentralWidget(root);
+
+    root->setLayout(layout);
+
     xCells = _xCells;
     yCells = _yCells;
 
@@ -98,30 +102,34 @@ void Window::createButtons()
 void Window::showPlayButton()
 {
 
-    QWidget *menubar = new QWidget(this);
-
-    QHBoxLayout *cute = new QHBoxLayout;
-
     QPushButton* play = new QPushButton("play", this);
-    widgetsToDelete.emplace_back(play);
-
     QPushButton* pause = new QPushButton("pause", this);
-    widgetsToDelete.emplace_back(play);
 
-    cute->addWidget(play);
-    cute->addWidget(pause);
+    play->show();
+    pause->show();
 
-    menubar->setLayout(cute);
-    menubar->show();
+    QSpacerItem *space = new QSpacerItem(this->size().width()*(9/10), this->size().height()*(9/10));
+
+    layout-> addWidget(play, 10, 1 ,1, 1);
+    layout-> addWidget(pause, 10, 2 ,1, 1);
+    layout.setHid
+
 
     connect(play, SIGNAL(pressed()), this, SLOT(onPlay()));
+
+    widgetsToDelete.emplace_back(play);
+    widgetsToDelete.emplace_back(pause);
 }
 
 void Window::onPlay()
 {
-    playBtnClicked = true;
+    play = true;
 }
 
-bool Window::isPlayBtnClicked() const {
-    return playBtnClicked;
+void Window::onPause() {
+    play = false;
+}
+
+bool Window::isPlay() const {
+    return play;
 }
