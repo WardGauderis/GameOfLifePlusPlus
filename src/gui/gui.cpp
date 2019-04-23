@@ -112,7 +112,8 @@ void Window::showPlayButton()
 
     layout-> addWidget(play, 10, 1 ,1, 1);
     layout-> addWidget(pause, 10, 2 ,1, 1);
-    layout.setHid
+
+    // hey
 
 
     connect(play, SIGNAL(pressed()), this, SLOT(onPlay()));

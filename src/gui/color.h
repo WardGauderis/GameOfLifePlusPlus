@@ -12,6 +12,7 @@
 
 #include <QColor>
 #include <cmath>
+#include <sstream>
 
 /*
  * Class to represent a color
@@ -25,14 +26,26 @@ public:
      */
     Color() = default;
     Color(double r, double g, double b) : red(r), green(g), blue(b) {};
+    Color(const std::string& hex)
+    {
+        for(uint32_t i = 0; i < 3; i++)
+        {
+            std::stringstream s({hex[2*i], hex[2*i+1]});
+            uint32_t val;
+            s >> std::hex >> val;
+            (*this)[i] = double(val)/255.99;
+        }
+    }
 
     /*
      * Convert the color to a Qcolor object (loss of precision due to Qcolor using int values)
      */
     operator QColor()
     {
-        return {(int)std::round(this->red), (int)std::round(this->green), (int)std::round(this->blue)};
+        return {(int)(std::round(this->red) * 255.99), (int)(std::round(this->green)*255.99), (int)(std::round(this->blue)*255.99)};
     }
+
+    double& operator[](uint32_t index){ switch (index){ case 0: return red; case 1: return green; case 2: return blue; }};
 
 private:
     double red, green, blue;
