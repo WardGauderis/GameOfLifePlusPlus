@@ -12,7 +12,7 @@
 
 //--------------------------WINDOW CLASS----------------------------------------
 
-Window::Window(QWidget *parent) : QWidget(parent)
+Window::Window(QWidget *parent) : QMainWindow(parent)
 {
     this->setWindowTitle("GameOfLife++");
 }
@@ -93,4 +93,22 @@ Window::~Window()
 void Window::createButtons()
 {
 
+}
+
+void Window::showPlayButton()
+{
+    QPushButton* play = new QPushButton("Start simulation", this);
+    widgetsToDelete.emplace_back(play);
+    play->show();
+
+    connect(play, SIGNAL(pressed()), this, SLOT(onPlay()));
+}
+
+void Window::onPlay()
+{
+    playBtnClicked = false;
+}
+
+bool Window::isPlayBtnClicked() const {
+    return playBtnClicked;
 }

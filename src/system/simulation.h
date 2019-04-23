@@ -15,14 +15,15 @@
 #include "../gui/gui.h"
 
 
+
 struct Simulation
 {
+
 public:
     Simulation(uint32_t width, uint32_t height);
     ~Simulation() = default;
 
     bool simulate();
-
 
 private:
     Window window;

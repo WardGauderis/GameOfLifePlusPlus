@@ -25,9 +25,11 @@
 #include <assert.h>
 #include <vector>
 #include <cmath>
+
 #include "color.h"
 
-class Window: public QWidget
+
+class Window: public QMainWindow
 {
 
     Q_OBJECT
@@ -61,6 +63,12 @@ public:
      */
     void update();
 
+    void showPlayButton();
+    /*
+     * Getters and Setters
+     */
+    bool isPlayBtnClicked() const;
+
 protected:
     /*
     * The paint event for our grid
@@ -73,14 +81,18 @@ private:
     */
     void createButtons();
 
-
     uint32_t xCells;
     uint32_t yCells;
 
     bool properlyInitialized = false;
+    bool playBtnClicked = false;
 
     std::vector<QWidget*> widgetsToDelete;
     std::vector<Color> cells;
+
+private slots:
+    void onPlay();
+
 };
 
 
