@@ -59,6 +59,7 @@ public:
 
     const Color& operator()(uint32_t x, uint32_t y) const;
     Color& operator()(uint32_t x, uint32_t y);
+    Color& operator[](uint32_t index);
 
     static void delay(uint32_t ms);
     /*

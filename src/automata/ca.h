@@ -33,11 +33,11 @@ public:
 
     static void update();
 
-    static const Color& getColor(uint32_t x, uint32_t y, uint32_t iteration);
+    static const Color& getColor(uint32_t i, uint32_t iteration);
+
+    static const std::vector<char>& getData(uint32_t iteration);
 
 private:
-
-
     static uint32_t width;
     static uint32_t height;
 

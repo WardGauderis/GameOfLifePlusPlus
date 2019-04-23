@@ -35,5 +35,5 @@ bool Simulation::simulate()
 
 void Simulation::draw(uint32_t iteration)
 {
-    for(uint32_t i = 0; i < )
+    for(uint32_t i = 0; i < ca.getData(iteration).size(); i++) window[i] = ca.getColor(i, iteration);
 }

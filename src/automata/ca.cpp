@@ -46,12 +46,17 @@ void CA::destroy()
     for(const auto& cell : cells) delete cell;
 }
 
-const Color& CA::getColor(uint32_t x, uint32_t y, uint32_t iteration)
+const Color& CA::getColor(uint32_t i, uint32_t iteration)
 {
     if(iteration == stack.size()) update();
     else if(iteration > stack.size()) throw std::runtime_error("multiple steps at once");
 
-    return converter.at(stack[iteration].at(y * width + x));
+    return converter.at(stack[iteration].at(i));
+}
+
+const std::vector<char>& CA::getData(uint32_t iteration)
+{
+    return stack[iteration];
 }
 
 void CA::update()
@@ -66,3 +71,4 @@ void CA::update()
     stack.emplace_back(width*height);
     for(uint32_t i = 0; i < width*height; i++) (*end(stack))[i] = cells[i]->getCurrent();
 }
+

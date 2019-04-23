@@ -87,6 +87,11 @@ const Color& Window::operator()(uint32_t x, uint32_t y) const
     return cells.at(y*xCells + x);
 }
 
+Color& Window::operator[](uint32_t index)
+{
+    return cells[index];
+}
+
 Window::~Window()
 {
     for (auto widget:widgetsToDelete) delete widget;
