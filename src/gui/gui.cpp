@@ -69,7 +69,7 @@ void Window::delay(uint32_t ms)
 
 void Window::update()
 {
-    (*this)(rand()%20, rand()%20) = Color(0, 0, 255);
+    (*this)(rand()%20, rand()%20) = Color(0, 0, 1);
 }
 
 bool Window::checkProperlyInitialized()
