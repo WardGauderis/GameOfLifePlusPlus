@@ -17,16 +17,13 @@ Simulation::Simulation(uint32_t width, uint32_t height)
 
 bool Simulation::simulate()
 {
-    window.showPlayButton();
-
     bool done = false;
     while(!done)
     {
-        if (window.isPlayBtnClicked()) {
-            window.update();
-            Window::delay(500);
-            window.repaint();
-        }
+        window.update();
+        Window::delay(500);
+        window.repaint();
+
     }
 
     return true;
