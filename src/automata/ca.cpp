@@ -15,12 +15,12 @@ uint32_t CA::width;
 uint32_t CA::height;
 
 std::vector<const Cell*> CA::cells;
-std::vector<std::pair<uint32_t, uint32_t>> CA::neighbours;
+std::vector<std::pair<int, int>> CA::neighbours;
 
 std::deque<std::vector<char>> CA::stack;
 std::map<char, Color> CA::converter;
 
-void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<uint32_t, uint32_t>>& neighbours,
+void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
               const std::vector<std::tuple<const Automaton*, std::string, Color>>& stateData, const FSMTransition& transition)
 {
     CA::width = width;

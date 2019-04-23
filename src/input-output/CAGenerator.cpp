@@ -40,14 +40,13 @@ void CAGenerator::manual(const ini::Configuration &conf) {
     const std::string inputs = conf["General"]["inputs"].as_string_or_default(
             "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)");
     auto seglist = byCharacter(inputs, ',');
-    std::vector<std::pair<uint32_t, uint32_t>> neighbours;
+    std::vector<std::pair<int, int>> neighbours;
     for (auto &it : seglist) {
         it.erase(remove_if(it.begin(), it.end(), [](const char &a) { return a == '(' || a == ')'; }),
                  it.end());
     }
     for (auto it = seglist.begin(); it != seglist.end() - 1;) {
-        neighbours.emplace_back(static_cast<unsigned int>(std::stoi(*(it++))),
-                                static_cast<unsigned int>(std::stoi(*(it))));
+        neighbours.emplace_back(std::stoi(*(it++)), std::stoi(*(it)));
     }
     const int amount = conf["States"]["amount"].as_int_or_die();
     std::vector<std::tuple<const Automaton *, std::string, Color>> stateData;

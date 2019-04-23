@@ -25,7 +25,7 @@ class CA
 {
 public:
 
-    static void init(uint32_t width, uint32_t height, const std::vector<std::pair<uint32_t, uint32_t>>& neighbours,
+    static void init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
             const std::vector<std::tuple<const Automaton*, std::string, Color>>& stateData, const FSMTransition& transition);
 
     static void destroy();
@@ -43,7 +43,7 @@ private:
     static uint32_t height;
 
     static std::vector<const Cell*> cells;
-    static std::vector<std::pair<uint32_t, uint32_t>> neighbours;
+    static std::vector<std::pair<int, int>> neighbours;
 
     static std::deque<std::vector<char>> stack;
     static std::map<char, Color> converter;
