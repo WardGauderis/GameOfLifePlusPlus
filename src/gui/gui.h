@@ -38,6 +38,7 @@ class Window: public QMainWindow
     Q_OBJECT
 
 public:
+    enum state {play, pause, next, previous};
     /*
     * Constructor, gridwidth and height indicate the amount of cells that the grid is supposed to have
     */
@@ -71,7 +72,7 @@ public:
     /*
      * Getters and Setters
      */
-    bool isPlay() const;
+    state getState() const;
 
 protected:
     /*
@@ -89,7 +90,7 @@ private:
     uint32_t yCells;
 
     bool properlyInitialized = false;
-    bool play = false;
+    state crState = pause;
 
     QWidget *root = new QWidget(this);
     QGridLayout *layout = new QGridLayout;
@@ -100,6 +101,8 @@ private:
 private slots:
     void onPlay();
     void onPause();
+    void onNext();
+    void onPrevious();
 
 };
 

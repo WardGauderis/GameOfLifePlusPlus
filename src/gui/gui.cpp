@@ -131,24 +131,37 @@ void Window::showPlayButton()
     layout->setRowStretch(0, this->size().height() - size);
     layout->setRowStretch(0, size);
 
-    // hey
-
-
     connect(play, SIGNAL(pressed()), this, SLOT(onPlay()));
+    connect(pause, SIGNAL(pressed()), this, SLOT(onPause()));
+    connect(skipOne, SIGNAL(pressed()), this, SLOT(onSkip()));
+    connect(goBackOne, SIGNAL(pressed()), this, SLOT(onPrevious()));
+
 
     widgetsToDelete.emplace_back(play);
     widgetsToDelete.emplace_back(pause);
+    widgetsToDelete.emplace_back(skipOne);
+    widgetsToDelete.emplace_back(goBackOne);
 }
 
 void Window::onPlay()
 {
-    play = true;
+    crState = play;
 }
 
 void Window::onPause() {
-    play = false;
+    crState = pause;
 }
 
-bool Window::isPlay() const {
-    return play;
+void Window::onNext() {
+    crState = next;
 }
+
+void Window::onPrevious() {
+    crState = previous;
+}
+
+Window::state Window::getState() const {
+    return crState;
+}
+
+
