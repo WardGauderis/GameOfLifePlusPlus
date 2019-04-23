@@ -21,7 +21,7 @@ std::deque<std::vector<char>> CA::stack;
 std::map<char, Color> CA::converter;
 
 void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
-              const std::vector<std::tuple<const Automaton*, std::string, Color>>& stateData, const FSMTransition& transition)
+              const std::vector<std::tuple<const Automaton*, char, std::string, Color>>& stateData, const FSMTransition& transition)
 {
     CA::width = width;
     CA::height = height;
@@ -29,11 +29,19 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
 
     std::vector<const Automaton*> states;
     states.reserve(stateData.size());
-    for(const auto& data : stateData) states.push_back(std::get<0>(data));
+    for(const auto& data : stateData)
+    {
+        states.push_back(std::get<0>(data));
+        converter.emplace(std::get<1>(data), std::get<3>(data));
+    }
 
     FSM::init(states, transition);
 
-    CA::cells.resize(width*height, new FSM{std::get<0>(stateData[0])});
+    CA::cells.reserve(width*height);
+    for(uint32_t i = 0; i < width*height; i++) cells.push_back(new FSM{std::get<0>(stateData[0])});
+
+    stack.emplace_back(width*height);
+    for(uint32_t i = 0; i < width*height; i++) stack[0][i] = std::get<1>(stateData[0]);
 }
 
 void CA::destroy()
@@ -43,9 +51,6 @@ void CA::destroy()
 
 const Color& CA::getColor(uint32_t i, uint32_t iteration)
 {
-    if(iteration == stack.size()) update();
-    else if(iteration > stack.size()) throw std::runtime_error("multiple steps at once");
-
     return converter.at(stack[iteration].at(i));
 }
 
@@ -60,10 +65,10 @@ void CA::update()
         for(uint32_t y = 0; y < height; y++)
         {
             std::string input;
-            for(const auto& pair : neighbours) input += (*end(stack))[((y + pair.second)%height) * width + ((x + pair.first)%width)];
+            for(const auto& pair : neighbours) input += (*--end(stack))[((y + pair.second)%height) * width + ((x + pair.first)%width)];
             (*cells.at(y * width + x))(input);
         }
     stack.emplace_back(width*height);
-    for(uint32_t i = 0; i < width*height; i++) (*end(stack))[i] = cells[i]->getCurrent();
+    for(uint32_t i = 0; i < width*height; i++) (*--end(stack))[i] = cells[i]->getCurrent();
 }
 

@@ -69,22 +69,22 @@ void CAGenerator::manual(const ini::Configuration &conf) {
     FSMTransition trans;
     auto transition = trans.getMap();
     for (const auto &state: stateData) {
-        const auto transitions = byCharacter(conf["Transitions"][std::get<1>(state)].as_string_or_die(), ',');
+        const auto transitions = byCharacter(conf["Transitions"][std::get<2>(state)].as_string_or_die(), ',');
         if (transitions.size() != 2) {
             std::cerr << "NOT ENOUGH ARGUMENTS!!!\n";
         }
         const std::string accept = transitions[0];
         const Automaton *a = std::get<0>(*std::find_if(stateData.begin(), stateData.end(),
                                                        [&accept](
-                                                               const std::tuple<const Automaton *, std::string, Color> &a) {
-                                                           return std::get<1>(a) == accept;
+                                                               const std::tuple<const Automaton *, char, std::string, Color> &a) {
+                                                           return std::get<2>(a) == accept;
                                                        }));
         transition[{std::get<0>(state), true}] = a;
         const std::string reject = transitions[1];
         const Automaton *r = std::get<0>(*std::find_if(stateData.begin(), stateData.end(),
                                                        [&reject](
-                                                               const std::tuple<const Automaton *, std::string, Color> &a) {
-                                                           return std::get<1>(a) == reject;
+                                                               const std::tuple<const Automaton *, char, std::string, Color> &a) {
+                                                           return std::get<2>(a) == reject;
                                                        }));
         transition[{std::get<0>(state), false}] = r;
     }

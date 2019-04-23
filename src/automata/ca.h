@@ -26,7 +26,7 @@ class CA
 public:
 
     static void init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
-            const std::vector<std::tuple<const Automaton*, std::string, Color>>& stateData, const FSMTransition& transition);
+            const std::vector<std::tuple<const Automaton*, char, std::string, Color>>& stateData, const FSMTransition& transition);
 
     static void destroy();
 
@@ -37,6 +37,7 @@ public:
 
     static uint32_t getWidth() { return width ; }
     static uint32_t getHeight(){ return height; }
+    static uint32_t getSize(){ return stack.size(); }
 
 private:
     static uint32_t width;

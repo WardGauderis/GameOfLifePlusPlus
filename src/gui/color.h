@@ -45,7 +45,7 @@ public:
         return {(int)(std::round(this->red * 255.99)), (int)(std::round(this->green * 255.99)), (int)(std::round(this->blue * 255.99))};
     }
 
-    double& operator[](uint32_t index){ switch (index){ case 0: return red; case 1: return green; case 2: return blue; }};
+    double& operator[](uint32_t index){ switch (index){ case 0: return red; case 1: return green; case 2: return blue; default: throw std::runtime_error("must be smaller than 2"); }};
 
 private:
     double red, green, blue;

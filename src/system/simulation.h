@@ -27,6 +27,7 @@ private:
     void draw(uint32_t iteration);
 
     Window window;
+    CA ca;
 };
 
 

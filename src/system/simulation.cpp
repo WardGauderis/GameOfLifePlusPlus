@@ -27,7 +27,7 @@ bool Simulation::simulate()
     {
         while(window.getState() == Window::play)
         {
-            draw(++iteration);
+            draw(iteration++);
             Window::delay(500);
         }
         while(window.getState() == Window::pause)
@@ -36,7 +36,7 @@ bool Simulation::simulate()
         }
         if(window.getState() == Window::next)
         {
-            draw(++iteration);
+            draw(iteration++);
             Window::delay(500);
         }
         else if(window.getState() == Window::previous)
@@ -51,5 +51,8 @@ bool Simulation::simulate()
 
 void Simulation::draw(uint32_t iteration)
 {
+    if(iteration == CA::getSize()) CA::update();
+    else if(iteration > CA::getSize()) throw std::runtime_error("multiple steps at once");
+
     for(uint32_t i = 0; i < CA::getData(iteration).size(); i++) window[i] = CA::getColor(i, iteration);
 }
