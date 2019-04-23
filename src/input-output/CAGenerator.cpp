@@ -49,13 +49,13 @@ void CAGenerator::manual(const ini::Configuration &conf) {
         neighbours.emplace_back(std::stoi(*(it)), std::stoi(*(it + 1)));
     }
     const int amount = conf["States"]["amount"].as_int_or_die();
-    std::vector<std::tuple<const Automaton *, std::string, Color>> stateData;
     std::map<std::string, char> stateNames;
     for (int i = 1; i <= amount; ++i) {
         const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
         const std::string name = strings[0];
         stateNames[name] = 'a' + i - 1;
     }
+    std::vector<std::tuple<const Automaton *, char, std::string, Color>> stateData;
     for (int i = 1; i <= amount; ++i) {
         const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
         if (strings.size() != 3) {
@@ -64,7 +64,7 @@ void CAGenerator::manual(const ini::Configuration &conf) {
         const std::string name = strings[0];
         const std::string color = strings[1];
         const std::string filename = strings[2];
-        stateData.emplace_back(Parser::parseAutomaton(filename, stateNames), name, readColor(color));
+        stateData.emplace_back(Parser::parseAutomaton(filename, stateNames), stateNames[name], name, readColor(color));
     }
     FSMTransition trans;
     auto transition = trans.getMap();
