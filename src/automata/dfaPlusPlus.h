@@ -25,7 +25,7 @@ public:
 
     void operator()(const std::string &word) const override;
 
-    const std::string &getState() const override;
+    char getState() const override;
 
     void TFAPlusPlus();
 

@@ -15,7 +15,7 @@ class Cell {
 public:
     virtual void operator()(const std::string &word) const = 0;
 
-    virtual const std::string &getState() const = 0;
+    virtual char getState() const = 0;
 };
 
 

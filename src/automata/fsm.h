@@ -17,23 +17,23 @@
 #include "automaton.h"
 #include "cell.h"
 
-class FSM: public Cell {
+class FSM: public Cell
+{
 public:
-    FSM(const std::vector<std::pair<const Automaton *, std::string>> &stateNames, const FSMTransition &transition,
-        const Automaton *start);
-
+    FSM(const Automaton* start);
     ~FSM();
 
-    void operator()(const std::string &word) const override ;
+    static void init(const std::vector<const Automaton*>& states, const FSMTransition& transition);
 
-    const std::string &getState() const override;
+    void operator()(const std::string &word) const override;
+
+    char getState() const override;
 
 private:
-    std::vector<const Automaton *> states;
-    FSMTransition transition;
-    mutable const Automaton *current;
+    static std::vector<const Automaton*> states;
+    static FSMTransition transition;
 
-    std::map<const Automaton *, std::string> converter;
+    mutable const Automaton* current;
 };
 
 

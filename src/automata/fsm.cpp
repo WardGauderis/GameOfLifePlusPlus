@@ -7,18 +7,10 @@
 // @description : 
 //============================================================================
 
+#include <algorithm>
 #include "fsm.h"
 
-FSM::FSM(const std::vector<std::pair<const Automaton*, std::string>>& stateNames, const FSMTransition& transition,
-        const Automaton* start) : transition(transition), current(start)
-{
-    states.reserve(stateNames.size());
-    for(const auto& pair : stateNames)
-    {
-        states.push_back(pair.first);
-        converter[pair.first] = pair.second;
-    }
-}
+FSM::FSM(const Automaton* start) : current(start) {}
 
 FSM::~FSM()
 {
@@ -30,7 +22,7 @@ void FSM::operator()(const std::string& word) const
     current = transition((*current)(word), current);
 }
 
-const std::string& FSM::getState() const
+char FSM::getState() const
 {
-    return converter.at(current);
+    return 65 + (std::find(begin(states), end(states), current) - begin(states));
 }

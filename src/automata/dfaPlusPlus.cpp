@@ -22,8 +22,9 @@ void DFAPlusPlus::operator()(const std::string &word) const {
     for (const auto &c: word) current = transition(c, current);
 }
 
-const std::string &DFAPlusPlus::getState() const {
-    return current->type;
+// was eerst const string& return current->type
+char DFAPlusPlus::getState() const {
+    return 65;
 }
 
 void DFAPlusPlus::TFAPlusPlus() {
