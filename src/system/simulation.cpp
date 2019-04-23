@@ -8,9 +8,11 @@
 //============================================================================
 
 #include "simulation.h"
+#include "../input-output/CAGenerator.h"
 
 Simulation::Simulation(uint32_t width, uint32_t height)
 {
+    CAGenerator::generate("./input/GameOfLife.ini");
     window.init(width, height, Color(1,0,0));
     window.show();
 }

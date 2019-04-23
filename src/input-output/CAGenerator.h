@@ -14,14 +14,14 @@
 
 class CAGenerator {
 public:
-    CA *generate(const std::string &filename);
+    static void generate(const std::string &filename);
 
 private:
-    CA *manual(const ini::Configuration &conf);
+    static void manual(const ini::Configuration &conf);
 
-    std::vector<std::string> byCharacter(std::string str, const char& ch);
+    static std::vector<std::string> byCharacter(const std::string& str, const char& ch);
 
-    Color readColor(std::string str);
+    static Color readColor(std::string str);
 };
 
 

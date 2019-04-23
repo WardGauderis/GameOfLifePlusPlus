@@ -10,8 +10,10 @@
 #include <iostream>
 #include <sstream>
 #include "CAGenerator.h"
+#include "../automata/transitions.h"
+#include "parser.h"
 
-CA *CAGenerator::generate(const std::string &filename) {
+void CAGenerator::generate(const std::string &filename) {
     try {
         ini::Configuration conf;
         std::ifstream fin(filename);
@@ -19,7 +21,7 @@ CA *CAGenerator::generate(const std::string &filename) {
         fin.close();
         const std::string mode = conf["General"]["mode"].as_string_or_die();
         if (mode == "manual") {
-            return manual(conf);
+            manual(conf);
         } else if (mode == "automatic") {
             std::cerr << "Coming soon!!!\n";
         } else {
@@ -31,7 +33,7 @@ CA *CAGenerator::generate(const std::string &filename) {
     }
 }
 
-CA *CAGenerator::manual(const ini::Configuration &conf) {
+void CAGenerator::manual(const ini::Configuration &conf) {
     const int width = conf["General"]["width"].as_int_or_default(200);
     const int height = conf["General"]["height"].as_int_or_default(200);
     const std::string layout = conf["General"]["layout"].as_string_or_default("");
@@ -48,7 +50,7 @@ CA *CAGenerator::manual(const ini::Configuration &conf) {
                                 static_cast<unsigned int>(std::stoi(*(it))));
     }
     const int amount = conf["States"]["amount"].as_int_or_die();
-    std::vector<std::tuple<Automaton *, std::string, Color>> stateData;
+    std::vector<std::tuple<const Automaton *, std::string, Color>> stateData;
     for (int i = 1; i <= amount; ++i) {
         const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
         if (strings.size() != 3) {
@@ -57,21 +59,32 @@ CA *CAGenerator::manual(const ini::Configuration &conf) {
         const std::string name = strings[0];
         const std::string color = strings[1];
         const std::string filename = strings[2];
-        stateData.emplace_back(parseAutomaton(filename), name,)
+        stateData.emplace_back(Parser::parseAutomaton(filename), name, readColor(color));
     }
-    for (int i = 1; i <= amount; ++i) {
-        const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
-        if (strings.size() != 3) {
+    FSMTransition trans;
+    auto transition = trans.getMap();
+    for (const auto &state: stateData) {
+        const auto transitions = byCharacter(conf["Transitions"][std::get<1>(state)].as_string_or_die(), ',');
+        if (transitions.size() != 2) {
             std::cerr << "NOT ENOUGH ARGUMENTS!!!\n";
         }
-        const std::string accept = strings[0];
-        const std::string reject = strings[1];
+        const std::string accept = transitions[0];
+        const Automaton *a = std::get<0>(*std::find_if(stateData.begin(), stateData.end(),
+                                                       [&accept](const std::tuple<const Automaton *, std::string, Color> &a) {
+                                                           return std::get<1>(a) == accept;
+                                                       }));
+        transition[{std::get<0>(state), true}] = a;
+        const std::string reject = transitions[1];
+        const Automaton *r = std::get<0>(*std::find_if(stateData.begin(), stateData.end(),
+                                                       [&reject](const std::tuple<const Automaton *, std::string, Color> &a) {
+                                                           return std::get<1>(a) == reject;
+                                                       }));
+        transition[{std::get<0>(state), false}] = r;
     }
-    CA::init(width, height, neighbours, stateData,)
-    return nullptr;
+    CA::init(width, height, neighbours, stateData, trans);
 }
 
-std::vector<std::string> CAGenerator::byCharacter(std::string str, const char &ch) {
+std::vector<std::string> CAGenerator::byCharacter(const std::string &str, const char &ch) {
     std::stringstream s(str);
     std::string segment;
     std::vector<std::string> seglist;
@@ -87,56 +100,56 @@ Color CAGenerator::readColor(std::string str) {
     Color a(0, 1, 1);
     std::transform(str.begin(), str.end(), str.begin(), tolower);
     if (str[0] == '#') {
-        return Color(str.substr())
-    } else if (str == "epsilon")
-
+        return {str.substr(1)};
+    } else if (str == "epsilon") {
+        std::cerr << "EPSILOOOOOON"; //TODO
     } else if (str == "red") {
-        return Color("ff0000");
+        return {"ff0000"};
     } else if (str == "orange") {
-        return Color("ffa500");
+        return {"ffa500"};
     } else if (str == "yellow") {
-        return Color("ffff00");
+        return {"ffff00"};
     } else if (str == "green") {
-        return Color("008000");
-    }else if (str == "blue") {
-        return Color("0000ff");
-    }else if (str == "purple") {
-        return Color("800080");
-    }else if (str == "brown") {
-        return Color("a52a2a");
-    }else if (str == "magenta") {
-        return Color("ff00ff");
-    }else if (str == "tan") {
-        return Color("d2b48c");
-    }else if (str == "cyan") {
-        return Color("00ffff");
-    }else if (str == "olive") {
-        return Color("808000");
-    }else if (str == "maroon") {
-        return Color("800000");
-    }else if (str == "navy") {
-        return Color("000080");
-    }else if (str == "aquamarine") {
-        return Color("7fffd4");
-    }else if (str == "turquoise") {
-        return Color("40e0d0");
-    }else if (str == "silver") {
-        return Color("c0c0c0");
-    }else if (str == "lime") {
-        return Color("00ff00");
-    }else if (str == "teal") {
-        return Color("008080");
-    }else if (str == "indigo") {
-        return Color("4b0082");
-    }else if (str == "violet") {
-        return Color("ee82ee");
-    }else if (str == "pink") {
-        return Color("ffc0cb");
-    }else if (str == "black") {
-        return Color("000000");
-    }else if (str == "white") {
-        return Color("ffffff");
-    }else if (str == "gray" || str == "grey") {
-        return Color("808080");
+        return {"008000"};
+    } else if (str == "blue") {
+        return {"0000ff"};
+    } else if (str == "purple") {
+        return {"800080"};
+    } else if (str == "brown") {
+        return {"a52a2a"};
+    } else if (str == "magenta") {
+        return {"ff00ff"};
+    } else if (str == "tan") {
+        return {"d2b48c"};
+    } else if (str == "cyan") {
+        return {"00ffff"};
+    } else if (str == "olive") {
+        return {"808000"};
+    } else if (str == "maroon") {
+        return {"800000"};
+    } else if (str == "navy") {
+        return {"000080"};
+    } else if (str == "aquamarine") {
+        return {"7fffd4"};
+    } else if (str == "turquoise") {
+        return {"40e0d0"};
+    } else if (str == "silver") {
+        return {"c0c0c0"};
+    } else if (str == "lime") {
+        return {"00ff00"};
+    } else if (str == "teal") {
+        return {"008080"};
+    } else if (str == "indigo") {
+        return {"4b0082"};
+    } else if (str == "violet") {
+        return {"ee82ee"};
+    } else if (str == "pink") {
+        return {"ffc0cb"};
+    } else if (str == "black") {
+        return {"000000"};
+    } else if (str == "white") {
+        return {"ffffff"};
+    } else if (str == "gray" || str == "grey") {
+        return {"808080"};
     }
 }

@@ -99,7 +99,7 @@ private:
 struct FSMTransition
 {
 public:
-    Automaton* operator()(bool b, const Automaton* state)
+    const Automaton* operator()(bool b, const Automaton* state)
     {
         return transition[ {state, b} ];
     }
@@ -108,17 +108,17 @@ public:
         try{ return transition.at( {state, b} ); }
         catch(std::exception& e){ return empty; }
     }
-    const std::map<std::pair<const Automaton*, bool>, Automaton*>& getMap() const
+    const std::map<std::pair<const Automaton*, bool>, const Automaton*>& getMap() const
     {
         return transition;
     }
-    std::map<std::pair<const Automaton*, bool>, Automaton*>& getMap()
+    std::map<std::pair<const Automaton*, bool>, const Automaton*>& getMap()
     {
         return transition;
     }
 private:
     // this is a map with key a {state and a char}, and a value that contains the transition from that state for that character
-    std::map<std::pair<const Automaton*, bool>, Automaton*> transition;
+    std::map<std::pair<const Automaton*, bool>, const Automaton*> transition;
     const Automaton* empty = nullptr;
 };
 
