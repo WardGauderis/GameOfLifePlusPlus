@@ -18,6 +18,8 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QToolBar>
+#include <QLayout>
+#include <QHBoxLayout>
 
 
 #include <random>
@@ -91,6 +93,7 @@ private:
     std::vector<Color> cells;
 
 private slots:
+
     void onPlay();
 
 };

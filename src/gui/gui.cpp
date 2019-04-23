@@ -97,9 +97,22 @@ void Window::createButtons()
 
 void Window::showPlayButton()
 {
-    QPushButton* play = new QPushButton("Start simulation", this);
+
+    QWidget *menubar = new QWidget(this);
+
+    QHBoxLayout *cute = new QHBoxLayout;
+
+    QPushButton* play = new QPushButton("play", this);
     widgetsToDelete.emplace_back(play);
-    play->show();
+
+    QPushButton* pause = new QPushButton("pause", this);
+    widgetsToDelete.emplace_back(play);
+
+    cute->addWidget(play);
+    cute->addWidget(pause);
+
+    menubar->setLayout(cute);
+    menubar->show();
 
     connect(play, SIGNAL(pressed()), this, SLOT(onPlay()));
 }
