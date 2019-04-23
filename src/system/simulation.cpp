@@ -23,12 +23,17 @@ bool Simulation::simulate()
     uint32_t iteration = 0;
     window.showPlayButton();
 
+    draw(0);
+    window.repaint();
+
     while(!done)
     {
         while(window.getState() == Window::play)
         {
-            draw(iteration++);
+            draw(++iteration);
+            window.repaint();
             Window::delay(500);
+
         }
         while(window.getState() == Window::pause)
         {
@@ -36,12 +41,14 @@ bool Simulation::simulate()
         }
         if(window.getState() == Window::next)
         {
-            draw(iteration++);
+            draw(++iteration);
+            window.repaint();
             Window::delay(500);
         }
         else if(window.getState() == Window::previous)
         {
             if(iteration > 0) draw(--iteration);
+            window.repaint();
             Window::delay(500);
         }
     }

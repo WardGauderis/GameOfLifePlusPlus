@@ -15,14 +15,9 @@ FSMTransition FSM::transition = {};
 
 FSM::FSM(const Automaton* start) : current(start) {}
 
-void FSM::init(const std::vector<const Automaton*>& states, const FSMTransition& transition)
+void FSM::init(const std::map<const Automaton*, char>& states, const FSMTransition& transition)
 {
-    char index = 65;
-    for(const auto& state : states)
-    {
-        FSM::states[state] = {index};
-        index++;
-    }
+    FSM::states = states;
     FSM::transition = transition;
 }
 

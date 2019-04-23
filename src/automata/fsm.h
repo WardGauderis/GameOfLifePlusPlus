@@ -22,7 +22,7 @@ class FSM: public Cell
 public:
     FSM(const Automaton* start);
 
-    static void init(const std::vector<const Automaton*>& stateData, const FSMTransition& transition);
+    static void init(const std::map<const Automaton*, char>& stateData, const FSMTransition& transition);
 
     void operator()(const std::string &word) const override;
     char getCurrent() const override;
