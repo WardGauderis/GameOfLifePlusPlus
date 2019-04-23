@@ -21,7 +21,7 @@ std::deque<std::vector<char>> CA::stack;
 std::map<char, Color> CA::converter;
 
 void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<uint32_t, uint32_t>>& neighbours,
-              const std::vector<std::tuple<const Automaton*, const std::string&, const Color&>>& stateData, const FSMTransition& transition)
+              const std::vector<std::tuple<const Automaton*, std::string, Color>>& stateData, const FSMTransition& transition)
 {
     CA::width = width;
     CA::height = height;
