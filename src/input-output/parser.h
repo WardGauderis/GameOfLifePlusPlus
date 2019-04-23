@@ -20,7 +20,7 @@ using nlohmann::json;
 class Parser
 {
 public:
-    static Automaton* parseAutomaton(const std::string& path)
+    static const Automaton* parseAutomaton(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
@@ -34,7 +34,7 @@ public:
         else throw std::runtime_error("unknown automaton type");
     }
 
-    static FA* parseFA(const std::string& path)
+    static const FA* parseFA(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
@@ -47,7 +47,7 @@ public:
         return new FA{alphabet, states, transition, json["type"] };
     }
 
-    static PDA* parsePDA(const std::string& path)
+    static const PDA* parsePDA(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
@@ -60,7 +60,7 @@ public:
 
         return new PDA{alphabet, stackAlphabet, states, transition};
     }
-    static TM* parseTM(const std::string& path)
+    static const TM* parseTM(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
@@ -73,7 +73,7 @@ public:
 
         return new TM{alphabet, tapeAlphabet, states, transition};
     }
-    static PA* parsePA(const std::string& path)
+    static const PA* parsePA(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
