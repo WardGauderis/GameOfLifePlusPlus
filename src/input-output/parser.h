@@ -20,6 +20,20 @@ using nlohmann::json;
 class Parser
 {
 public:
+    static Automaton* parseAutomaton(const std::string& path)
+    {
+        std::ifstream file(path);
+        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
+        auto json = json::parse(file);
+
+        std::string type = json["type"];
+        if     (type == "fa" ) return parseFA(path);
+        else if(type == "pda") return parsePDA(path);
+        else if(type == "tm" ) return parseTM(path);
+        else if(type == "pa") return parsePA(path);
+        else throw std::runtime_error("unknown automaton type");
+    }
+
     static FA* parseFA(const std::string& path)
     {
         std::ifstream file(path);
