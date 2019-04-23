@@ -28,6 +28,8 @@ public:
 private:
     Window window;
     CA ca;
+
+
 };
 
 

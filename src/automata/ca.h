@@ -14,35 +14,31 @@
 #include "cell.h"
 #include <vector>
 #include <string>
-#include <deque>
 #include "../gui/color.h"
 #include <map>
 
 struct Automaton;
 struct FSMTransition;
 
-class CA
-{
+class CA {
 public:
+
     static void init(uint32_t width, uint32_t height, const std::vector<std::pair<uint32_t, uint32_t>>& neighbours,
             const std::vector<std::tuple<const Automaton*, const std::string&, const Color&>>& stateData,
-            const FSMTransition& transition, const std::vector<std::string>& layout);
+            const FSMTransition& transition, const std::vector<std::string>& starts);
 
     static void destroy();
 
     static void update();
 
-    static const Color& getColor(uint32_t x, uint32_t y, uint32_t iteration);
+    static const Color& getColor(uint32_t x, uint32_t y);
 
 private:
-    static uint32_t width;
-    static uint32_t height;
-
     static std::vector<const Cell*> cells;
     static std::vector<std::pair<uint32_t, uint32_t>> neighbours;
 
-    static std::deque<std::vector<char>> stack;
-    static std::map<char, Color> converter;
+    static uint32_t width;
+    static uint32_t height;
 };
 
 

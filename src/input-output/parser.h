@@ -20,7 +20,7 @@ using nlohmann::json;
 class Parser
 {
 public:
-    static FA* parseFA(const std::string& path)
+    static FA parseFA(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
@@ -30,10 +30,10 @@ public:
         std::vector<const State*> states = parseStates(json["states"]);
         FATransition          transition  = parseFATransitions(json["transitions"], json["states"], states);
 
-        return new FA{alphabet, states, transition, json["type"] };
+        return {alphabet, states, transition, json["type"] };
     }
 
-    static PDA* parsePDA(const std::string& path)
+    static PDA parsePDA(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
@@ -44,9 +44,9 @@ public:
         std::vector<const State*> states    = parseStates(json["states"]);
         PDATransition       transition      = parsePDATransitions(json["transitions"], json["states"], states);
 
-        return new PDA{alphabet, stackAlphabet, states, transition};
+        return {alphabet, stackAlphabet, states, transition};
     }
-    static TM* parseTM(const std::string& path)
+    static TM parseTM(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
@@ -57,9 +57,9 @@ public:
         std::vector<TMState*> states    = parseTMStates(json["states"]);
         TMTransition transition         = parseTMTransitions(json["transitions"], json["states"], states);
 
-        return new TM{alphabet, tapeAlphabet, states, transition};
+        return {alphabet, tapeAlphabet, states, transition};
     }
-    static PA* parsePA(const std::string& path)
+    static PA parsePA(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
@@ -68,7 +68,7 @@ public:
         std::vector<char> alphabet       = parseAlphabet(json["alphabet"], nullptr);
         std::vector<const State*> states = parseStates(json["states"]);
         PATransition transition          = parsePATransitions(json["transitions"], json["states"], states);
-        return new PA{alphabet, states, transition};
+        return {alphabet, states, transition};
     }
 
 private:

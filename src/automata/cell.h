@@ -12,11 +12,13 @@
 #include <string>
 #include "../gui/color.h"
 
+typedef std::tuple<char, std::string, Color> Data;
+
 struct Cell
 {
     virtual ~Cell() = default;
     virtual void operator()(const std::string &word) const = 0;
-    virtual char getCurrent() const = 0;
+    virtual const Data& getData() const = 0;
 };
 
 
