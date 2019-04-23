@@ -13,7 +13,7 @@
 Simulation::Simulation(uint32_t width, uint32_t height)
 {
     CAGenerator::generate("./input/GameOfLife.ini");
-    window.init(width, height, Color(1,0,0));
+    window.init(width, height, Color(0.5,0.5,0.5));
     window.show();
 }
 

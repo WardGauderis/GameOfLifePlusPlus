@@ -143,7 +143,7 @@ private:
         {
             State const* from = states[converter[transition["from"]]];
             State const* to   = states[converter[transition["to"  ]]];
-            char input = alphabet.at((transition["input"])[0]);
+            char input = alphabet.at(transition["input"]);
             result(input, from).push_back(to);
         }
         return result;
@@ -160,7 +160,7 @@ private:
         {
             State const* from = states[converter[transition["from"]]];
             State const* to   = states[converter[transition["to"  ]]];
-            char input = alphabet.at((transition["input"])[0]);
+            char input = alphabet.at(transition["input"]);
             char push  = static_cast<std::string> (transition["push" ])[0];
             char pop   = static_cast<std::string> (transition["pop"  ])[0];
             result(input, from) = {to, push, pop};
@@ -178,7 +178,7 @@ private:
         {
             TMState const* from = states[converter[transition["from"]]];
             TMState const* to   = states[converter[transition["to"  ]]];
-            char input = alphabet.at((transition["input"])[0]);
+            char input = alphabet.at(transition["input"]);
             char dir   = static_cast<std::string> (transition["direction"])[0];
             char write = static_cast<std::string> (transition["write"    ])[0];
             result(input, from) = {to, dir, write};
@@ -195,7 +195,7 @@ private:
 
         for(const auto& transition : transition_values)
         {
-            char input = alphabet.at((transition["input"])[0]);
+            char input = alphabet.at(transition["input"]);
             State const* from  = states[converter[transition["from"]]];
             State const* to    = states[converter[transition["to"  ]]];
             double probability = transition["probability"];

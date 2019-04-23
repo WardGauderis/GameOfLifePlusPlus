@@ -45,11 +45,17 @@ void CAGenerator::manual(const ini::Configuration &conf) {
         it.erase(remove_if(it.begin(), it.end(), [](const char &a) { return a == '(' || a == ')'; }),
                  it.end());
     }
-    for (auto it = seglist.begin(); it != seglist.end() - 1;) {
-        neighbours.emplace_back(std::stoi(*(it++)), std::stoi(*(it)));
+    for (auto it = seglist.begin(); it < seglist.end(); it = it + 2) {
+        neighbours.emplace_back(std::stoi(*(it)), std::stoi(*(it + 1)));
     }
     const int amount = conf["States"]["amount"].as_int_or_die();
     std::vector<std::tuple<const Automaton *, std::string, Color>> stateData;
+    std::map<std::string, char> stateNames;
+    for (int i = 1; i <= amount; ++i) {
+        const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
+        const std::string name = strings[0];
+        stateNames[name] = 'a' + i - 1;
+    }
     for (int i = 1; i <= amount; ++i) {
         const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
         if (strings.size() != 3) {
@@ -58,7 +64,7 @@ void CAGenerator::manual(const ini::Configuration &conf) {
         const std::string name = strings[0];
         const std::string color = strings[1];
         const std::string filename = strings[2];
-        stateData.emplace_back(Parser::parseAutomaton(filename), name, readColor(color));
+        stateData.emplace_back(Parser::parseAutomaton(filename, stateNames), name, readColor(color));
     }
     FSMTransition trans;
     auto transition = trans.getMap();
@@ -69,13 +75,15 @@ void CAGenerator::manual(const ini::Configuration &conf) {
         }
         const std::string accept = transitions[0];
         const Automaton *a = std::get<0>(*std::find_if(stateData.begin(), stateData.end(),
-                                                       [&accept](const std::tuple<const Automaton *, std::string, Color> &a) {
+                                                       [&accept](
+                                                               const std::tuple<const Automaton *, std::string, Color> &a) {
                                                            return std::get<1>(a) == accept;
                                                        }));
         transition[{std::get<0>(state), true}] = a;
         const std::string reject = transitions[1];
         const Automaton *r = std::get<0>(*std::find_if(stateData.begin(), stateData.end(),
-                                                       [&reject](const std::tuple<const Automaton *, std::string, Color> &a) {
+                                                       [&reject](
+                                                               const std::tuple<const Automaton *, std::string, Color> &a) {
                                                            return std::get<1>(a) == reject;
                                                        }));
         transition[{std::get<0>(state), false}] = r;

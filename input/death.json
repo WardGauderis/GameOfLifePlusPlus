@@ -1,9 +1,5 @@
 {
   "type": "dfa",
-  "alphabet": [
-    "0",
-    "1"
-  ],
   "states": [
     {
       "name": "zero",
@@ -35,52 +31,52 @@
     {
       "from": "zero",
       "to": "zero",
-      "input": "0"
+      "input": "death"
     },
     {
       "from": "zero",
       "to": "one",
-      "input": "1"
+      "input": "alive"
     },
     {
       "from": "one",
       "to": "one",
-      "input": "0"
+      "input": "death"
     },
     {
       "from": "one",
       "to": "two",
-      "input": "1"
+      "input": "alive"
     },
     {
       "from": "two",
       "to": "two",
-      "input": "0"
+      "input": "death"
     },
     {
       "from": "two",
       "to": "three",
-      "input": "1"
+      "input": "alive"
     },
     {
       "from": "three",
       "to": "three",
-      "input": "0"
+      "input": "death"
     },
     {
       "from": "three",
       "to": "four",
-      "input": "1"
+      "input": "alive"
     },
     {
       "from": "four",
       "to": "four",
-      "input": "0"
+      "input": "death"
     },
     {
       "from": "four",
       "to": "four",
-      "input": "1"
+      "input": "alive"
     }
   ]
 }
