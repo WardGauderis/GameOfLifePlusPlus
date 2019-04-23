@@ -102,16 +102,29 @@ void Window::createButtons()
 void Window::showPlayButton()
 {
 
-    QPushButton* play = new QPushButton("play", this);
-    QPushButton* pause = new QPushButton("pause", this);
+    QPushButton* play = new QPushButton("Play", this);
+    QPushButton* pause = new QPushButton("Pause", this);
+    QPushButton* skipOne = new QPushButton("Previous tick", this);
+    QPushButton* goBackOne = new QPushButton("Next tick", this);
 
     play->show();
     pause->show();
+    skipOne->show();
+    goBackOne->show();
 
-    QSpacerItem *space = new QSpacerItem(this->size().width()*(9/10), this->size().height()*(9/10));
+    int size = 70;
 
-    layout-> addWidget(play, 10, 1 ,1, 1);
-    layout-> addWidget(pause, 10, 2 ,1, 1);
+    play->setFixedHeight(size);
+    pause->setFixedHeight(size);
+    skipOne->setFixedHeight(size);
+    goBackOne->setFixedHeight(size);
+
+    layout-> addWidget(play, 1, 1 ,1, 1);
+    layout-> addWidget(pause, 1, 2 ,1, 1);
+    layout-> addWidget(skipOne, 1, 0 ,1, 1);
+    layout-> addWidget(goBackOne, 1, 3 ,1, 1);
+    layout->setRowStretch(0, this->size().height() - size);
+    layout->setRowStretch(0, size);
 
     // hey
 
