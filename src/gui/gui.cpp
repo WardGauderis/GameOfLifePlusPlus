@@ -69,7 +69,7 @@ void Window::delay(uint32_t ms)
 
 void Window::update()
 {
-    (*this)(rand()%20, rand()%20) = Color(0, 0, 255);
+    (*this)(rand()%20, rand()%20) = Color(0, 0, 1);
 }
 
 bool Window::checkProperlyInitialized()
@@ -109,8 +109,8 @@ void Window::showPlayButton()
 
     QPushButton* play = new QPushButton("Play", this);
     QPushButton* pause = new QPushButton("Pause", this);
-    QPushButton* skipOne = new QPushButton("Previous tick", this);
-    QPushButton* goBackOne = new QPushButton("Next tick", this);
+    QPushButton* skipOne = new QPushButton("Next tick", this);
+    QPushButton* goBackOne = new QPushButton("Previous tick", this);
 
     play->show();
     pause->show();
@@ -126,14 +126,14 @@ void Window::showPlayButton()
 
     layout-> addWidget(play, 1, 1 ,1, 1);
     layout-> addWidget(pause, 1, 2 ,1, 1);
-    layout-> addWidget(skipOne, 1, 0 ,1, 1);
-    layout-> addWidget(goBackOne, 1, 3 ,1, 1);
+    layout-> addWidget(skipOne, 1, 3 ,1, 1);
+    layout-> addWidget(goBackOne, 1, 0 ,1, 1);
     layout->setRowStretch(0, this->size().height() - size);
     layout->setRowStretch(0, size);
 
     connect(play, SIGNAL(pressed()), this, SLOT(onPlay()));
     connect(pause, SIGNAL(pressed()), this, SLOT(onPause()));
-    connect(skipOne, SIGNAL(pressed()), this, SLOT(onSkip()));
+    connect(skipOne, SIGNAL(pressed()), this, SLOT(onNext()));
     connect(goBackOne, SIGNAL(pressed()), this, SLOT(onPrevious()));
 
 
