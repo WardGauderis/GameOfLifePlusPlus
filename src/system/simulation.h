@@ -14,8 +14,6 @@
 #include "../automata/ca.h"
 #include "../gui/gui.h"
 
-
-
 struct Simulation
 {
 

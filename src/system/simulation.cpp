@@ -11,7 +11,7 @@
 
 Simulation::Simulation(uint32_t width, uint32_t height)
 {
-    window.init(width, height, Color(255,0,0));
+    window.init(width, height, Color(1,0,0));
     window.show();
 }
 
@@ -39,7 +39,7 @@ bool Simulation::simulate()
         }
         else if(window.getState() == Window::previous)
         {
-            draw(--iteration);
+            if(iteration > 0) draw(--iteration);
             Window::delay(500);
         }
     }

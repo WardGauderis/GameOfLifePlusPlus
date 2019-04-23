@@ -21,8 +21,7 @@ std::deque<std::vector<char>> CA::stack;
 std::map<char, Color> CA::converter;
 
 void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<uint32_t, uint32_t>>& neighbours,
-              const std::vector<std::tuple<const Automaton*, const std::string&, const Color&>>& stateData,
-              const FSMTransition& transition, const std::vector<std::string>& layout)
+              const std::vector<std::tuple<const Automaton*, const std::string&, const Color&>>& stateData, const FSMTransition& transition)
 {
     CA::width = width;
     CA::height = height;
@@ -34,11 +33,7 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<uint3
 
     FSM::init(states, transition);
 
-    CA::cells.reserve(width*height);
-    std::map<std::string, const Automaton*> converter;
-    for(const auto& data : stateData) converter[std::get<1>(data)] = std::get<0>(data);
-
-    for(uint32_t i = 0; i < width*height; i++) cells.push_back(new FSM{converter.at(layout[i])});
+    CA::cells.resize(width*height, new FSM{std::get<0>(stateData[0])});
 }
 
 void CA::destroy()
