@@ -30,7 +30,7 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
     properlyInitialized = true;
 }
 
-void Window::paintEvent(QPaintEvent* event)
+void Window::paintEvent([[maybe_unused]] QPaintEvent* event)
 {
     assert(this->checkProperlyInitialized());
 

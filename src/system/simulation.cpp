@@ -18,19 +18,22 @@ Simulation::Simulation(uint32_t width, uint32_t height)
 bool Simulation::simulate()
 {
     bool done = false;
+    uint32_t iteration = 0;
     window.showPlayButton();
 
     while(!done)
     {
-        if (window.isPlay())
+        while(window.isPlay())
         {
-            window.update();
 
         }
-        Window::delay(500);
-        window.repaint();
 
     }
 
     return true;
+}
+
+void Simulation::draw(uint32_t iteration)
+{
+    for(uint32_t i = 0; i < )
 }

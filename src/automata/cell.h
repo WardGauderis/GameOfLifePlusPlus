@@ -18,7 +18,7 @@ struct Cell
 {
     virtual ~Cell() = default;
     virtual void operator()(const std::string &word) const = 0;
-    virtual const Data& getData() const = 0;
+    virtual char getCurrent() const = 0;
 };
 
 
