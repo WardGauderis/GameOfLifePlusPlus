@@ -106,7 +106,7 @@ void Window::showPlayButton()
 
 void Window::onPlay()
 {
-    playBtnClicked = false;
+    playBtnClicked = true;
 }
 
 bool Window::isPlayBtnClicked() const {
