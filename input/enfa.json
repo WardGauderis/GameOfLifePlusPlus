@@ -1,10 +1,4 @@
 {
-  "type": "ENFA",
-  "alphabet": [
-    "0",
-    "1"
-  ],
-  "eps": "e",
   "states": [
     {
       "name": "Q0",

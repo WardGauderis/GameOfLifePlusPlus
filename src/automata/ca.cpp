@@ -60,7 +60,7 @@ void CA::update()
         for(uint32_t y = 0; y < height; y++)
         {
             std::string input;
-            for(const auto& pair : neighbours) input += (*end(stack))[(y + pair.second) * width + (x + pair.first)];
+            for(const auto& pair : neighbours) input += (*end(stack))[((y + pair.second)%height) * width + ((x + pair.first)%width)];
             (*cells.at(y * width + x))(input);
         }
     stack.emplace_back(width*height);

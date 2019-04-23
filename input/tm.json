@@ -1,13 +1,9 @@
 {
-  "type": "TM",
-  "alphabet": [
-    "0",
-    "1"
-  ],
+  "type": "tm",
   "tape_alphabet":
   [
-    "0",
-    "1"
+    "A",
+    "B"
   ],
   "states": [
     {
