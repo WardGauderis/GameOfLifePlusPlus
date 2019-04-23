@@ -22,6 +22,7 @@ bool Simulation::simulate()
 
     while(!done)
     {
+
         if (window.isPlayBtnClicked())
         {
             window.update();
