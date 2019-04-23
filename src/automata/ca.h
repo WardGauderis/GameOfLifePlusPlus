@@ -17,36 +17,28 @@
 #include "../gui/color.h"
 #include <map>
 
+struct Automaton;
+struct FSMTransition;
+
 class CA {
 public:
-    CA(const uint32_t width, const uint32_t height) : width(width), height(height) {
-        neighbours = {{-1, -1},
-                      {0,  -1},
-                      {1,  -1},
-                      {1,  0},
-                      {1,  1},
-                      {0,  1},
-                      {-1, 1},
-                      {-1, 0}};
-    };
 
-    ~CA() = default;
+    static void init(uint32_t width, uint32_t height, const std::vector<std::pair<uint32_t, uint32_t>>& neighbours,
+            const std::vector<std::tuple<const Automaton*, const std::string&, const Color&>>& stateData,
+            const FSMTransition& transition, const std::vector<std::string>& starts);
 
-    void update();
+    static void destroy();
 
-    const Cell &operator()(uint32_t x, uint32_t y) const;
+    static void update();
 
-    const Color &getColor(uint32_t x, uint32_t y) const;
+    static const Color& getColor(uint32_t x, uint32_t y);
 
 private:
-    std::vector<Cell *> cells;
-    std::vector<std::pair<uint32_t, uint32_t>> neighbours;
+    static std::vector<const Cell*> cells;
+    static std::vector<std::pair<uint32_t, uint32_t>> neighbours;
 
-    std::map<std::string, char> charConverter;
-    std::map<std::string, Color> colorConverter;
-
-    uint32_t width;
-    uint32_t height;
+    static uint32_t width;
+    static uint32_t height;
 };
 
 

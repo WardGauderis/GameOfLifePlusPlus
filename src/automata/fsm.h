@@ -21,16 +21,15 @@ class FSM: public Cell
 {
 public:
     FSM(const Automaton* start);
-    ~FSM();
+    ~FSM() = default;
 
-    static void init(const std::vector<const Automaton*>& states, const FSMTransition& transition);
+    static void init(const std::vector<std::tuple<const Automaton*, const std::string&, const Color&>>& stateData, const FSMTransition& transition);
 
     void operator()(const std::string &word) const override;
-
-    char getState() const override;
+    const Data& getData() const override;
 
 private:
-    static std::vector<const Automaton*> states;
+    static std::map<const Automaton*, Data> states;
     static FSMTransition transition;
 
     mutable const Automaton* current;

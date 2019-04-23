@@ -10,11 +10,20 @@
 #include <algorithm>
 #include "fsm.h"
 
+std::map<const Automaton*, Data> FSM::states = {};
+FSMTransition FSM::transition = {};
+
 FSM::FSM(const Automaton* start) : current(start) {}
 
-FSM::~FSM()
+void FSM::init(const std::vector<std::tuple<const Automaton*, const std::string&, const Color&>>& stateData, const FSMTransition& transition)
 {
-    for(const auto& state: states) delete state;
+    char index = 65;
+    for(const auto& state : stateData)
+    {
+        FSM::states[std::get<0>(state)] = {index, std::get<1>(state), std::get<2>(state)};
+        index++;
+    }
+    FSM::transition = transition;
 }
 
 void FSM::operator()(const std::string& word) const
@@ -22,7 +31,7 @@ void FSM::operator()(const std::string& word) const
     current = transition((*current)(word), current);
 }
 
-char FSM::getState() const
+const Data& FSM::getData() const
 {
-    return 65 + (std::find(begin(states), end(states), current) - begin(states));
+    return states.at(current);
 }

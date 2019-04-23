@@ -9,7 +9,7 @@
 
 #include "simulation.h"
 
-Simulation::Simulation(uint32_t width, uint32_t height) : ca(width, height)
+Simulation::Simulation(uint32_t width, uint32_t height)
 {
     window.init(width, height, Color(255,0,0));
     window.show();
