@@ -46,9 +46,14 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
     stack.emplace_back(width*height);
     for(uint32_t i = 0; i < width*height; i++)
     {
-        int a = rand() % 2;
+        int a = 1;
         stack[0][i] = std::get<1>(stateData[a]);
     }
+    stack[0][1] = std::get<1>(stateData[0]);
+    stack[0][22] = std::get<1>(stateData[0]);
+    stack[0][41] = std::get<1>(stateData[0]);
+    stack[0][40] = std::get<1>(stateData[0]);
+    stack[0][42] = std::get<1>(stateData[0]);
 }
 
 void CA::destroy()

@@ -102,12 +102,14 @@ std::vector<std::string> CAGenerator::byCharacter(const std::string &str, const 
 }
 
 Color CAGenerator::readColor(std::string str) {
-    Color a(0, 1, 1);
     std::transform(str.begin(), str.end(), str.begin(), tolower);
     if (str[0] == '#') {
         return {str.substr(1)};
     } else if (str == "epsilon") {
         std::cerr << "EPSILOOOOOON"; //TODO
+    } else if (str == "random") {
+        srand((int) time(0));
+        Color(double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX);
     } else if (str == "red") {
         return {"ff0000"};
     } else if (str == "orange") {

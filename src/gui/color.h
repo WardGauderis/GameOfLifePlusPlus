@@ -25,7 +25,11 @@ public:
      * Constructors
      */
     Color() = default;
-    Color(double r, double g, double b) : red(r), green(g), blue(b) {};
+
+    Color(double r, double g, double b) : red(std::min(std::max(r, 0.0), 1.0)), green(std::min(std::max(g, 0.0), 1.0)),
+                                          blue(std::min(std::max(b, 0.0), 1.0)) {
+
+    };
     Color(const std::string& hex)
     {
         for(uint32_t i = 0; i < 3; i++)
