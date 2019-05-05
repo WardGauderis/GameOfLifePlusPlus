@@ -14,7 +14,7 @@
     {
       "name": "two",
       "starting": false,
-      "accepting": true
+      "accepting": false
     },
     {
       "name": "three",

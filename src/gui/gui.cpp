@@ -160,8 +160,11 @@ void Window::onPrevious() {
     crState = previous;
 }
 
-Window::state Window::getState() const {
-    return crState;
+Window::state Window::getState()
+{
+    state temp = crState;
+    if(crState == next or crState == previous) crState = pause;
+    return temp;
 }
 
 

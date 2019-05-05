@@ -72,7 +72,7 @@ public:
     /*
      * Getters and Setters
      */
-    state getState() const;
+    state getState();
 
 protected:
     /*
