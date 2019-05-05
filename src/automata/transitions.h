@@ -99,11 +99,11 @@ private:
 struct FSMTransition
 {
 public:
-    const Automaton* operator()(bool b, const Automaton* state)
+    const Automaton *&operator()(bool b, const Automaton* state)
     {
         return transition[ {state, b} ];
     }
-    const Automaton* operator()(bool b, const Automaton* state) const
+    const Automaton *const &operator()(bool b, const Automaton* state) const
     {
         try{ return transition.at( {state, b} ); }
         catch(std::exception& e){ return empty; }
@@ -156,7 +156,6 @@ public:
     }
 
     const StatePlusPlus *const &operator()(char c, const StatePlusPlus *state) const {
-        return transition.at(std::pair<const StatePlusPlus *, char>{state, c});
         try { return transition.at({state, c}); }
         catch (std::exception &e) { return empty; }
     }
