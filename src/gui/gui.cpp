@@ -9,30 +9,14 @@
 
 #include <QtCore/QTime>
 #include "gui.h"
-
-//--------------------------WINDOW CLASS----------------------------------------
-
-Window::Window(QWidget *parent) : QMainWindow(parent)
+UIGrid::UIGrid(QWidget *parent) : QWidget(parent)
 {
+
 }
 
-void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
+void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
-    this->setWindowTitle("GameOfLife++");
-    this->setCentralWidget(root);
 
-    root->setLayout(layout);
-
-    xCells = _xCells;
-    yCells = _yCells;
-
-    cells = std::vector<Color>(xCells*yCells, color);
-    properlyInitialized = true;
-}
-
-void Window::paintEvent([[maybe_unused]] QPaintEvent* event)
-{
-    assert(this->checkProperlyInitialized());
 
     double celWidth  = double(this->size().width() ) / double(xCells);
     double celHeight = double(this->size().height()) / double(yCells);
@@ -53,9 +37,44 @@ void Window::paintEvent([[maybe_unused]] QPaintEvent* event)
         }
         xPos += celWidth;
     }
-
 }
 
+void UIGrid::setXCells(uint32_t xCells) {
+    UIGrid::xCells = xCells;
+}
+
+void UIGrid::setYCells(uint32_t yCells) {
+    UIGrid::yCells = yCells;
+}
+
+Color& UIGrid::operator()(uint32_t x, uint32_t y)
+{
+    return cells .at(y*xCells + x);
+}
+//--------------------------WINDOW CLASS----------------------------------------
+
+Window::Window(QWidget *parent) : QMainWindow(parent)
+{
+}
+
+void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
+{
+    this->setWindowTitle("GameOfLife++");
+    this->setCentralWidget(root);
+
+    root->setLayout(layout);
+
+    xCells = _xCells;
+    yCells = _yCells;
+
+    layout->addWidget(raster, 0, 0, 1, 10);
+
+    raster->cells = std::vector<Color>(xCells*yCells, color);
+    raster->setXCells(xCells);
+    raster->setYCells(yCells);
+
+    properlyInitialized = true;
+}
 
 void Window::delay(uint32_t ms)
 {
@@ -79,17 +98,17 @@ bool Window::checkProperlyInitialized()
 
 Color& Window::operator()(uint32_t x, uint32_t y)
 {
-    return cells.at(y*xCells + x);
+    return raster->cells .at(y*xCells + x);
 }
 
 const Color& Window::operator()(uint32_t x, uint32_t y) const
 {
-    return cells.at(y*xCells + x);
+    return raster->cells .at(y*xCells + x);
 }
 
 Color& Window::operator[](uint32_t index)
 {
-    return cells[index];
+    return raster->cells [index];
 }
 
 Window::~Window()
@@ -124,10 +143,10 @@ void Window::showPlayButton()
     skipOne->setFixedHeight(size);
     goBackOne->setFixedHeight(size);
 
-    layout-> addWidget(play, 1, 1 ,1, 1);
-    layout-> addWidget(pause, 1, 2 ,1, 1);
-    layout-> addWidget(skipOne, 1, 3 ,1, 1);
-    layout-> addWidget(goBackOne, 1, 0 ,1, 1);
+    layout-> addWidget(play, 1, 4 ,1, 1);
+    layout-> addWidget(pause, 1, 5 ,1, 1);
+    layout-> addWidget(skipOne, 1, 6 ,1, 1);
+    layout-> addWidget(goBackOne, 1, 3 ,1, 1);
     layout->setRowStretch(0, this->size().height() - size);
     layout->setRowStretch(0, size);
 
@@ -167,4 +186,8 @@ Window::state Window::getState()
     return temp;
 }
 
+void Window::closeEvent(QCloseEvent *event)
+{
+    crState = quit;
+}
 
