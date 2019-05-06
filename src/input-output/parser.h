@@ -48,8 +48,9 @@ public:
 
         std::vector<const State*> states = parseStates(json["states"]);
         FATransition          transition  = parseFATransitions(json["transitions"], json["states"], states, alphabet);
-
-        return new FA{getCharacters(alphabet), states, transition, json["type"] };
+        auto temp = new FA{getCharacters(alphabet), states, transition, json["type"] };
+        temp->dot("output/test.dot");
+        return temp;
     }
 
     static const PDA* parsePDA(const std::string& path, const std::map<std::string, char>& alphabet)
