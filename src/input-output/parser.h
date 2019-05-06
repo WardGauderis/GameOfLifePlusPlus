@@ -49,7 +49,10 @@ public:
         std::vector<const State*> states = parseStates(json["states"]);
         FATransition          transition  = parseFATransitions(json["transitions"], json["states"], states, alphabet);
         auto temp = new FA{getCharacters(alphabet), states, transition, json["type"] };
+
+        system("mkdir output");
         temp->dot("output/test.dot");
+
         return temp;
     }
 
