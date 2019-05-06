@@ -63,8 +63,7 @@ public:
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
         auto json = json::parse(file);
 
-        std::vector<char>   stackAlphabet   = parseAlphabet(json["stack_alphabet"], json["stack_start"]);
-        stackAlphabet.push_back(static_cast<std::string>(json["stack_eps"])[0]);
+        std::vector<char>   stackAlphabet   = parseAlphabet(json["stack_alphabet"], json["stack_eps"]);
         std::vector<const State*> states    = parseStates(json["states"]);
         PDATransition       transition      = parsePDATransitions(json["transitions"], json["states"], states, alphabet);
 

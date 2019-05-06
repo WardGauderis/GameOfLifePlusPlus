@@ -4,7 +4,6 @@
   "stack_alphabet": [
     "x"
   ],
-  "stack_start": "}",
   "stack_eps": "~",
   "states": [
     {

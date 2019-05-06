@@ -53,6 +53,9 @@ bool Simulation::simulate()
                 Window::delay(10);
                 break;
 
+            case Window::quit:
+                exit(0);
+
             default:
                 Window::delay(500);
         }

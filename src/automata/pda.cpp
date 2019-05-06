@@ -33,6 +33,6 @@ bool PDA::operator()(const std::string& word) const
 
         else return false;
     }
-    return current->accepting;
+    return stack.size() == 1;
 }
 
