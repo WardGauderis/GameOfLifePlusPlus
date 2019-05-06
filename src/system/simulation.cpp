@@ -28,28 +28,32 @@ bool Simulation::simulate()
 
     while(!done)
     {
-        while(window.getState() == Window::play)
+         switch(window.getState())
         {
-            draw(++iteration);
-            window.repaint();
-            Window::delay(500);
+            case Window::pause:
+                Window::delay(10);
+                break;
 
-        }
-        while(window.getState() == Window::pause)
-        {
-            Window::delay(10);
-        }
-        if(window.getState() == Window::next)
-        {
-            draw(++iteration);
-            window.repaint();
-            Window::delay(500);
-        }
-        else if(window.getState() == Window::previous)
-        {
-            if(iteration > 0) draw(--iteration);
-            window.repaint();
-            Window::delay(500);
+            case Window::play:
+                draw(++iteration);
+                window.repaint();
+                Window::delay(500);
+                break;
+
+            case Window::next:
+                draw(++iteration);
+                window.repaint();
+                Window::delay(500);
+                break;
+
+            case Window::previous:
+                if(iteration > 0) draw(--iteration);
+                window.repaint();
+                Window::delay(500);
+                break;
+
+            default:
+                Window::delay(500);
         }
     }
 
