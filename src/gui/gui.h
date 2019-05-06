@@ -21,6 +21,7 @@
 #include <QLayout>
 #include <QHBoxLayout>
 #include <QSpacerItem>
+#include <QSlider>
 
 
 #include <random>
@@ -78,6 +79,8 @@ public:
 
     void closeEvent(QCloseEvent *event);
 
+    int getSliderValue() const;
+
 protected:
     /*
     * The paint event for our grid
@@ -100,11 +103,14 @@ private:
 
     std::vector<QWidget*> widgetsToDelete;
 
+    int sliderValue = 1;
+
 private slots:
     void onPlay();
     void onPause();
     void onNext();
     void onPrevious();
+    void setSliderValue(int val);
 
 };
 

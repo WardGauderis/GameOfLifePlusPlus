@@ -17,7 +17,6 @@ UIGrid::UIGrid(QWidget *parent) : QWidget(parent)
 void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
 
-
     double celWidth  = double(this->size().width() ) / double(xCells);
     double celHeight = double(this->size().height()) / double(yCells);
 
@@ -61,6 +60,7 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
 {
     this->setWindowTitle("GameOfLife++");
     this->setCentralWidget(root);
+    this->setFixedSize(750, 500);
 
     root->setLayout(layout);
 
@@ -136,7 +136,7 @@ void Window::showPlayButton()
     skipOne->show();
     goBackOne->show();
 
-    int size = 70;
+    int size = 35;
 
     play->setFixedHeight(size);
     pause->setFixedHeight(size);
@@ -147,8 +147,7 @@ void Window::showPlayButton()
     layout-> addWidget(pause, 1, 5 ,1, 1);
     layout-> addWidget(skipOne, 1, 6 ,1, 1);
     layout-> addWidget(goBackOne, 1, 3 ,1, 1);
-    layout->setRowStretch(0, this->size().height() - size);
-    layout->setRowStretch(0, size);
+
 
     connect(play, SIGNAL(pressed()), this, SLOT(onPlay()));
     connect(pause, SIGNAL(pressed()), this, SLOT(onPause()));
@@ -160,6 +159,15 @@ void Window::showPlayButton()
     widgetsToDelete.emplace_back(pause);
     widgetsToDelete.emplace_back(skipOne);
     widgetsToDelete.emplace_back(goBackOne);
+
+    // slider
+    QSlider* slider = new QSlider(Qt::Orientation::Horizontal, this);
+    slider->setSingleStep(1);
+    slider->setTickInterval(10);
+    slider->setMaximum(110);
+    slider->setMinimum(0);
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setSliderValue(int)));
+    layout->addWidget(slider,1, 0, 1, 3);
 }
 
 void Window::onPlay()
@@ -167,15 +175,18 @@ void Window::onPlay()
     crState = play;
 }
 
-void Window::onPause() {
+void Window::onPause()
+{
     crState = pause;
 }
 
-void Window::onNext() {
+void Window::onNext()
+{
     crState = next;
 }
 
-void Window::onPrevious() {
+void Window::onPrevious()
+{
     crState = previous;
 }
 
@@ -190,4 +201,15 @@ void Window::closeEvent(QCloseEvent *event)
 {
     crState = quit;
 }
+
+void Window::setSliderValue(int val)
+{
+    sliderValue = val;
+}
+
+int Window::getSliderValue() const
+{
+    return sliderValue;
+}
+
 
