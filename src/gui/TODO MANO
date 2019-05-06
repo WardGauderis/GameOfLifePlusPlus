@@ -1,0 +1,6 @@
+- slider: snelheid + getter voor snelheid
+- rechthoeken
+- knoppen apart veld
+- tick counter
+- setter voor iteratie
+- play back button (niet per tick)
