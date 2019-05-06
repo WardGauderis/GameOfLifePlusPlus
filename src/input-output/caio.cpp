@@ -202,18 +202,34 @@ CAIO::parseLayout(const std::string &fileName, const int width, const int height
     }
     std::vector<char> layout;
     std::string line;
-    int h = 0;
-    while (getline(fin, line)) {
-        std::stringstream linestream(line);
+    for (int i = 0; i < height; ++i) {
+        if(!getline(fin, line)) throw std::runtime_error("Layout height is smaller than CA height");
         std::string value;
-        int w = 0;
-        while (getline(linestream, value, ',')) {
-            layout.emplace_back('a' + std::max(std::min(std::stoi(value), amount - 1), 0));
-            w++;
+        for (int j = 0; j < width; ++j) {
+            if(!getline(fin, value, ',')) throw std::runtime_error("Layout width is smaller than CA width");
+            layout.push_back('a' + std::max(std::min(std::stoi(value), amount - 1), 0));
         }
-        if (w != width) throw std::runtime_error("Layout width doesn't match CA width");
-        h++;
     }
-    if (h != height) throw std::runtime_error("Layout height doesn't match CA height");
     return layout;
 }
+
+bool CAIO::exportCA(const std::vector<char> &CA, const int width, const int heigth, const std::string &fileName) {
+    try {
+        std::ofstream fout(fileName + ".csv");
+        if (!fout.is_open()) {
+            throw std::runtime_error("File " + fileName + ".csv couldn't be opened");
+        }
+        for (int i = 0; i < heigth; ++i) {
+            for (int j = 0; j < width; ++j) {
+                fout << std::to_string(CA[i * heigth + j]-'a') << (j == width - 1 ? "" : ",");
+            }
+            fout << '\n';
+        }
+        fout.close();
+        return true;
+    } catch (const std::exception &ex) {
+        std::cerr << "Error exporting to file " << fileName << ": " << ex.what() << std::endl;
+        return false;
+    }
+}
+
