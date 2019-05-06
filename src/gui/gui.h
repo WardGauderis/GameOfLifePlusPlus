@@ -22,6 +22,7 @@
 #include <QHBoxLayout>
 #include <QSpacerItem>
 #include <QSlider>
+#include <QMessageBox>
 
 
 #include <random>
@@ -82,13 +83,9 @@ public:
     int getSliderValue() const;
 
 protected:
-    /*
-    * The paint event for our grid
-    */
+
 private:
-    /*
-    * Creates helper buttons
-    */
+
     void createButtons();
 
     uint32_t xCells;
@@ -104,6 +101,7 @@ private:
     std::vector<QWidget*> widgetsToDelete;
 
     int sliderValue = 1;
+    QSlider* fancySlider;
 
 private slots:
     void onPlay();

@@ -60,6 +60,7 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
 {
     this->setWindowTitle("GameOfLife++");
     this->setCentralWidget(root);
+    this->setMinimumSize(750, 750);
 
     root->setLayout(layout);
 
@@ -160,13 +161,13 @@ void Window::showPlayButton()
     widgetsToDelete.emplace_back(goBackOne);
 
     // slider
-    QSlider* slider = new QSlider(Qt::Orientation::Horizontal, this);
-    slider->setSingleStep(1);
-    slider->setTickInterval(10);
-    slider->setMaximum(110);
-    slider->setMinimum(0);
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(setSliderValue(int)));
-    layout->addWidget(slider,1, 0, 1, 3);
+    fancySlider = new QSlider(Qt::Orientation::Horizontal, this);
+    fancySlider->setSingleStep(1);
+    fancySlider->setTickInterval(10);
+    fancySlider->setMaximum(110);
+    fancySlider->setMinimum(0);
+    connect(fancySlider, SIGNAL(valueChanged(int)), this, SLOT(setSliderValue(int)));
+    layout->addWidget(fancySlider,1, 0, 1, 3);
 }
 
 void Window::onPlay()
@@ -203,7 +204,15 @@ void Window::closeEvent(QCloseEvent *event)
 
 void Window::setSliderValue(int val)
 {
+    fancySlider->setToolTip(QString(std::to_string(sliderValue).c_str()));
     sliderValue = val;
+    if (sliderValue > 100)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("ARE YOU SURE YOU WANT TO GO MAXIMUM POWER??");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        int ret = msgBox.exec();
+    }
 }
 
 int Window::getSliderValue() const
