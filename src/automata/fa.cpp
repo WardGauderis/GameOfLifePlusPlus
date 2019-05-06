@@ -53,5 +53,31 @@ void FA::ecloseCurrent(std::set<const State*>& current) const
 }
 
 
+void FA::dot(const std::string& path) const
+{
+    std::ofstream file(path);
+
+    file << "digraph G {\n";
+    file << "NULL -> " << start->name << ";\n";
+    file << "NULL [style=invis];\n";
+
+    for(const State* state: states)
+    {
+        for(const char c : alphabet)
+        {
+            for(const auto& newState : transition(c, state)) file << state->name << " -> " << newState->name << "[label=\"" << c << "\"];\n";
+        }
+    }
+    for(const State* state : states)
+    {
+        if(state->accepting) file << state->name << "[peripheries=2];\n";
+    }
+
+    file << "}" << std::endl; // Flushing is very important.
+    std::string pngPath = path.substr(0, path.size() - 3) + "png";
+    system(("dot -Tpng " + path + " -o " + pngPath).c_str());
+}
+
+
 
 

@@ -26,6 +26,8 @@ public:
     bool operator()(const std::string& word) const override;
     void ecloseCurrent(std::set<const State*>& current) const;
 
+    void dot(const std::string& name) const;
+
 private:
     std::vector<char> alphabet;
     std::vector<const State*> states;
