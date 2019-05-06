@@ -8,12 +8,12 @@
 //============================================================================
 
 #include "simulation.h"
-#include "../input-output/CAGenerator.h"
+#include "../input-output/CAIO.h"
 #include <cassert>
 
 Simulation::Simulation(uint32_t width, uint32_t height)
 {
-    assert(CAGenerator::generate("./input/GameOfLife.ini"));
+    assert(CAIO::generate("./input/GameOfLife.ini"));
     window.init(width, height, Color(0.5,0.5,0.5));
     window.show();
 }
