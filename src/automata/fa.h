@@ -27,6 +27,11 @@ public:
     void ecloseCurrent(std::set<const State*>& current) const;
 
     void dot(const std::string& name) const;
+    static const FA* minimize(const FA& fa);
+    static std::string makeName(const std::set<const State*>& states);
+
+    static std::vector<std::vector<bool>> createTable(const FA& fa);
+    static bool fillTable(std::vector<std::vector<bool>>& table, const FA& fa);
 
 private:
     std::vector<char> alphabet;

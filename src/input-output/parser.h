@@ -49,11 +49,12 @@ public:
         std::vector<const State*> states = parseStates(json["states"]);
         FATransition          transition  = parseFATransitions(json["transitions"], json["states"], states, alphabet);
         auto temp = new FA{getCharacters(alphabet), states, transition, json["type"] };
+        auto res = FA::minimize(*temp);
 
-        system("mkdir output");
+        system("[ -d \"output\" ] || mkdir output");
         temp->dot("output/test.dot");
 
-        return temp;
+        return res;
     }
 
     static const PDA* parsePDA(const std::string& path, const std::map<std::string, char>& alphabet)

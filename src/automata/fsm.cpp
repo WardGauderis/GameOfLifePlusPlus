@@ -10,12 +10,12 @@
 #include <algorithm>
 #include "fsm.h"
 
-std::map<const Automaton*, char> FSM::states = {};
+std::map<const Automaton*, std::pair<char, bool>> FSM::states = {};
 FSMTransition FSM::transition = {};
 
 FSM::FSM(const Automaton* start) : current(start) {}
 
-void FSM::init(const std::map<const Automaton*, char>& states, const FSMTransition& transition)
+void FSM::init(const std::map<const Automaton*, std::pair<char, bool>>& states, const FSMTransition& transition)
 {
     FSM::states = states;
     FSM::transition = transition;
@@ -23,10 +23,13 @@ void FSM::init(const std::map<const Automaton*, char>& states, const FSMTransiti
 
 void FSM::operator()(const std::string& word) const
 {
-    current = transition((*current)(word), current);
+    while (states.at(current).second)
+    {
+        current = transition((*current)(word), current);
+    }
 }
 
 char FSM::getCurrent() const
 {
-    return states.at(current);
+    return states.at(current).first;
 }
