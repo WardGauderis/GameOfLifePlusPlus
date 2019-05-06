@@ -29,7 +29,7 @@ bool Simulation::simulate()
 
     while(!done)
     {
-         switch(window.getState())
+        switch(window.getState())
         {
             case Window::pause:
                 Window::delay(10);
@@ -44,13 +44,13 @@ bool Simulation::simulate()
             case Window::next:
                 draw(++iteration);
                 window.repaint();
-                Window::delay(500);
+                Window::delay(10);
                 break;
 
             case Window::previous:
                 if(iteration > 0) draw(--iteration);
                 window.repaint();
-                Window::delay(500);
+                Window::delay(10);
                 break;
 
             default:

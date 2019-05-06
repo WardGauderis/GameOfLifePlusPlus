@@ -23,10 +23,10 @@ void FSM::init(const std::map<const Automaton*, std::pair<char, bool>>& states, 
 
 void FSM::operator()(const std::string& word) const
 {
-    while (states.at(current).second)
+    do
     {
         current = transition((*current)(word), current);
-    }
+    } while (states.at(current).second);
 }
 
 char FSM::getCurrent() const

@@ -13,7 +13,7 @@ PDA::PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphab
 : alphabet(alphabet), stackAlphabet(stackAlphabet), states(states), transition(transition)
 {
     start = *std::find_if(begin(states), end(states), [](const auto& state){ return state->starting; });
-    stack.push(stackAlphabet.back());
+    stack.push(stackAlphabet[stackAlphabet.size() - 2]);
 }
 
 bool PDA::operator()(const std::string& word) const
@@ -27,9 +27,10 @@ bool PDA::operator()(const std::string& word) const
         char push = std::get<1>(next);
         char pop = std::get<2>(next);
 
-        if(push != alphabet.back()) stack.push(push);
+        // we first pop, then push, goes against convention but we don't care.
+        if(pop  != stackAlphabet.back() and stack.top() == pop) stack.pop();
+        if(push != stackAlphabet.back()) stack.push(push);
 
-        if(pop  != alphabet.back() and stack.top() == pop) stack.pop();
         else return false;
     }
     return current->accepting;
