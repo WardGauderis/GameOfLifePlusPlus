@@ -40,12 +40,11 @@ void CAIO::manual(const ini::Configuration &conf) {
     //GENERAL
     const int width = conf["General"]["width"].as_int_or_default(20);
     const int height = conf["General"]["height"].as_int_or_default(20);
-    if (conf["General"]["layout"].exists()) {
-        const std::string file = conf["General"]["layout"];
-        const int amount = conf["States"]["amount"].as_int_or_die();
-        if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
-        const auto layout = parseLayout(file, width, height, amount);
-    }
+
+    const std::string file = conf["General"]["layout"].as_string_or_default("");
+    const int amount = conf["States"]["amount"].as_int_or_die();
+    if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
+    const auto layout = parseLayout(file, width, height, amount);
 
     const auto neighbours = parseCoordinates(conf["General"]["inputs"].as_string_or_default(
             "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)"));
@@ -54,7 +53,7 @@ void CAIO::manual(const ini::Configuration &conf) {
     //TRANSITIONS
     const auto trans = transition(conf, stateData);
 
-    CA::init(width, height, neighbours, stateData, trans);
+    CA::init(width, height, neighbours, stateData, trans, layout);
 }
 
 std::vector<std::string> CAIO::byCharacter(const std::string &str, const char &ch) {
@@ -169,7 +168,7 @@ CAIO::parseStates(const ini::Configuration &conf) {
 }
 
 FSMTransition CAIO::transition(const ini::Configuration &conf,
-                                      const std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> &stateData) {
+                               const std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> &stateData) {
     FSMTransition trans;
     for (const auto &state: stateData) {
         const auto transitions = byCharacter(conf["Transitions"][std::get<2>(state)].as_string_or_die(), ',');
@@ -197,7 +196,9 @@ std::vector<char>
 CAIO::parseLayout(const std::string &fileName, const int width, const int height, const int amount) {
     std::ifstream fin(fileName);
     if (!fin.is_open()) {
-        throw std::runtime_error("File " + fileName + " not found");
+        std::vector<char> layout;
+        layout.resize(width * height, 'a');
+        return layout;
     }
     std::vector<char> layout;
     std::string line;
@@ -214,4 +215,5 @@ CAIO::parseLayout(const std::string &fileName, const int width, const int height
         h++;
     }
     if (h != height) throw std::runtime_error("Layout height doesn't match CA height");
+    return layout;
 }
