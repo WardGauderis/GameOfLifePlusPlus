@@ -47,30 +47,30 @@ const std::vector<const State*> FATransition::empty = {};
 struct PDATransition
 {
 public:
-    std::tuple<const State*, char, char>& operator()(char c, const State* state)
+    std::tuple<const PDAState*, char, char>& operator()(char c, const PDAState* state)
     {
         return transition[ {state, c} ];
     }
-    const std::tuple<const State*, char, char>& operator()(char c, const State* state) const
+    const std::tuple<const PDAState*, char, char>& operator()(char c, const PDAState* state) const
     {
         try{ return transition.at( {state, c} ); }
         catch(std::exception& e){ return empty; }
     }
-    const std::map<std::pair<const State*, char>, std::tuple<const State*, char, char>>& getMap() const
+    const std::map<std::pair<const PDAState*, char>, std::tuple<const PDAState*, char, char>>& getMap() const
     {
         return transition;
     }
-    std::map<std::pair<const State*, char>, std::tuple<const State*, char, char>>& getMap()
+    std::map<std::pair<const PDAState*, char>, std::tuple<const PDAState*, char, char>>& getMap()
     {
         return transition;
     }
 private:
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
-    std::map<std::pair<const State*, char>, std::tuple<const State*, char, char>> transition;
-    static const std::tuple<const State*, char, char> empty;
+    std::map<std::pair<const PDAState*, char>, std::tuple<const PDAState*, char, char>> transition;
+    static const std::tuple<const PDAState*, char, char> empty;
 };
 
-const std::tuple<const State*, char, char> PDATransition::empty = {};
+const std::tuple<const PDAState*, char, char> PDATransition::empty = {};
 
 
 struct TMTransition

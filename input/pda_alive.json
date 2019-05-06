@@ -7,44 +7,24 @@
   "stack_eps": "~",
   "states": [
     {
-      "name": "Q0",
-      "starting": true,
-      "accepting": false
-    },
-    {
-      "name": "Q1",
-      "starting": false,
-      "accepting": true
+      "name": "start",
+      "starting": true
     }
   ],
   "transitions": [
     {
-      "from": "Q0",
-      "to": "Q0",
-      "input": "0",
-      "push": "0",
-      "pop": "e"
+      "from": "start",
+      "to": "start",
+      "input": "alive",
+      "push": "x",
+      "pop": "~"
     },
     {
-      "from": "Q0",
-      "to": "Q1",
-      "input": "1",
-      "push": "0",
-      "pop": "e"
-    },
-    {
-      "from": "Q1",
-      "to": "Q1",
-      "input": "0",
-      "push": "e",
-      "pop": "0"
-    },
-    {
-      "from": "Q1",
-      "to": "Q0",
-      "input": "1",
-      "push": "e",
-      "pop": "1"
+      "from": "start",
+      "to": "start",
+      "input": "dead",
+      "push": "~",
+      "pop": "x"
     }
   ]
 }
