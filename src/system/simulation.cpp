@@ -8,7 +8,7 @@
 //============================================================================
 
 #include "simulation.h"
-#include "../input-output/CAIO.h"
+#include "../input-output/caio.h"
 #include <cassert>
 
 Simulation::Simulation()

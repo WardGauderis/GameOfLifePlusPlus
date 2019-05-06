@@ -9,7 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include "CAIO.h"
+#include "caio.h"
 #include "../automata/transitions.h"
 #include "parser.h"
 
