@@ -13,7 +13,7 @@
 
 Simulation::Simulation()
 {
-    assert(CAIO::generate("./input/GameOfLife.ini"));
+    assert(CAIO::generate("./input/GameOfLifePDA.ini"));
     window.init(CA::getWidth(), CA::getHeight(), Color(0.5,0.5,0.5));
     window.show();
 }
