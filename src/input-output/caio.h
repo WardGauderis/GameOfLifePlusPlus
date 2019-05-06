@@ -32,8 +32,10 @@ private:
 
     static Color readColor(std::string str);
 
-    static std::vector<char> parseLayout(const std::string &fileName, const int width, const int height, const int amount);
+    static std::vector<char>
+    parseLayout(const std::string &fileName, const int width, const int height, const int amount);
 
+    static bool exportCA(const std::vector<char> &CA, int width, int height, const std::string &fileName);
 };
 
 
