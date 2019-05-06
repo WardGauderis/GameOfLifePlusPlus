@@ -22,16 +22,16 @@
 class PDA : public Automaton
 {
 public:
-    PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphabet, const std::vector<const State*>& states, const PDATransition& transition);
+    PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphabet, const std::vector<const PDAState*>& states, const PDATransition& transition);
     bool operator()(const std::string& word) const override;
 
 private:
     std::vector<char> alphabet;
     std::vector<char> stackAlphabet;
 
-    std::vector<const State*> states;
+    std::vector<const PDAState*> states;
     PDATransition transition;
-    const State* start;
+    const PDAState* start;
 
     mutable std::stack<char> stack;
 };

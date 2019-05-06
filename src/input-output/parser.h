@@ -63,9 +63,9 @@ public:
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
         auto json = json::parse(file);
 
-        std::vector<char>   stackAlphabet   = parseAlphabet(json["stack_alphabet"], json["stack_eps"]);
-        std::vector<const State*> states    = parseStates(json["states"]);
-        PDATransition       transition      = parsePDATransitions(json["transitions"], json["states"], states, alphabet);
+        std::vector<char> stackAlphabet     = parseAlphabet(json["stack_alphabet"], json["stack_eps"]);
+        std::vector<const PDAState*> states = parsePDAStates(json["states"]);
+        PDATransition transition            = parsePDATransitions(json["transitions"], json["states"], states, alphabet);
 
         return new PDA{getCharacters(alphabet), stackAlphabet, states, transition};
     }
@@ -119,6 +119,17 @@ private:
         return states;
     }
 
+    static std::vector<const PDAState*> parsePDAStates(const json& state_values)
+    {
+        std::vector<const PDAState*> states;
+        states.reserve(state_values.size());
+        for(const auto& value : state_values)
+        {
+            states.push_back(new PDAState{value["name"], value["starting"]});
+        }
+        return states;
+    }
+
     static std::vector<TMState*> parseTMStates(const json& state_values)
     {
         std::vector<TMState*> states(state_values.size());
@@ -154,7 +165,7 @@ private:
         return result;
     }
 
-    static PDATransition parsePDATransitions(const json& transition_values, const json& state_values, const std::vector<const State*>& states, const std::map<std::string, char>& alphabet)
+    static PDATransition parsePDATransitions(const json& transition_values, const json& state_values, const std::vector<const PDAState*>& states, const std::map<std::string, char>& alphabet)
     {
         PDATransition result;
 
@@ -163,8 +174,8 @@ private:
 
         for(const auto& transition : transition_values)
         {
-            State const* from = states[converter[transition["from"]]];
-            State const* to   = states[converter[transition["to"  ]]];
+            PDAState const* from = states[converter[transition["from"]]];
+            PDAState const* to   = states[converter[transition["to"  ]]];
             char input = alphabet.at(transition["input"]);
             char push  = static_cast<std::string> (transition["push" ])[0];
             char pop   = static_cast<std::string> (transition["pop"  ])[0];

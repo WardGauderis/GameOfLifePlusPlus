@@ -25,6 +25,12 @@ struct State
     uint32_t index;
 };
 
+struct PDAState
+{
+    std::string name;
+    bool starting;
+};
+
 struct TMState
 {
     enum Type{start, normal, accept, reject};

@@ -21,6 +21,7 @@
 #include <QLayout>
 #include <QHBoxLayout>
 #include <QSpacerItem>
+#include <QSlider>
 
 
 #include <random>
@@ -31,6 +32,26 @@
 
 #include "color.h"
 
+class UIGrid: public QWidget
+{
+Q_OBJECT
+
+public:
+    explicit UIGrid(QWidget* parent = nullptr);
+    void paintEvent(QPaintEvent* event) override;
+
+    void setXCells(uint32_t xCells);
+
+    void setYCells(uint32_t yCells);
+
+    std::vector<Color> cells;
+
+    Color& operator()(uint32_t x, uint32_t y);
+private:
+    uint32_t xCells;
+    uint32_t yCells;
+
+};
 
 class Window: public QMainWindow
 {
@@ -38,24 +59,12 @@ class Window: public QMainWindow
     Q_OBJECT
 
 public:
-    enum state {play, pause, next, previous};
-    /*
-    * Constructor, gridwidth and height indicate the amount of cells that the grid is supposed to have
-    */
+    enum state {play, pause, next, previous, quit};
+
     explicit Window(QWidget* parent = nullptr);
-    /*
-    * Destructor
-    */
     ~Window() override;
 
-    /*
-    * Used to initialize the grid
-    */
     void init(uint32_t _xCells, uint32_t _yCells, const Color& color);
-
-    /*
-    * Used to check if the grid is properly initialized and can be used
-    */
     bool checkProperlyInitialized();
 
     const Color& operator()(uint32_t x, uint32_t y) const;
@@ -63,23 +72,19 @@ public:
     Color& operator[](uint32_t index);
 
     static void delay(uint32_t ms);
-    /*
-     * Updates the cellular automata with 1 tick
-     */
     void update();
 
     void showPlayButton();
-    /*
-     * Getters and Setters
-     */
     state getState();
+
+    void closeEvent(QCloseEvent *event);
+
+    int getSliderValue() const;
 
 protected:
     /*
     * The paint event for our grid
     */
-    void paintEvent(QPaintEvent* event) override;
-
 private:
     /*
     * Creates helper buttons
@@ -94,15 +99,18 @@ private:
 
     QWidget *root = new QWidget(this);
     QGridLayout *layout = new QGridLayout;
+    UIGrid *raster = new UIGrid(root);
 
     std::vector<QWidget*> widgetsToDelete;
-    std::vector<Color> cells;
+
+    int sliderValue = 1;
 
 private slots:
     void onPlay();
     void onPause();
     void onNext();
     void onPrevious();
+    void setSliderValue(int val);
 
 };
 

@@ -11,12 +11,10 @@
     {
       "name": "Q0",
       "starting": true,
-      "accepting": false
     },
     {
       "name": "Q1",
       "starting": false,
-      "accepting": true
     }
   ],
   "transitions": [
