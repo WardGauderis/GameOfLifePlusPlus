@@ -1,0 +1,15 @@
+digraph G {
+NULL -> zero;
+NULL [style=invis];
+zero -> one[label="a"];
+zero -> zero[label="b"];
+one -> two[label="a"];
+one -> one[label="b"];
+two -> three[label="a"];
+two -> two[label="b"];
+three -> four[label="a"];
+three -> three[label="b"];
+four -> four[label="a"];
+four -> four[label="b"];
+three[peripheries=2];
+}

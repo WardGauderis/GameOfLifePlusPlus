@@ -19,9 +19,9 @@ public:
 
 private:
     static FSMTransition transition(const ini::Configuration &conf,
-                                    const std::vector<std::tuple<const Automaton *, char, std::string, Color>> &stateData);
+                                    const std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> &stateData);
 
-    static std::vector<std::tuple<const Automaton *, char, std::string, Color>> states(const ini::Configuration &conf);
+    static std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> states(const ini::Configuration &conf);
 
     static std::vector<std::pair<int, int>> coordinates(const std::string &inputs);
 

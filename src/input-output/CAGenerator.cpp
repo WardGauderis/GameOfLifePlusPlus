@@ -66,14 +66,10 @@ std::vector<std::string> CAGenerator::byCharacter(const std::string &str, const 
 }
 
 Color CAGenerator::readColor(std::string str) {
-    std::transform(str.begin(), str.end(), str.begin(), tolower);
     if (str[0] == '#') {
         return {str.substr(1)};
-    } else if (str == "epsilon") {
-        std::cerr << "EPSILOOOOOON"; //TODO
     } else if (str == "random") {
-        srand((int) time(0));
-        Color(double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX);
+        return {double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX};
     } else if (str == "red") {
         return {"ff0000"};
     } else if (str == "orange") {
@@ -123,7 +119,7 @@ Color CAGenerator::readColor(std::string str) {
     } else if (str == "gray" || str == "grey") {
         return {"808080"};
     }
-    return {"000000"};
+    throw std::runtime_error("Color" + str + "not recognised");
 }
 
 std::vector<std::pair<int, int>> CAGenerator::coordinates(const std::string &inputs) {
@@ -139,7 +135,7 @@ std::vector<std::pair<int, int>> CAGenerator::coordinates(const std::string &inp
     return neighbours;
 }
 
-std::vector<std::tuple<const Automaton *, char, std::string, Color>>
+std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>>
 CAGenerator::states(const ini::Configuration &conf) {
     const int amount = conf["States"]["amount"].as_int_or_die();
 
@@ -153,19 +149,23 @@ CAGenerator::states(const ini::Configuration &conf) {
         stateNames[name] = 'a' + i - 1;
     }
 
-    std::vector<std::tuple<const Automaton *, char, std::string, Color>> stateData;
+    std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> stateData;
+    srand((int) time(nullptr));
     for (int i = 1; i <= amount; ++i) {
         const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
         const std::string name = strings[0];
-        const std::string color = strings[1];
+        std::string color = strings[1];
+        std::transform(color.begin(), color.end(), color.begin(), tolower);
+        const bool epsilon = color == "epsilon";
         const std::string filename = strings[2];
-        stateData.emplace_back(Parser::parseAutomaton(filename, stateNames), stateNames[name], name, readColor(color));
+        stateData.emplace_back(Parser::parseAutomaton(filename, stateNames), stateNames[name], name, readColor(color),
+                               epsilon);
     }
     return stateData;
 }
 
 FSMTransition CAGenerator::transition(const ini::Configuration &conf,
-                                      const std::vector<std::tuple<const Automaton *, char, std::string, Color>> &stateData) {
+                                      const std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> &stateData) {
     FSMTransition trans;
     for (const auto &state: stateData) {
         const auto transitions = byCharacter(conf["Transitions"][std::get<2>(state)].as_string_or_die(), ',');
