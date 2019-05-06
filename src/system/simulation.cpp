@@ -8,13 +8,13 @@
 //============================================================================
 
 #include "simulation.h"
-#include "../input-output/CAGenerator.h"
+#include "../input-output/caio.h"
 #include <cassert>
 
-Simulation::Simulation(uint32_t width, uint32_t height)
+Simulation::Simulation()
 {
-    assert(CAGenerator::generate("./input/GameOfLife.ini"));
-    window.init(width, height, Color(0.5,0.5,0.5));
+    assert(CAIO::generate("./input/GameOfLife.ini"));
+    window.init(CA::getWidth(), CA::getHeight(), Color(0.5,0.5,0.5));
     window.show();
 }
 
@@ -29,7 +29,7 @@ bool Simulation::simulate()
 
     while(!done)
     {
-         switch(window.getState())
+        switch(window.getState())
         {
             case Window::pause:
                 Window::delay(10);
@@ -44,14 +44,17 @@ bool Simulation::simulate()
             case Window::next:
                 draw(++iteration);
                 window.repaint();
-                Window::delay(500);
+                Window::delay(10);
                 break;
 
             case Window::previous:
                 if(iteration > 0) draw(--iteration);
                 window.repaint();
-                Window::delay(500);
+                Window::delay(10);
                 break;
+
+            case Window::quit:
+                exit(0);
 
             default:
                 Window::delay(500);

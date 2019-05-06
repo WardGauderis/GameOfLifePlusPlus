@@ -18,6 +18,7 @@
 #include "transitions.h"
 #include "automaton.h"
 
+// https://en.wikipedia.org/wiki/Deterministic_pushdown_automaton
 class PDA : public Automaton
 {
 public:

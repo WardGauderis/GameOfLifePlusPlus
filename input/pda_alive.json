@@ -2,10 +2,8 @@
   "type": "pda",
 
   "stack_alphabet": [
-    "0",
-    "1"
+    "x"
   ],
-  "stack_start": "}",
   "stack_eps": "~",
   "states": [
     {

@@ -27,16 +27,10 @@ public:
         auto json = json::parse(file);
 
         std::string type = json["type"];
-        if     (type == "dfa" or "nfa") return parseFA(path, alphabet);
+        if     (type == "dfa" or "nfa" or "enfa") return parseFA(path, alphabet);
         else if(type == "pda") return parsePDA(path, alphabet);
         else if(type == "tm" ) return parseTM(path, alphabet);
         else if(type == "pa") return parsePA(path, alphabet);
-        else if(type == "enfa")
-        {
-            auto newAlphabet = alphabet;
-            newAlphabet.emplace("~", '~');
-            return parseFA(path, newAlphabet);
-        }
         else throw std::runtime_error("unknown automaton type");
     }
 
@@ -47,13 +41,20 @@ public:
         auto json = json::parse(file);
 
         std::vector<const State*> states = parseStates(json["states"]);
-        FATransition          transition  = parseFATransitions(json["transitions"], json["states"], states, alphabet);
-        auto temp = new FA{getCharacters(alphabet), states, transition, json["type"] };
+        FATransition transition;
+        if(json["type"] == "enfa"){ auto newAlphabet = alphabet; newAlphabet.emplace("~", '~');  transition = parseFATransitions(json["transitions"], json["states"], states, newAlphabet); }
+        else transition = parseFATransitions(json["transitions"], json["states"], states, alphabet);
 
-        system("mkdir output");
+        auto chars = getCharacters(alphabet);
+        if(json["type"] == "enfa") chars.push_back('~');
+
+        auto temp = new FA{chars, states, transition, json["type"] };
+        auto res = FA::minimize(*temp);
+
+        system("[ -d \"output\" ] || mkdir output");
         temp->dot("output/test.dot");
 
-        return temp;
+        return res;
     }
 
     static const PDA* parsePDA(const std::string& path, const std::map<std::string, char>& alphabet)
@@ -62,7 +63,7 @@ public:
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
         auto json = json::parse(file);
 
-        std::vector<char>   stackAlphabet   = parseAlphabet(json["stack_alphabet"], json["stack_start"]);
+        std::vector<char>   stackAlphabet   = parseAlphabet(json["stack_alphabet"], json["stack_eps"]);
         std::vector<const State*> states    = parseStates(json["states"]);
         PDATransition       transition      = parsePDATransitions(json["transitions"], json["states"], states, alphabet);
 

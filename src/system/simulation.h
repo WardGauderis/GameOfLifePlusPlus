@@ -18,7 +18,7 @@ struct Simulation
 {
 
 public:
-    Simulation(uint32_t width, uint32_t height);
+    Simulation();
     ~Simulation() = default;
 
     bool simulate();
@@ -27,7 +27,6 @@ private:
     void draw(uint32_t iteration);
 
     Window window;
-    CA ca;
 };
 
 

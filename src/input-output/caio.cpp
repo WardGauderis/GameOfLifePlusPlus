@@ -1,5 +1,5 @@
 //============================================================================
-// @name        : CAGenerator.cpp
+// @name        : CAIO.cpp
 // @author      : Ward Gauderis
 // @date        : 4/23/19
 // @version     : 
@@ -9,16 +9,16 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include "CAGenerator.h"
+#include "caio.h"
 #include "../automata/transitions.h"
 #include "parser.h"
 
-bool CAGenerator::generate(const std::string &filename) {
+bool CAIO::generate(const std::string &fileName) {
     try {
         ini::Configuration conf;
-        std::ifstream fin(filename);
+        std::ifstream fin(fileName);
         if (!fin.is_open()) {
-            throw std::runtime_error("File not found");
+            throw std::runtime_error("File " + fileName + " not found");
         }
         fin >> conf;
         fin.close();
@@ -31,29 +31,32 @@ bool CAGenerator::generate(const std::string &filename) {
         return true;
     }
     catch (const std::exception &ex) {
-        std::cerr << "Error parsing file " << filename << ": " << ex.what() << std::endl;
+        std::cerr << "Error parsing file " << fileName << ": " << ex.what() << std::endl;
         return false;
     }
 }
 
-void CAGenerator::manual(const ini::Configuration &conf) {
+void CAIO::manual(const ini::Configuration &conf) {
     //GENERAL
     const int width = conf["General"]["width"].as_int_or_default(20);
     const int height = conf["General"]["height"].as_int_or_default(20);
 
-    const std::string layout = conf["General"]["layout"].as_string_or_default("");
+    const std::string file = conf["General"]["layout"].as_string_or_default("");
+    const int amount = conf["States"]["amount"].as_int_or_die();
+    if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
+    const auto layout = parseLayout(file, width, height, amount);
 
-    auto neighbours = coordinates(conf["General"]["inputs"].as_string_or_default(
+    const auto neighbours = parseCoordinates(conf["General"]["inputs"].as_string_or_default(
             "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)"));
     //STATES
-    auto stateData = states(conf);
+    const auto stateData = parseStates(conf);
     //TRANSITIONS
-    auto trans = transition(conf, stateData);
+    const auto trans = transition(conf, stateData);
 
-    CA::init(width, height, neighbours, stateData, trans);
+    CA::init(width, height, neighbours, stateData, trans, layout);
 }
 
-std::vector<std::string> CAGenerator::byCharacter(const std::string &str, const char &ch) {
+std::vector<std::string> CAIO::byCharacter(const std::string &str, const char &ch) {
     std::stringstream s(str);
     std::string segment;
     std::vector<std::string> seglist;
@@ -65,15 +68,11 @@ std::vector<std::string> CAGenerator::byCharacter(const std::string &str, const 
     return seglist;
 }
 
-Color CAGenerator::readColor(std::string str) {
-    std::transform(str.begin(), str.end(), str.begin(), tolower);
+Color CAIO::readColor(std::string str) {
     if (str[0] == '#') {
         return {str.substr(1)};
-    } else if (str == "epsilon") {
-        std::cerr << "EPSILOOOOOON"; //TODO
     } else if (str == "random") {
-        srand((int) time(0));
-        Color(double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX);
+        return {double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX};
     } else if (str == "red") {
         return {"ff0000"};
     } else if (str == "orange") {
@@ -123,10 +122,10 @@ Color CAGenerator::readColor(std::string str) {
     } else if (str == "gray" || str == "grey") {
         return {"808080"};
     }
-    return {"000000"};
+    throw std::runtime_error("Color" + str + "not recognised");
 }
 
-std::vector<std::pair<int, int>> CAGenerator::coordinates(const std::string &inputs) {
+std::vector<std::pair<int, int>> CAIO::parseCoordinates(const std::string &inputs) {
     auto seglist = byCharacter(inputs, ',');
     std::vector<std::pair<int, int>> neighbours;
     for (auto &it : seglist) {
@@ -139,8 +138,8 @@ std::vector<std::pair<int, int>> CAGenerator::coordinates(const std::string &inp
     return neighbours;
 }
 
-std::vector<std::tuple<const Automaton *, char, std::string, Color>>
-CAGenerator::states(const ini::Configuration &conf) {
+std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>>
+CAIO::parseStates(const ini::Configuration &conf) {
     const int amount = conf["States"]["amount"].as_int_or_die();
 
     std::map<std::string, char> stateNames;
@@ -153,24 +152,28 @@ CAGenerator::states(const ini::Configuration &conf) {
         stateNames[name] = 'a' + i - 1;
     }
 
-    std::vector<std::tuple<const Automaton *, char, std::string, Color>> stateData;
+    std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> stateData;
+    srand((int) time(nullptr));
     for (int i = 1; i <= amount; ++i) {
         const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
         const std::string name = strings[0];
-        const std::string color = strings[1];
+        std::string color = strings[1];
+        std::transform(color.begin(), color.end(), color.begin(), tolower);
+        const bool epsilon = color == "epsilon";
         const std::string filename = strings[2];
-        stateData.emplace_back(Parser::parseAutomaton(filename, stateNames), stateNames[name], name, readColor(color));
+        stateData.emplace_back(Parser::parseAutomaton(filename, stateNames), stateNames[name], name, readColor(color),
+                               epsilon);
     }
     return stateData;
 }
 
-FSMTransition CAGenerator::transition(const ini::Configuration &conf,
-                                      const std::vector<std::tuple<const Automaton *, char, std::string, Color>> &stateData) {
+FSMTransition CAIO::transition(const ini::Configuration &conf,
+                               const std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> &stateData) {
     FSMTransition trans;
     for (const auto &state: stateData) {
         const auto transitions = byCharacter(conf["Transitions"][std::get<2>(state)].as_string_or_die(), ',');
         if (transitions.size() != 2)
-            throw std::runtime_error(std::get<2>(state) + "-transition nees 2 comma separated fields");
+            throw std::runtime_error(std::get<2>(state) + "-transition needs 2 comma separated fields");
 
         std::string toFind = transitions[0];
         auto a = std::find_if(stateData.begin(), stateData.end(), [&toFind](auto &a) {
@@ -187,4 +190,30 @@ FSMTransition CAGenerator::transition(const ini::Configuration &conf,
         trans(false, std::get<0>(state)) = std::get<0>(*r);
     }
     return trans;
+}
+
+std::vector<char>
+CAIO::parseLayout(const std::string &fileName, const int width, const int height, const int amount) {
+    std::ifstream fin(fileName);
+    if (!fin.is_open()) {
+        std::vector<char> layout;
+        layout.resize(width * height, 'a');
+        return layout;
+    }
+    std::vector<char> layout;
+    std::string line;
+    int h = 0;
+    while (getline(fin, line)) {
+        std::stringstream linestream(line);
+        std::string value;
+        int w = 0;
+        while (getline(linestream, value, ',')) {
+            layout.emplace_back('a' + std::max(std::min(std::stoi(value), amount - 1), 0));
+            w++;
+        }
+        if (w != width) throw std::runtime_error("Layout width doesn't match CA width");
+        h++;
+    }
+    if (h != height) throw std::runtime_error("Layout height doesn't match CA height");
+    return layout;
 }

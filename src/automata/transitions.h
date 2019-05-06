@@ -37,8 +37,10 @@ public:
 private:
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const State*, char>, std::vector<const State*>> transition;
-    const std::vector<const State*> empty;
+    static const std::vector<const State*> empty;
 };
+
+const std::vector<const State*> FATransition::empty = {};
 
 
 
@@ -65,8 +67,10 @@ public:
 private:
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const State*, char>, std::tuple<const State*, char, char>> transition;
-    const std::tuple<const State*, char, char> empty;
+    static const std::tuple<const State*, char, char> empty;
 };
+
+const std::tuple<const State*, char, char> PDATransition::empty = {};
 
 
 struct TMTransition
@@ -92,8 +96,10 @@ public:
 private:
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const TMState*, char>, std::tuple<const TMState*, char, char>> transition;
-    const std::tuple<const TMState*, char, char> empty;
+    static const std::tuple<const TMState*, char, char> empty;
 };
+
+const std::tuple<const TMState*, char, char> TMTransition::empty = {};
 
 
 struct FSMTransition
@@ -119,8 +125,10 @@ public:
 private:
     // this is a map with key a {state and a char}, and a value that contains the transition from that state for that character
     std::map<std::pair<const Automaton*, bool>, const Automaton*> transition;
-    const Automaton* empty = nullptr;
+    static const Automaton* empty;
 };
+
+const Automaton* FSMTransition::empty = nullptr;
 
 
 struct PATransition
@@ -146,8 +154,10 @@ public:
 private:
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const State*, char>, std::vector<std::pair<double, const State*>>> transition;
-    const std::vector<std::pair<double, const State*>> empty;
+    static const std::vector<std::pair<double, const State*>> empty;
 };
+
+const std::vector<std::pair<double, const State*>> PATransition::empty = {};
 
 struct DFAPlusPlusTransition {
 public:
@@ -171,8 +181,10 @@ public:
 private:
     // this is a map with key a {state and a char}, and a value that contains the transition from that state for that character
     std::map<std::pair<const StatePlusPlus *, char>, const StatePlusPlus *> transition;
-    const StatePlusPlus *empty = nullptr;
+    static const StatePlusPlus* empty;
 };
+
+const StatePlusPlus* DFAPlusPlusTransition::empty = nullptr;
 
 
 
