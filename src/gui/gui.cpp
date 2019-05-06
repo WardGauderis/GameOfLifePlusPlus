@@ -60,7 +60,6 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
 {
     this->setWindowTitle("GameOfLife++");
     this->setCentralWidget(root);
-    this->setFixedSize(750, 500);
 
     root->setLayout(layout);
 

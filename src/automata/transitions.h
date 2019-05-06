@@ -40,8 +40,6 @@ private:
     static const std::vector<const State*> empty;
 };
 
-const std::vector<const State*> FATransition::empty = {};
-
 
 
 struct PDATransition
@@ -70,9 +68,6 @@ private:
     static const std::tuple<const PDAState*, char, char> empty;
 };
 
-const std::tuple<const PDAState*, char, char> PDATransition::empty = {};
-
-
 struct TMTransition
 {
 public:
@@ -98,9 +93,6 @@ private:
     std::map<std::pair<const TMState*, char>, std::tuple<const TMState*, char, char>> transition;
     static const std::tuple<const TMState*, char, char> empty;
 };
-
-const std::tuple<const TMState*, char, char> TMTransition::empty = {};
-
 
 struct FSMTransition
 {
@@ -128,9 +120,6 @@ private:
     static const Automaton* empty;
 };
 
-const Automaton* FSMTransition::empty = nullptr;
-
-
 struct PATransition
 {
 public:
@@ -157,8 +146,6 @@ private:
     static const std::vector<std::pair<double, const State*>> empty;
 };
 
-const std::vector<std::pair<double, const State*>> PATransition::empty = {};
-
 struct DFAPlusPlusTransition {
 public:
     const StatePlusPlus *&operator()(char c, const StatePlusPlus *state) {
@@ -183,8 +170,6 @@ private:
     std::map<std::pair<const StatePlusPlus *, char>, const StatePlusPlus *> transition;
     static const StatePlusPlus* empty;
 };
-
-const StatePlusPlus* DFAPlusPlusTransition::empty = nullptr;
 
 
 
