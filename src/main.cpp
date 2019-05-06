@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[]) {
     QApplication application(argc, argv);
-    Simulation simulation = {20, 20};
+    Simulation simulation = {100, 100};
 
     simulation.simulate();
 
