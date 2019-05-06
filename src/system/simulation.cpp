@@ -11,10 +11,10 @@
 #include "../input-output/CAIO.h"
 #include <cassert>
 
-Simulation::Simulation(uint32_t width, uint32_t height)
+Simulation::Simulation()
 {
     assert(CAIO::generate("./input/GameOfLife.ini"));
-    window.init(width, height, Color(0.5,0.5,0.5));
+    window.init(CA::getWidth(), CA::getHeight(), Color(0.5,0.5,0.5));
     window.show();
 }
 
