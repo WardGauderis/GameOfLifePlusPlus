@@ -161,8 +161,8 @@ CAIO::parseStates(const ini::Configuration &conf) {
         std::transform(color.begin(), color.end(), color.begin(), tolower);
         const bool epsilon = color == "epsilon";
         const std::string filename = strings[2];
-        stateData.emplace_back(Parser::parseAutomaton(filename, stateNames), stateNames[name], name, readColor(color),
-                               epsilon);
+        auto automaton = Parser::parseAutomaton(filename, stateNames);
+        stateData.emplace_back(automaton, stateNames[name], name, readColor(color), epsilon);
     }
     return stateData;
 }
