@@ -9,6 +9,9 @@
 
 #include <QtCore/QTime>
 #include "gui.h"
+
+QTime Window::prev = QTime::currentTime();
+
 UIGrid::UIGrid(QWidget *parent) : QWidget(parent)
 {
 
@@ -16,7 +19,6 @@ UIGrid::UIGrid(QWidget *parent) : QWidget(parent)
 
 void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
-
     double celWidth  = double(this->size().width() ) / double(xCells);
     double celHeight = double(this->size().height()) / double(yCells);
 
@@ -30,13 +32,13 @@ void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
         yPos = 0;
         for (uint32_t y = 0; y < yCells; ++y)
         {
-            //if (colorCheck(x , y)) continue;
             QRect temp(std::floor(xPos), std::floor(yPos), std::floor(xPos + celWidth), std::floor(yPos + celHeight));
-            painter.fillRect(temp, (*this)(x,y));
+            painter.fillRect(temp, cells.at(y*xCells + x) );
             yPos += celHeight;
         }
         xPos += celWidth;
     }
+    shouldRepaint = false;
 }
 
 void UIGrid::setXCells(uint32_t xCells) {
@@ -47,22 +49,8 @@ void UIGrid::setYCells(uint32_t yCells) {
     UIGrid::yCells = yCells;
 }
 
-Color& UIGrid::operator()(uint32_t x, uint32_t y)
-{
-    return cells .at(y*xCells + x);
-}
+bool& UIGrid::getRepaint() { return shouldRepaint; }
 
-bool UIGrid::colorCheck(int x, int y)
-{
-    if (cells .at(y*xCells + x)[0] == prevCells .at(y*xCells + x)[0]
-    and cells .at(y*xCells + x)[1] == prevCells .at(y*xCells + x)[1]
-    and cells .at(y*xCells + x)[2] == prevCells .at(y*xCells + x)[2])
-    {
-        return true;
-    }
-    prevCells .at(y*xCells + x) = cells .at(y*xCells + x);
-    return false;
-}
 //--------------------------WINDOW CLASS----------------------------------------
 
 Window::Window(QWidget *parent) : QMainWindow(parent)
@@ -83,48 +71,51 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
     layout->addWidget(raster, 0, 0, 1, 10);
 
     raster->cells = std::vector<Color>(xCells*yCells, color);
-    raster->prevCells = std::vector<Color>(xCells*yCells, color);
 
     raster->setXCells(xCells);
     raster->setYCells(yCells);
+}
 
-    properlyInitialized = true;
+void Window::processEverything()
+{
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    QTime current = QTime::currentTime();
+    if(prev.addMSecs(20) < current and raster->getRepaint())
+    {
+        prev = current;
+        repaint();
+    }
 }
 
 void Window::delay(uint32_t ms)
 {
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    processEverything();
     QTime stopTime = QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < stopTime)
     {
+        processEverything();
         system("sleep 0.01");
     }
 }
 
-void Window::update()
+const Color& Window::getColor(uint32_t x, uint32_t y) const
 {
-    (*this)(rand()%20, rand()%20) = Color(0, 0, 1);
+    return raster->cells.at(y*xCells + x);
 }
 
-bool Window::checkProperlyInitialized()
+void Window::setColor(uint32_t x, uint32_t y, const Color& color)
 {
-    return properlyInitialized;
+    raster->getRepaint() = true;
+    raster->cells.at(y*xCells + x) = color;
 }
 
-Color& Window::operator()(uint32_t x, uint32_t y)
+void Window::setColor(uint32_t i, const Color& color)
 {
-    return raster->cells .at(y*xCells + x);
+    raster->getRepaint() = true;
+    raster->cells.at(i) = color;
 }
 
-const Color& Window::operator()(uint32_t x, uint32_t y) const
-{
-    return raster->cells .at(y*xCells + x);
-}
 
-Color& Window::operator[](uint32_t index)
-{
-    return raster->cells [index];
-}
 
 Window::~Window()
 {
@@ -223,14 +214,15 @@ void Window::closeEvent([[maybe_unused]] QCloseEvent *event)
 void Window::setSliderValue(int val)
 {
     fancySlider->setToolTip(QString(std::to_string(sliderValue).c_str()));
-    sliderValue = val;
-    if (sliderValue > 100 and val < sliderValue)
+
+    if (sliderValue > 100 and val > sliderValue)
     {
         QMessageBox msgBox;
         msgBox.setText("ARE YOU SURE YOU WANT TO GO MAXIMUM POWER??");
         msgBox.setStandardButtons(QMessageBox::Ok);
         [[maybe_unused]] int ret =  msgBox.exec();
     }
+    sliderValue = val;
 }
 
 int Window::getSliderValue() const

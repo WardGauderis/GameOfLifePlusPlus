@@ -32,16 +32,20 @@ bool TM::operator()(const std::string& word) const
 
         // new state
         current = std::get<0>(next);
-        if     (current->type == TMState::Type::accept) return true;
+        if(current == nullptr) return false;
+        else if(current->type == TMState::Type::accept) return true;
         else if(current->type == TMState::Type::reject) return false;
-
-        // new index
-        if     (std::get<1>(next) == 'L') index--;
-        else if(std::get<1>(next) == 'R') index++;
-        else std::cerr << "unknown character\n";
-        if(index > tape.size()) tape.reserve(2 * tape.size());
 
         // new tape character
         tape[index] = std::get<2>(next);
+
+        // new index
+        if(std::get<1>(next) == 'L')
+        {
+            if(index == 0) throw std::runtime_error("fell off tape\n");
+            index--;
+        }
+        else if(std::get<1>(next) == 'R') index++;
+        if(index > tape.size()) tape.reserve(2 * tape.size());
     }
 }

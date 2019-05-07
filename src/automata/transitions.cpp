@@ -11,8 +11,8 @@
 
 const State* DFATransition::empty = nullptr;
 const std::vector<const State*> NFATransition::empty = {};
-const std::tuple<const PDAState*, char, char> PDATransition::empty = {};
-const std::tuple<const TMState*, char, char> TMTransition::empty = {};
+const std::tuple<const PDAState*, char, char> PDATransition::empty = {nullptr, 0, 0};
+const std::tuple<const TMState*, char, char> TMTransition::empty = {nullptr, 0, 0};
 const Automaton* FSMTransition::empty = nullptr;
 const std::vector<std::pair<double, const State*>> PATransition::empty = {};
 const StatePlusPlus* DFAPlusPlusTransition::empty = nullptr;

@@ -2,8 +2,8 @@
   "type": "tm",
   "tape_alphabet":
   [
-    "A",
-    "B"
+    "x",
+    "y"
   ],
   "states": [
     {
@@ -22,17 +22,17 @@
   "transitions": [
     {
       "from": "Q0",
-      "to": "Q0",
-      "input": "1",
-      "direction": "L",
-      "write": "0"
+      "to": "Q1",
+      "input": "dead",
+      "direction": "S",
+      "write": "x"
     },
     {
       "from": "Q0",
       "to": "Q2",
-      "input": "0",
-      "direction": "R",
-      "write": "1"
+      "input": "alive",
+      "direction": "S",
+      "write": "y"
     }
   ]
 }

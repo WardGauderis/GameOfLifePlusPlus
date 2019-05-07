@@ -42,19 +42,17 @@ public:
     void paintEvent(QPaintEvent* event) override;
 
     void setXCells(uint32_t xCells);
-
     void setYCells(uint32_t yCells);
 
     std::vector<Color> cells;
-    std::vector<Color> prevCells;
 
-    Color& operator()(uint32_t x, uint32_t y);
+    bool& getRepaint();
+
 private:
     uint32_t xCells;
     uint32_t yCells;
 
-    bool colorCheck(int x, int y);
-
+    bool shouldRepaint = false;
 };
 
 class Window: public QMainWindow
@@ -69,14 +67,13 @@ public:
     ~Window() override;
 
     void init(uint32_t _xCells, uint32_t _yCells, const Color& color);
-    bool checkProperlyInitialized();
 
-    const Color& operator()(uint32_t x, uint32_t y) const;
-    Color& operator()(uint32_t x, uint32_t y);
-    Color& operator[](uint32_t index);
+    const Color& getColor(uint32_t x, uint32_t y) const;
+    void setColor(uint32_t x, uint32_t y, const Color& color);
+    void setColor(uint32_t i, const Color& color);
 
-    static void delay(uint32_t ms);
-    void update();
+    void delay(uint32_t ms);
+    void processEverything();
 
     void showPlayButton();
     state getState();
@@ -94,7 +91,6 @@ private:
     uint32_t xCells;
     uint32_t yCells;
 
-    bool properlyInitialized = false;
     state crState = pause;
 
     QWidget *root = new QWidget(this);
@@ -107,6 +103,9 @@ private:
 
     int sliderValue = 1;
     QSlider* fancySlider;
+
+    static QTime prev;
+    bool shouldRepaint = false;
 
 private slots:
     void onPlay();
