@@ -1,0 +1,56 @@
+
+
+class UIGrid: public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit UIGrid(QWidget* parent = nullptr);
+    void paintEvent(QPaintEvent* event) override;
+
+    void setXCells(uint32_t xCells);
+
+    void setYCells(uint32_t yCells);
+
+private:
+    uint32_t xCells;
+    uint32_t yCells;
+};
+
+//--------------------------UIGRID CLASS----------------------------------------
+UIGrid::UIGrid(QWidget *parent) : QWidget(parent)
+{
+
+}
+
+void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
+{
+
+    double celWidth  = double(this->size().width() ) / double(xCells);
+    double celHeight = double(this->size().height()) / double(yCells);
+
+    double xPos = 0;
+    double yPos = 0;
+
+    QPainter painter(this);
+
+    for (uint32_t x = 0; x < xCells; ++x)
+    {
+        yPos = 0;
+        for (uint32_t y = 0; y < yCells; ++y)
+        {
+            QRect temp(std::floor(xPos), std::floor(yPos), std::floor(xPos + celWidth), std::floor(yPos + celHeight));
+            painter.fillRect(temp, QBrush(QColor("red")));
+            yPos += celHeight;
+        }
+        xPos += celWidth;
+    }
+}
+
+void UIGrid::setXCells(uint32_t xCells) {
+    UIGrid::xCells = xCells;
+}
+
+void UIGrid::setYCells(uint32_t yCells) {
+    UIGrid::yCells = yCells;
+}
