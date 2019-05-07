@@ -50,7 +50,7 @@ void DFA::dot(const std::string& path) const
 
     file << "}" << std::endl; // Flushing is very important.
     std::string pngPath = path.substr(0, path.size() - 3) + "png";
-    system(("dot -Tpng " + path + " -o " + pngPath).c_str());
+    [[maybe_unused]] int res = system(("dot -Tpng " + path + " -o " + pngPath).c_str());
 }
 
 DFA* DFA::SSC(const NFA* fa)
