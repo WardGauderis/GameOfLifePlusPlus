@@ -30,7 +30,7 @@ void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
         yPos = 0;
         for (uint32_t y = 0; y < yCells; ++y)
         {
-            if (colorCheck(x , y)) continue;
+            //if (colorCheck(x , y)) continue;
             QRect temp(std::floor(xPos), std::floor(yPos), std::floor(xPos + celWidth), std::floor(yPos + celHeight));
             painter.fillRect(temp, (*this)(x,y));
             yPos += celHeight;
@@ -97,7 +97,6 @@ void Window::delay(uint32_t ms)
     QTime stopTime = QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < stopTime)
     {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
         system("sleep 0.01");
     }
 }
