@@ -182,11 +182,15 @@ void Window::onPause()
 
 void Window::onNext()
 {
+    playBtn->show();
+    pauseBtn->hide();
     crState = next;
 }
 
 void Window::onPrevious()
 {
+    playBtn->show();
+    pauseBtn->hide();
     crState = previous;
 }
 
