@@ -1,0 +1,30 @@
+{
+  "type": "pda",
+
+  "stack_alphabet": [
+    "x"
+  ],
+  "stack_eps": "~",
+  "states": [
+    {
+      "name": "start",
+      "starting": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "start",
+      "to": "start",
+      "input": "alive",
+      "push": "x",
+      "pop": "~"
+    },
+    {
+      "from": "start",
+      "to": "start",
+      "input": "dead",
+      "push": "~",
+      "pop": "x"
+    }
+  ]
+}

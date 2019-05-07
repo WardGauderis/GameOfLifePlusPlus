@@ -1,0 +1,48 @@
+{
+  "type": "pa",
+
+  "states": [
+    {
+      "name": "start",
+      "starting": true,
+      "accepting": false
+    },
+    {
+      "name": "end",
+      "starting": false,
+      "accepting": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "start",
+      "to": "end",
+      "input": "dead",
+      "probability": 0.1
+    },
+    {
+      "from": "start",
+      "to": "start",
+      "input": "dead",
+      "probability": 0.9
+    },
+    {
+      "from": "start",
+      "to": "start",
+      "input": "alive",
+      "probability": 1
+    },
+    {
+      "from": "end",
+      "to": "end",
+      "input": "dead",
+      "probability": 1
+    },
+    {
+      "from": "end",
+      "to": "end",
+      "input": "alive",
+      "probability": 1
+    }
+  ]
+}

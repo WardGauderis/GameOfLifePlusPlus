@@ -1,0 +1,17 @@
+digraph DFAPlusPlus{
+	resolution=250;
+	rankdir=LR;
+	node [fontname = "roboto"]
+	edge [fontname = "roboto"]
+	node [ shape = circle ];
+	start [ style = invis, label = "" ];
+	start -> "{a}";
+	"{a}" [ label = <A<br/><FONT POINT-SIZE="8">{a}</FONT>> ];
+	"{a}" -> "{b, c}" [ label = "0, 1" ];
+	"{b, c}" [ label = <B<br/><FONT POINT-SIZE="8">{b, c}</FONT>> ];
+	"{b, c}" -> "{d, e}" [ label = "0, 1" ];
+	"{d, e}" [ label = <C<br/><FONT POINT-SIZE="8">{d, e}</FONT>> ];
+	"{d, e}" -> "{f}" [ label = "0, 1" ];
+	"{f}" [ label = <A<br/><FONT POINT-SIZE="8">{f}</FONT>> ];
+	"{f}" -> "{f}" [ label = "0, 1" ];
+}
