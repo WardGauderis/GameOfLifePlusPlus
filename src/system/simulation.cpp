@@ -13,7 +13,7 @@
 
 Simulation::Simulation()
 {
-    if(!CAIO::generate("./input/GameOfLifePDA.ini")) exit(69);
+    if(!CAIO::generate("./input/GameOfLife/GameOfLife.ini")) exit(69);
     window.init(CA::getWidth(), CA::getHeight(), Color(0.5,0.5,0.5));
     window.show();
 }
@@ -32,29 +32,32 @@ bool Simulation::simulate()
         switch(window.getState())
         {
             case Window::pause:
-                window.delay(10);
+                Window::delay(10);
                 break;
 
             case Window::play:
                 draw(++iteration);
-                window.delay(getDelay(window.getSliderValue()));
+                window.repaint();
+                Window::delay(getDelay(window.getSliderValue()));
                 break;
 
             case Window::next:
                 draw(++iteration);
-                window.delay(10);
+                window.repaint();
+                Window::delay(10);
                 break;
 
             case Window::previous:
                 if(iteration > 0) draw(--iteration);
-                window.delay(10);
+                window.repaint();
+                Window::delay(10);
                 break;
 
             case Window::quit:
                 exit(0);
 
             default:
-                window.delay(500);
+                Window::delay(500);
         }
     }
 
@@ -66,7 +69,7 @@ void Simulation::draw(uint32_t iteration)
     if(iteration == CA::getSize()) CA::update();
     else if(iteration > CA::getSize()) throw std::runtime_error("multiple steps at once");
 
-    for(uint32_t i = 0; i < CA::getData(iteration).size(); i++) window.setColor(i, CA::getColor(i, iteration));
+    for(uint32_t i = 0; i < CA::getData(iteration).size(); i++) window[i] = CA::getColor(i, iteration);
 }
 
 uint32_t Simulation::getDelay(uint32_t val)
