@@ -30,6 +30,7 @@ void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
         yPos = 0;
         for (uint32_t y = 0; y < yCells; ++y)
         {
+            if (colorCheck(x , y)) continue;
             QRect temp(std::floor(xPos), std::floor(yPos), std::floor(xPos + celWidth), std::floor(yPos + celHeight));
             painter.fillRect(temp, (*this)(x,y));
             yPos += celHeight;
@@ -49,6 +50,18 @@ void UIGrid::setYCells(uint32_t yCells) {
 Color& UIGrid::operator()(uint32_t x, uint32_t y)
 {
     return cells .at(y*xCells + x);
+}
+
+bool UIGrid::colorCheck(int x, int y)
+{
+    if (cells .at(y*xCells + x)[0] == prevCells .at(y*xCells + x)[0]
+    and cells .at(y*xCells + x)[1] == prevCells .at(y*xCells + x)[1]
+    and cells .at(y*xCells + x)[2] == prevCells .at(y*xCells + x)[2])
+    {
+        return true;
+    }
+    prevCells .at(y*xCells + x) = cells .at(y*xCells + x);
+    return false;
 }
 //--------------------------WINDOW CLASS----------------------------------------
 
@@ -70,6 +83,8 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
     layout->addWidget(raster, 0, 0, 1, 10);
 
     raster->cells = std::vector<Color>(xCells*yCells, color);
+    raster->prevCells = std::vector<Color>(xCells*yCells, color);
+
     raster->setXCells(xCells);
     raster->setYCells(yCells);
 

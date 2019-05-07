@@ -46,11 +46,14 @@ public:
     void setYCells(uint32_t yCells);
 
     std::vector<Color> cells;
+    std::vector<Color> prevCells;
 
     Color& operator()(uint32_t x, uint32_t y);
 private:
     uint32_t xCells;
     uint32_t yCells;
+
+    bool colorCheck(int x, int y);
 
 };
 
