@@ -127,39 +127,34 @@ void Window::createButtons()
 void Window::showPlayButton()
 {
 
-    QPushButton* play = new QPushButton("Play", this);
-    QPushButton* pause = new QPushButton("Pause", this);
+    playBtn = new QPushButton("Play", this);
+    pauseBtn = new QPushButton("Pause", this);
     QPushButton* skipOne = new QPushButton("Next tick", this);
     QPushButton* goBackOne = new QPushButton("Previous tick", this);
 
-    play->show();
-    pause->show();
+    playBtn->show();
+    pauseBtn->hide();
     skipOne->show();
     goBackOne->show();
 
     int size = 35;
 
-    play->setFixedHeight(size);
-    pause->setFixedHeight(size);
+    playBtn->setFixedHeight(size);
+    pauseBtn->setFixedHeight(size);
     skipOne->setFixedHeight(size);
     goBackOne->setFixedHeight(size);
 
-    layout-> addWidget(play, 1, 4 ,1, 1);
-    layout-> addWidget(pause, 1, 5 ,1, 1);
-    layout-> addWidget(skipOne, 1, 6 ,1, 1);
+    layout-> addWidget(playBtn, 1, 4 ,1, 1);
+    layout-> addWidget(pauseBtn, 1, 4 ,1, 1);
+    layout-> addWidget(skipOne, 1, 5 ,1, 1);
     layout-> addWidget(goBackOne, 1, 3 ,1, 1);
 
 
-    connect(play, SIGNAL(pressed()), this, SLOT(onPlay()));
-    connect(pause, SIGNAL(pressed()), this, SLOT(onPause()));
+    connect(playBtn, SIGNAL(pressed()), this, SLOT(onPlay()));
+    connect(pauseBtn, SIGNAL(pressed()), this, SLOT(onPause()));
     connect(skipOne, SIGNAL(pressed()), this, SLOT(onNext()));
     connect(goBackOne, SIGNAL(pressed()), this, SLOT(onPrevious()));
 
-
-    widgetsToDelete.emplace_back(play);
-    widgetsToDelete.emplace_back(pause);
-    widgetsToDelete.emplace_back(skipOne);
-    widgetsToDelete.emplace_back(goBackOne);
 
     // slider
     fancySlider = new QSlider(Qt::Orientation::Horizontal, this);
@@ -173,11 +168,15 @@ void Window::showPlayButton()
 
 void Window::onPlay()
 {
+    playBtn->hide();
+    pauseBtn->show();
     crState = play;
 }
 
 void Window::onPause()
 {
+    playBtn->show();
+    pauseBtn->hide();
     crState = pause;
 }
 

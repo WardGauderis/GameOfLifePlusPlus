@@ -97,6 +97,8 @@ private:
     QWidget *root = new QWidget(this);
     QGridLayout *layout = new QGridLayout;
     UIGrid *raster = new UIGrid(root);
+    QPushButton* playBtn;
+    QPushButton* pauseBtn;
 
     std::vector<QWidget*> widgetsToDelete;
 
