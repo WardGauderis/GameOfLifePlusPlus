@@ -21,6 +21,7 @@ struct Transition
     Transition() = default;
     explicit Transition(const Value& empty) : empty(empty) {}
 
+    // returns value of certain key, if not found, returns default
     const Value& operator[](const Key& key) const
     {
         const auto iter = map.find(key);
@@ -28,11 +29,13 @@ struct Transition
         else return iter->second;
     }
 
+    // creates a new element if not found, replaces it if not unique
     Value& operator[](const Key& key)
     {
         return map[key];
     }
 
+    // creates a new element if not found, throws error if not unique
     Value& find_if_unique(const Key& key)
     {
         if(map.find(key) != end(map)) throw std::runtime_error("element not found in transition");

@@ -96,7 +96,7 @@ DFA* DFA::SSC(const NFA* fa)
             newStates.push_back(new State{makeName(nextStates), false, accepting, static_cast<uint32_t>(newStates.size())});
 
             newTransition[{c, newStates[index]}] = newStates.back();
-            existing.emplace(nextStates, newState);
+            existing.emplace(nextStates, newStates.back());
             queue.push(nextStates);
         }
         index++;
