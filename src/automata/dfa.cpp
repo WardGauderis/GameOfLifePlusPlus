@@ -69,7 +69,7 @@ DFA* DFA::SSC(const NFA* fa)
     fa->ecloseCurrent(startStates);
 
     State* newState = new State{makeName(startStates), true, fa->start->accepting, 0};
-    existing.insert({startStates, newState});
+    existing.emplace(startStates, newState);
     newStates.push_back(newState);
     queue.push(startStates);
 
@@ -95,8 +95,8 @@ DFA* DFA::SSC(const NFA* fa)
             bool accepting = *std::find_if(begin(nextStates), end(nextStates), [](const auto& state){ return state->accepting; });
             newStates.push_back(new State{makeName(nextStates), false, accepting, static_cast<uint32_t>(newStates.size())});
 
-            newTransition[{c, newStates[index]}] = newState;
-            existing.insert({nextStates, newState});
+            newTransition[{c, newStates[index]}] = newStates.back();
+            existing.emplace(nextStates, newState);
             queue.push(nextStates);
         }
         index++;
