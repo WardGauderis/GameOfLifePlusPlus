@@ -89,8 +89,7 @@ DFA* DFA::SSC(const NFA* fa)
             }
 
             bool accepting = *std::find_if(begin(nextStates), end(nextStates), [](const auto& state){ return state->accepting; });
-            State* newState = new State{makeName(nextStates), false, accepting, static_cast<uint32_t>(newStates.size())};
-            newStates.push_back(newState);
+            newStates.push_back(new State{makeName(nextStates), false, accepting, static_cast<uint32_t>(newStates.size())});
 
             newTransition(c, newStates[index]) = newState;
             existing.insert({nextStates, newState});
