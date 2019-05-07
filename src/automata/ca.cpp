@@ -43,13 +43,6 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
     CA::cells.reserve(width*height);
     stack.emplace_back(start);
 
-    for(auto& elem : stack[0]) elem = std::get<1>(stateData[1]);
-    stack[0][1] = std::get<1>(stateData[0]);
-    stack[0][22] = std::get<1>(stateData[0]);
-    stack[0][41] = std::get<1>(stateData[0]);
-    stack[0][40] = std::get<1>(stateData[0]);
-    stack[0][42] = std::get<1>(stateData[0]);
-
     for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new FSM{charToState.at(stack.back()[i])});
 }
 

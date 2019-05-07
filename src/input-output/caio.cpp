@@ -203,11 +203,13 @@ CAIO::parseLayout(const std::string &fileName, const int width, const int height
     std::vector<char> layout;
     std::string line;
     for (int i = 0; i < height; ++i) {
-        if(!getline(fin, line)) throw std::runtime_error("Layout height is smaller than CA height");
+        if (!getline(fin, line)) line = "";
         std::string value;
+        std::stringstream lineStream(line);
         for (int j = 0; j < width; ++j) {
-            if(!getline(fin, value, ',')) throw std::runtime_error("Layout width is smaller than CA width");
-            layout.push_back('a' + std::max(std::min(std::stoi(value), amount - 1), 0));
+            if (!getline(lineStream, value, ',')) value = "0";
+            try{layout.push_back('a' + std::max(std::min(std::stoi(value), amount - 1), 0));}
+            catch (const std::invalid_argument& ex) { layout.push_back('a'); }
         }
     }
     return layout;
@@ -221,7 +223,7 @@ bool CAIO::exportCA(const std::vector<char> &CA, const int width, const int heig
         }
         for (int i = 0; i < heigth; ++i) {
             for (int j = 0; j < width; ++j) {
-                fout << std::to_string(CA[i * heigth + j]-'a') << (j == width - 1 ? "" : ",");
+                fout << std::to_string(CA[i * heigth + j] - 'a') << (j == width - 1 ? "" : ",");
             }
             fout << '\n';
         }
