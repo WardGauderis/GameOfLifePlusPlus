@@ -34,7 +34,7 @@ public:
     {
         return transition;
     }
-private:
+
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const State*, char>, const State*> transition;
     static const State* empty;
@@ -61,7 +61,7 @@ public:
     {
         return transition;
     }
-private:
+
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const State*, char>, std::vector<const State*>> transition;
     static const std::vector<const State*> empty;
@@ -89,7 +89,7 @@ public:
     {
         return transition;
     }
-private:
+
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const PDAState*, char>, std::tuple<const PDAState*, char, char>> transition;
     static const std::tuple<const PDAState*, char, char> empty;
@@ -115,7 +115,7 @@ public:
     {
         return transition;
     }
-private:
+
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const TMState*, char>, std::tuple<const TMState*, char, char>> transition;
     static const std::tuple<const TMState*, char, char> empty;
@@ -141,7 +141,7 @@ public:
     {
         return transition;
     }
-private:
+
     // this is a map with key a {state and a char}, and a value that contains the transition from that state for that character
     std::map<std::pair<const Automaton*, bool>, const Automaton*> transition;
     static const Automaton* empty;
@@ -167,7 +167,7 @@ public:
     {
         return transition;
     }
-private:
+
     // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
     std::map<std::pair<const State*, char>, std::vector<std::pair<double, const State*>>> transition;
     static const std::vector<std::pair<double, const State*>> empty;
@@ -192,7 +192,7 @@ public:
         return transition;
     }
 
-private:
+
     // this is a map with key a {state and a char}, and a value that contains the transition from that state for that character
     std::map<std::pair<const StatePlusPlus *, char>, const StatePlusPlus *> transition;
     static const StatePlusPlus* empty;

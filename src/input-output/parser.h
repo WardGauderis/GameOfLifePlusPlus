@@ -120,7 +120,8 @@ private:
         states.resize(state_values.size());
         for(uint32_t i = 0; i < state_values.size(); i++)
         {
-            states[i] = new State{state_values[i]["name"], state_values[i]["starting"], state_values[i]["accepting"], i};
+            try{ states[i] = new State{state_values[i]["name"], state_values[i]["starting"], state_values[i]["accepting"], i}; }
+            catch(std::exception& e){ throw std::runtime_error("something went wrong parsing state " + std::to_string(i) + "\n"); }
         }
         return states;
     }
@@ -131,7 +132,8 @@ private:
         states.reserve(state_values.size());
         for(const auto& value : state_values)
         {
-            states.push_back(new PDAState{value["name"], value["starting"]});
+            try{ states.push_back(new PDAState{value["name"], value["starting"]}); }
+            catch(std::exception& e){ throw std::runtime_error("something went wrong parsing a state\n"); }
         }
         return states;
     }
@@ -154,7 +156,7 @@ private:
         return states;
     }
 
-    static DFATransition parseDFATransitions(const json &transition_values, const json &state_values,const std::vector<const State *> &states,const std::map<std::string, char> &alphabet)
+    static DFATransition parseDFATransitions(const json &transition_values, const json &state_values,const std::vector<const State*> &states,const std::map<std::string, char> &alphabet)
     {
         DFATransition result;
 
@@ -163,10 +165,23 @@ private:
 
         for(const auto& transition : transition_values)
         {
-            State const* from = states[converter[transition["from"]]];
-            State const* to   = states[converter[transition["to"  ]]];
-            char input = alphabet.at(transition["input"]);
-            result(input, from) = to;
+            const std::string& fromName = transition["from"];
+            const std::string& toName = transition["to"];
+            const std::string& inputName = transition["input"];
+
+            try
+            {
+                State const* from = states[converter.at(fromName)];
+                State const* to   = states[converter.at(toName)];
+                char input = alphabet.at(inputName);
+                assert(result(input, from) == nullptr);
+                result(input, from) = to;
+            }
+            catch(std::exception& e)
+            {
+                throw std::runtime_error("something went from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters and check for accidental duplicates\n");
+            }
+
         }
         return result;
     }
@@ -180,10 +195,20 @@ private:
 
         for(const auto& transition : transition_values)
         {
-            State const* from = states[converter[transition["from"]]];
-            State const* to   = states[converter[transition["to"  ]]];
-            char input = alphabet.at(transition["input"]);
-            result(input, from).push_back(to);
+            const std::string& fromName = transition["from"];
+            const std::string& toName = transition["to"];
+            const std::string& inputName = transition["input"];
+            try
+            {
+                State const* from = states[converter.at(fromName)];
+                State const* to   = states[converter.at(toName)];
+                char input = alphabet.at(inputName);
+                result(input, from).push_back(to);
+            }
+            catch(std::exception& e)
+            {
+                throw std::runtime_error("something went from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters\n");
+            }
         }
         return result;
     }
@@ -197,12 +222,24 @@ private:
 
         for(const auto& transition : transition_values)
         {
-            PDAState const* from = states[converter[transition["from"]]];
-            PDAState const* to   = states[converter[transition["to"  ]]];
-            char input = alphabet.at(transition["input"]);
-            char push  = static_cast<std::string> (transition["push" ])[0];
-            char pop   = static_cast<std::string> (transition["pop"  ])[0];
-            result(input, from) = {to, push, pop};
+            const std::string& fromName = transition["from"];
+            const std::string& toName = transition["to"];
+            const std::string& inputName = transition["input"];
+
+            try
+            {
+                PDAState const* from = states[converter.at(fromName)];
+                PDAState const* to   = states[converter.at(toName)];
+                char input = alphabet.at(inputName);
+                char push  = static_cast<std::string> (transition["push" ])[0];
+                char pop   = static_cast<std::string> (transition["pop"  ])[0];
+                assert(result(input, from) == result.empty);
+                result(input, from) = {to, push, pop};
+            }
+            catch(std::exception& e)
+            {
+                throw std::runtime_error("something went from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters\n");
+            }
         }
         return result;
     }
