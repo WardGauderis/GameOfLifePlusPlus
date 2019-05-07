@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
-for dir in .
+for dir in ./*
 do
-	cmake CMakeLists.txt
-	make
+	if [ -d $dir ]; then
+		cd $dir
+		cmake CMakeLists.txt
+		make
+		cd ..
+	fi
 done;
