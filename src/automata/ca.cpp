@@ -7,6 +7,7 @@
 // @description : 
 //============================================================================
 
+#include <iostream>
 #include "ca.h"
 #include "fsm.h"
 
@@ -42,7 +43,14 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
     CA::cells.reserve(width*height);
     stack.emplace_back(start);
 
-    for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new FSM{charToState.at(start[i])});
+    for(auto& elem : stack[0]) elem = std::get<1>(stateData[1]);
+    stack[0][1] = std::get<1>(stateData[0]);
+    stack[0][22] = std::get<1>(stateData[0]);
+    stack[0][41] = std::get<1>(stateData[0]);
+    stack[0][40] = std::get<1>(stateData[0]);
+    stack[0][42] = std::get<1>(stateData[0]);
+
+    for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new FSM{charToState.at(stack.back()[i])});
 }
 
 void CA::destroy()
@@ -66,10 +74,18 @@ void CA::update()
         for(uint32_t y = 0; y < height; y++)
         {
             std::string input;
-            for(const auto& pair : neighbours) input += stack.back()[((y + pair.second)%height) * width + ((x + pair.first)%width)];
+            for(const auto& pair : neighbours)
+                input += stack.back()[getIndex(pair, x, y)];
             (*cells.at(y * width + x))(input);
         }
     stack.emplace_back(width*height);
     for(uint32_t i = 0; i < width*height; i++) stack.back()[i] = cells[i]->getCurrent();
+}
+
+uint32_t CA::getIndex(std::pair<int, int> offset, uint32_t x, uint32_t y)
+{
+    uint32_t xVal = (int(width ) + (offset.first  + int(x)) % int(width )) % int(width );
+    uint32_t yVal = (int(height) + (offset.second + int(y)) % int(height)) % int(height);
+    return yVal * width + xVal;
 }
 

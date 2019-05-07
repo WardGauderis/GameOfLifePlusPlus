@@ -39,6 +39,8 @@ public:
     static uint32_t getHeight(){ return height; }
     static uint32_t getSize(){ return stack.size(); }
 
+    static uint32_t getIndex(std::pair<int, int> offset, uint32_t x, uint32_t y);
+
 private:
     static uint32_t width;
     static uint32_t height;
