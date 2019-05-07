@@ -23,6 +23,8 @@ public:
 
     bool simulate();
 
+    static uint32_t getDelay(uint32_t val);
+
 private:
     void draw(uint32_t iteration);
 

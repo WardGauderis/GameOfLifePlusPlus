@@ -38,7 +38,7 @@ bool Simulation::simulate()
             case Window::play:
                 draw(++iteration);
                 window.repaint();
-                Window::delay(500);
+                Window::delay(getDelay(window.getSliderValue()));
                 break;
 
             case Window::next:
@@ -70,4 +70,10 @@ void Simulation::draw(uint32_t iteration)
     else if(iteration > CA::getSize()) throw std::runtime_error("multiple steps at once");
 
     for(uint32_t i = 0; i < CA::getData(iteration).size(); i++) window[i] = CA::getColor(i, iteration);
+}
+
+uint32_t Simulation::getDelay(uint32_t val)
+{
+    if(val > 100) return 0;
+    else return 50 + static_cast<uint32_t>(std::pow((100-val), 1.2) * 5);
 }

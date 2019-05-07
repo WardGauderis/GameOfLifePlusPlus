@@ -14,7 +14,34 @@
 #include "states.h"
 #include "automaton.h"
 
-struct FATransition
+struct DFATransition
+{
+public:
+    const State*& operator()(char c, const State* state)
+    {
+        return transition[ {state, c} ];
+    }
+    const State* operator()(char c, const State* state) const
+    {
+        try{ return transition.at( {state, c} ); }
+        catch(std::exception& e){ return empty; }
+    }
+    const std::map<std::pair<const State*, char>, const State*>& getMap() const
+    {
+        return transition;
+    }
+    std::map<std::pair<const State*, char>, const State*>& getMap()
+    {
+        return transition;
+    }
+private:
+    // this is a map with key a {state and a char}, and a value that contains the vector of transitions from that state for that character
+    std::map<std::pair<const State*, char>, const State*> transition;
+    static const State* empty;
+};
+
+
+struct NFATransition
 {
 public:
     std::vector<const State*>& operator()(char c, const State* state)

@@ -9,7 +9,8 @@
 
 #include "transitions.h"
 
-const std::vector<const State*> FATransition::empty = {};
+const State* DFATransition::empty = nullptr;
+const std::vector<const State*> NFATransition::empty = {};
 const std::tuple<const PDAState*, char, char> PDATransition::empty = {};
 const std::tuple<const TMState*, char, char> TMTransition::empty = {};
 const Automaton* FSMTransition::empty = nullptr;

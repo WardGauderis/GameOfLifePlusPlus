@@ -78,6 +78,7 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const Color& color)
 
 void Window::delay(uint32_t ms)
 {
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     QTime stopTime = QTime::currentTime().addMSecs(ms);
     while (QTime::currentTime() < stopTime)
     {
@@ -197,7 +198,7 @@ Window::state Window::getState()
     return temp;
 }
 
-void Window::closeEvent(QCloseEvent *event)
+void Window::closeEvent([[maybe_unused]] QCloseEvent *event)
 {
     crState = quit;
 }
@@ -206,12 +207,12 @@ void Window::setSliderValue(int val)
 {
     fancySlider->setToolTip(QString(std::to_string(sliderValue).c_str()));
     sliderValue = val;
-    if (sliderValue > 100)
+    if (sliderValue > 100 and val < sliderValue)
     {
         QMessageBox msgBox;
         msgBox.setText("ARE YOU SURE YOU WANT TO GO MAXIMUM POWER??");
         msgBox.setStandardButtons(QMessageBox::Ok);
-        int ret = msgBox.exec();
+        [[maybe_unused]] int ret =  msgBox.exec();
     }
 }
 

@@ -9,7 +9,8 @@
 
 #pragma once
 
-#include "../automata/fa.h"
+#include "../automata/dfa.h"
+#include "../automata/nfa.h"
 #include "../automata/pda.h"
 #include "../automata/tm.h"
 #include "../automata/pa.h"
@@ -27,34 +28,39 @@ public:
         auto json = json::parse(file);
 
         std::string type = json["type"];
-        if     (type == "dfa" or type == "nfa" or type == "enfa") return parseFA(path, alphabet);
+        if     (type == "dfa") return parseDFA(path, alphabet);
+        else if(type == "nfa" or type == "enfa") return DFA::SSC( parseNFA(path, alphabet));
         else if(type == "pda") return parsePDA(path, alphabet);
         else if(type == "tm" ) return parseTM(path, alphabet);
         else if(type == "pa") return parsePA(path, alphabet);
         else throw std::runtime_error("unknown automaton type");
     }
 
-    static const FA* parseFA(const std::string& path, const std::map<std::string, char>& alphabet)
+    static const DFA* parseDFA(const std::string &path, const std::map<std::string, char> &alphabet)
+    {
+        std::ifstream file(path);
+        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
+        auto json = json::parse(file);
+
+        const std::vector<const State*> states = parseStates(json["states"]);
+        DFATransition transition = parseDFATransitions(json["transitions"], json["states"], states, alphabet);
+        return new DFA{getCharacters(alphabet), states, transition};
+    }
+
+    static const NFA* parseNFA(const std::string &path, const std::map<std::string, char> &alphabet)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
         auto json = json::parse(file);
 
         std::vector<const State*> states = parseStates(json["states"]);
-        FATransition transition;
-        if(json["type"] == "enfa"){ auto newAlphabet = alphabet; newAlphabet.emplace("~", '~');  transition = parseFATransitions(json["transitions"], json["states"], states, newAlphabet); }
-        else transition = parseFATransitions(json["transitions"], json["states"], states, alphabet);
+        NFATransition transition;
+        if(json["type"] == "enfa"){ auto newAlphabet = alphabet; newAlphabet.emplace("~", '~');  transition = parseNFATransitions(json["transitions"], json["states"], states, newAlphabet); }
+        else transition = parseNFATransitions(json["transitions"], json["states"], states, alphabet);
 
         auto chars = getCharacters(alphabet);
         if(json["type"] == "enfa") chars.push_back('~');
-
-        auto temp = new FA{chars, states, transition, json["type"] };
-        auto res = FA::minimize(*temp);
-
-        system("[ -d \"output\" ] || mkdir output");
-        temp->dot("output/test.dot");
-
-        return res;
+        return new NFA{chars, states, transition, json["type"] };
     }
 
     static const PDA* parsePDA(const std::string& path, const std::map<std::string, char>& alphabet)
@@ -148,9 +154,26 @@ private:
         return states;
     }
 
-    static FATransition parseFATransitions(const json& transition_values, const json& state_values, const std::vector<const State*>& states, const std::map<std::string, char>& alphabet)
+    static DFATransition parseDFATransitions(const json &transition_values, const json &state_values,const std::vector<const State *> &states,const std::map<std::string, char> &alphabet)
     {
-        FATransition result;
+        DFATransition result;
+
+        std::map<std::string, uint32_t> converter;
+        for(uint32_t i = 0; i < state_values.size(); i++) converter[ state_values[i]["name"] ] = i;
+
+        for(const auto& transition : transition_values)
+        {
+            State const* from = states[converter[transition["from"]]];
+            State const* to   = states[converter[transition["to"  ]]];
+            char input = alphabet.at(transition["input"]);
+            result(input, from) = to;
+        }
+        return result;
+    }
+
+    static NFATransition parseNFATransitions(const json &transition_values, const json &state_values,const std::vector<const State *> &states,const std::map<std::string, char> &alphabet)
+    {
+        NFATransition result;
 
         std::map<std::string, uint32_t> converter;
         for(uint32_t i = 0; i < state_values.size(); i++) converter[ state_values[i]["name"] ] = i;

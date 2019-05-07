@@ -1,13 +1,15 @@
 //============================================================================
-// @name        : FA.h
+// @name        : dfa.h
 // @author      : Thomas Dooms
-// @date        : 3/16/19
+// @date        : 5/7/19
 // @version     : 
 // @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
 // @description : 
 //============================================================================
 
-#pragma once
+
+#ifndef GOL_DFA_H
+#define GOL_DFA_H
 
 #include <vector>
 #include <set>
@@ -16,32 +18,32 @@
 #include "states.h"
 #include "transitions.h"
 #include "automaton.h"
+#include "nfa.h"
 
-class FA : public Automaton
+
+class DFA : public Automaton
 {
 public:
-    FA(const std::vector<char>& alphabet, const std::vector<const State*>& states, const FATransition& transition, const std::string& type);
-    ~FA() override;
+    DFA(const std::vector<char>& alphabet, const std::vector<const State*>& states, const DFATransition& transition);
+    ~DFA() override;
 
     bool operator()(const std::string& word) const override;
-    void ecloseCurrent(std::set<const State*>& current) const;
-
     void dot(const std::string& name) const;
-    static const FA* minimize(const FA& fa);
+
+    static DFA* SSC(const NFA* fa);
+
+    static const DFA* minimize(const DFA* fa);
     static std::string makeName(const std::set<const State*>& states);
 
-    static std::vector<std::vector<bool>> createTable(const FA& fa);
-    static bool fillTable(std::vector<std::vector<bool>>& table, const FA& fa);
+    static std::vector<std::vector<bool>> createTable(const DFA* fa);
+    static bool fillTable(std::vector<std::vector<bool>>& table, const DFA* fa);
 
 private:
     std::vector<char> alphabet;
     std::vector<const State*> states;
     const State* start;
-    FATransition transition;
-    std::string type;
+    DFATransition transition;
 };
 
 
-
-
-
+#endif //GOL_DFA_H
