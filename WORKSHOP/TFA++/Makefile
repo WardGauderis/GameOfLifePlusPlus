@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ward/Downloads/TEST
+CMAKE_SOURCE_DIR = /home/ward/Documents/GitHub/fase2-ta-2018-2019-thomas-mano-ward-olivier/WORKSHOP/TFA++
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ward/Downloads/TEST
+CMAKE_BINARY_DIR = /home/ward/Documents/GitHub/fase2-ta-2018-2019-thomas-mano-ward-olivier/WORKSHOP/TFA++
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ward/Downloads/TEST/CMakeFiles /home/ward/Downloads/TEST/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ward/Documents/GitHub/fase2-ta-2018-2019-thomas-mano-ward-olivier/WORKSHOP/TFA++/CMakeFiles /home/ward/Documents/GitHub/fase2-ta-2018-2019-thomas-mano-ward-olivier/WORKSHOP/TFA++/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ward/Downloads/TEST/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ward/Documents/GitHub/fase2-ta-2018-2019-thomas-mano-ward-olivier/WORKSHOP/TFA++/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named TEST
+# Target rules for targets named TFA
 
 # Build rule for target.
-TEST: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 TEST
-.PHONY : TEST
+TFA: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 TFA
+.PHONY : TFA
 
 # fast build rule for target.
-TEST/fast:
-	$(MAKE) -f CMakeFiles/TEST.dir/build.make CMakeFiles/TEST.dir/build
-.PHONY : TEST/fast
+TFA/fast:
+	$(MAKE) -f CMakeFiles/TFA.dir/build.make CMakeFiles/TFA.dir/build
+.PHONY : TFA/fast
 
 DFA.o: DFA.cpp.o
 
@@ -129,7 +129,7 @@ DFA.o: DFA.cpp.o
 
 # target to build an object file
 DFA.cpp.o:
-	$(MAKE) -f CMakeFiles/TEST.dir/build.make CMakeFiles/TEST.dir/DFA.cpp.o
+	$(MAKE) -f CMakeFiles/TFA.dir/build.make CMakeFiles/TFA.dir/DFA.cpp.o
 .PHONY : DFA.cpp.o
 
 DFA.i: DFA.cpp.i
@@ -138,7 +138,7 @@ DFA.i: DFA.cpp.i
 
 # target to preprocess a source file
 DFA.cpp.i:
-	$(MAKE) -f CMakeFiles/TEST.dir/build.make CMakeFiles/TEST.dir/DFA.cpp.i
+	$(MAKE) -f CMakeFiles/TFA.dir/build.make CMakeFiles/TFA.dir/DFA.cpp.i
 .PHONY : DFA.cpp.i
 
 DFA.s: DFA.cpp.s
@@ -147,7 +147,7 @@ DFA.s: DFA.cpp.s
 
 # target to generate assembly for a file
 DFA.cpp.s:
-	$(MAKE) -f CMakeFiles/TEST.dir/build.make CMakeFiles/TEST.dir/DFA.cpp.s
+	$(MAKE) -f CMakeFiles/TFA.dir/build.make CMakeFiles/TFA.dir/DFA.cpp.s
 .PHONY : DFA.cpp.s
 
 main.o: main.cpp.o
@@ -156,7 +156,7 @@ main.o: main.cpp.o
 
 # target to build an object file
 main.cpp.o:
-	$(MAKE) -f CMakeFiles/TEST.dir/build.make CMakeFiles/TEST.dir/main.cpp.o
+	$(MAKE) -f CMakeFiles/TFA.dir/build.make CMakeFiles/TFA.dir/main.cpp.o
 .PHONY : main.cpp.o
 
 main.i: main.cpp.i
@@ -165,7 +165,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) -f CMakeFiles/TEST.dir/build.make CMakeFiles/TEST.dir/main.cpp.i
+	$(MAKE) -f CMakeFiles/TFA.dir/build.make CMakeFiles/TFA.dir/main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -174,7 +174,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) -f CMakeFiles/TEST.dir/build.make CMakeFiles/TEST.dir/main.cpp.s
+	$(MAKE) -f CMakeFiles/TFA.dir/build.make CMakeFiles/TFA.dir/main.cpp.s
 .PHONY : main.cpp.s
 
 # Help Target
@@ -184,7 +184,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... TEST"
+	@echo "... TFA"
 	@echo "... edit_cache"
 	@echo "... DFA.o"
 	@echo "... DFA.i"
