@@ -180,14 +180,14 @@ FSMTransition CAIO::transition(const ini::Configuration &conf,
             return std::get<2>(a) == toFind;
         });
         if (a == stateData.end()) throw std::runtime_error("Transition to unknown state" + toFind);
-        trans(true, std::get<0>(state)) = std::get<0>(*a);
+        trans[{true, std::get<0>(state)}] = std::get<0>(*a);
 
         toFind = transitions[1];
         auto r = std::find_if(stateData.begin(), stateData.end(), [&toFind](auto &a) {
             return std::get<2>(a) == toFind;
         });
         if (r == stateData.end()) throw std::runtime_error("Transition to unknown state" + toFind);
-        trans(false, std::get<0>(state)) = std::get<0>(*r);
+        trans[{false, std::get<0>(state)}] = std::get<0>(*r);
     }
     return trans;
 }

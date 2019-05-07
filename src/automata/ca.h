@@ -15,11 +15,11 @@
 #include <vector>
 #include <string>
 #include "../gui/color.h"
+#include "transitions.h"
 #include <map>
 #include <deque>
 
 struct Automaton;
-struct FSMTransition;
 
 class CA
 {

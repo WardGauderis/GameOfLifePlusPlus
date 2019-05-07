@@ -1,31 +1,53 @@
 {
+  "type": "enfa",
   "states": [
     {
-      "name": "Q0",
-      "starting": true,
-      "accepting": false
-    },
-    {
-      "name": "Q1",
+      "name": "1",
       "starting": false,
       "accepting": true
+    },
+    {
+      "name": "2",
+      "starting": false,
+      "accepting": true
+    },
+    {
+      "name": "0",
+      "starting": true,
+      "accepting": false
     }
   ],
   "transitions": [
     {
-      "from": "Q0",
-      "to": "Q0",
-      "input": "0"
+      "from": "1",
+      "to": "0",
+      "input": "alive"
     },
     {
-      "from": "Q0",
-      "to": "Q1",
-      "input": "e"
+      "from": "2",
+      "to": "2",
+      "input": "alive"
     },
     {
-      "from": "Q1",
-      "to": "Q0",
-      "input": "1"
+      "from": "0",
+      "to": "2",
+      "input": "death"
+    },
+    {
+      "from": "0",
+      "to": "0",
+      "input": "alive"
+    },
+    {
+      "from": "1",
+      "to": "1",
+      "input": "death"
+    },
+    {
+      "from": "2",
+      "to": "1",
+      "input": "~"
     }
   ]
 }
+

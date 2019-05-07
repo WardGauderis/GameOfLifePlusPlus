@@ -158,7 +158,7 @@ private:
 
     static DFATransition parseDFATransitions(const json &transition_values, const json &state_values,const std::vector<const State*> &states,const std::map<std::string, char> &alphabet)
     {
-        DFATransition result;
+        DFATransition result(nullptr);
 
         std::map<std::string, uint32_t> converter;
         for(uint32_t i = 0; i < state_values.size(); i++) converter[ state_values[i]["name"] ] = i;
@@ -171,11 +171,10 @@ private:
 
             try
             {
-                State const* from = states[converter.at(fromName)];
-                State const* to   = states[converter.at(toName)];
+                const State* from = states[converter.at(fromName)];
+                const State* to   = states[converter.at(toName)];
                 char input = alphabet.at(inputName);
-                assert(result(input, from) == nullptr);
-                result(input, from) = to;
+                result.find_if_unique({input, from}) = to;
             }
             catch(std::exception& e)
             {
@@ -203,7 +202,7 @@ private:
                 State const* from = states[converter.at(fromName)];
                 State const* to   = states[converter.at(toName)];
                 char input = alphabet.at(inputName);
-                result(input, from).push_back(to);
+                result[{input, from}].push_back(to);
             }
             catch(std::exception& e)
             {
@@ -233,8 +232,8 @@ private:
                 char input = alphabet.at(inputName);
                 char push  = static_cast<std::string> (transition["push" ])[0];
                 char pop   = static_cast<std::string> (transition["pop"  ])[0];
-                assert(result(input, from) == result.empty);
-                result(input, from) = {to, push, pop};
+
+                result.find_if_unique({input, from}) = {to, push, pop};
             }
             catch(std::exception& e)
             {
@@ -257,7 +256,7 @@ private:
             char input = alphabet.at(transition["input"]);
             char dir   = static_cast<std::string> (transition["direction"])[0];
             char write = static_cast<std::string> (transition["write"    ])[0];
-            result(input, from) = {to, dir, write};
+            result.find_if_unique({input, from}) = {to, dir, write};
         }
         return result;
     }
@@ -275,7 +274,7 @@ private:
             State const* from  = states[converter[transition["from"]]];
             State const* to    = states[converter[transition["to"  ]]];
             double probability = transition["probability"];
-            result(input, from).emplace_back(probability, to);
+            result[{input, from}].emplace_back(probability, to);
         }
         return result;
     }

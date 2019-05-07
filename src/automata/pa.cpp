@@ -26,7 +26,7 @@ bool PA::operator()(const std::string& word) const
     for(char c : word)
     {
         double random = drand48();
-        const auto next = transition(c, current);
+        const auto next = transition[{c, current}];
 
         for(const auto& pair : next)
         {

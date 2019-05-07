@@ -21,7 +21,7 @@ bool PDA::operator()(const std::string& word) const
 
     for(char c : word)
     {
-        const auto next = transition(c, current);
+        const auto next = transition[{c, current}];
         current = std::get<0>(next);
         char push = std::get<1>(next);
         char pop = std::get<2>(next);

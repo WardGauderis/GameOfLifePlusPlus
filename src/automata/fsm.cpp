@@ -25,7 +25,7 @@ void FSM::operator()(const std::string& word) const
 {
     do
     {
-        current = transition((*current)(word), current);
+        current = transition[{(*current)(word), current}];
     } while (states.at(current).second);
 }
 

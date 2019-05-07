@@ -24,7 +24,7 @@ DFA::~DFA()
 bool DFA::operator()(const std::string& word) const
 {
     const State* current = start;
-    for(char c : word) current = transition(c, current);
+    for(char c : word) current = transition[{c, current}];
     return current->accepting;
 }
 
@@ -40,7 +40,7 @@ void DFA::dot(const std::string& path) const
     {
         for(const char c : alphabet)
         {
-            file << state->name << " -> " << transition(c, state)->name << "[label=\"" << c << "\"];\n";
+            file << state->name << " -> " << transition[{c, state}]->name << "[label=\"" << c << "\"];\n";
         }
     }
     for(const State* state : states)
@@ -61,6 +61,10 @@ DFA* DFA::SSC(const NFA* fa)
 
     std::vector<const State*> newStates;
     DFATransition newTransition;
+
+    std::vector<char> newAlphabet = fa->alphabet;
+    newAlphabet.pop_back();
+
     std::set<const State*> startStates = {fa->start};
     fa->ecloseCurrent(startStates);
 
@@ -73,33 +77,35 @@ DFA* DFA::SSC(const NFA* fa)
     {
         for(const char c : fa->alphabet)
         {
-            if(fa->type == "ENFA" and c == fa->alphabet.back()) continue;
+            if(fa->type == "enfa" and c == fa->alphabet.back()) continue;
 
             std::set<const State*> nextStates;
             for(const State* state : queue.front())
-                for(const State* next : fa->transition(c, state))
+                for(const State* next : fa->transition[{c, state}])
                     nextStates.insert(next);
 
             fa->ecloseCurrent(nextStates);
             const auto& iter = existing.find(nextStates);
             if(iter != end(existing))
             {
-                newTransition(c, newStates[index]) = iter->second;
+                newTransition[{c, newStates[index]}] = iter->second;
                 continue;
             }
 
             bool accepting = *std::find_if(begin(nextStates), end(nextStates), [](const auto& state){ return state->accepting; });
             newStates.push_back(new State{makeName(nextStates), false, accepting, static_cast<uint32_t>(newStates.size())});
 
-            newTransition(c, newStates[index]) = newState;
+            newTransition[{c, newStates[index]}] = newState;
             existing.insert({nextStates, newState});
             queue.push(nextStates);
         }
         index++;
         queue.pop();
     }
-
-    return new DFA{fa->alphabet, newStates, newTransition};
+    auto res = new DFA{newAlphabet, newStates, newTransition};
+    system("[ -d output ] || mkdir output");
+    res->dot("output/test.dot");
+    return res;
 }
 
 
@@ -135,7 +141,7 @@ const DFA* DFA::minimize(const DFA* fa)
     DFATransition newTransition;
     for(auto& element : fa->transition.getMap())
     {
-        newTransition(element.first.second, converter[element.first.first]) = converter[element.second];
+        newTransition[{element.first.first, converter[element.first.second]}] = converter[element.second];
     }
 
     return new DFA(fa->alphabet, newStates, newTransition);
@@ -183,8 +189,8 @@ bool DFA::fillTable(std::vector<std::vector<bool>>& table, const DFA* fa)
             if(table[i][j]) continue;
             for(const char c : fa->alphabet)
             {
-                const auto i1 = fa->transition(c, fa->states[i])->index;
-                const auto j1 = fa->transition(c, fa->states[j])->index;
+                const auto i1 = fa->transition[{c, fa->states[i]}]->index;
+                const auto j1 = fa->transition[{c, fa->states[j]}]->index;
                 if(table[i1][j1])
                 {
                     done = false;

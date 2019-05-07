@@ -33,7 +33,7 @@ struct NFA
         char epsilon = alphabet.back();
         for(const State* state : current)
         {
-            const auto temp = transition(epsilon, state);
+            const auto temp = transition[{epsilon, state}];
             current.insert(begin(temp), end(temp));
         }
     }

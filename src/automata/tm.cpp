@@ -28,7 +28,7 @@ bool TM::operator()(const std::string& word) const
 
     while(true)
     {
-        const auto next = transition(tape[index], current);
+        const auto next = transition[{tape[index], current}];
 
         // new state
         current = std::get<0>(next);
