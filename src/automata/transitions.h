@@ -11,6 +11,7 @@
 
 #include <map>
 #include <vector>
+#include <iostream>
 #include "states.h"
 #include "automaton.h"
 
@@ -181,7 +182,11 @@ public:
 
     const StatePlusPlus *const &operator()(char c, const StatePlusPlus *state) const {
         try { return transition.at({state, c}); }
-        catch (std::exception &e) { return empty; }
+        catch (std::exception &e) {
+            std::cerr << "No transition defined for state " << state->name << " on input of state"
+                      << std::to_string(c - 'a');
+            return empty;
+        }
     }
 
     const std::map<std::pair<const StatePlusPlus *, char>, const StatePlusPlus *> &getMap() const {
