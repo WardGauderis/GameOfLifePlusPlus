@@ -92,7 +92,7 @@ DFA* DFA::SSC(const NFA* fa)
                 continue;
             }
 
-            bool accepting = *std::find_if(begin(nextStates), end(nextStates), [](const auto& state){ return state->accepting; });
+            bool accepting = std::find_if(begin(nextStates), end(nextStates), [](const auto& state){ return state->accepting; }) == nextStates.end();
             newStates.push_back(new State{makeName(nextStates), false, accepting, static_cast<uint32_t>(newStates.size())});
 
             newTransition[{c, newStates[index]}] = newStates.back();
