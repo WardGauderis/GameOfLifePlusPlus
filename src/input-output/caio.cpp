@@ -73,7 +73,6 @@ Color CAIO::readColor(std::string str) {
     if (str[0] == '#') {
         return {str.substr(1)};
     } else if (str == "random") {
-        return {0, 1, -1};
         return {double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX};
     } else if (str == "red") {
         return {"ff0000"};
