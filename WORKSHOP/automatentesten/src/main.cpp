@@ -26,23 +26,23 @@ void testStringTM(const TM* testTM, std::string test)
     else std::cout << test << " was not accepted by Turing Machine" << std::endl;
 }
 
-void testStringDFA(const DFA* testDFA, std::string test)
-{
-    if ((*testDFA)(test))
-    {
-        std::cout << test << " was accepted by DFA" << std::endl;
-    }
-    else std::cout << test << " was not accepted by DFA" << std::endl;
-}
+//void testStringDFA(const DFA* testDFA, std::string test)
+//{
+//    if ((*testDFA)(test))
+//    {
+//        std::cout << test << " was accepted by DFA" << std::endl;
+//    }
+//    else std::cout << test << " was not accepted by DFA" << std::endl;
+//}
 
-void testStringENFA(const NFA* testENFA, std::string test)
-{
-    if ((*testENFA)(test))
-    {
-        std::cout << test << " was accepted by ENFA" << std::endl;
-    }
-    else std::cout << test << " was not accepted by ENFA" << std::endl;
-}
+//void testStringENFA(const NFA* testENFA, std::string test)
+//{
+//    if ((*testENFA)(test))
+//    {
+//        std::cout << test << " was accepted by ENFA" << std::endl;
+//    }
+//    else std::cout << test << " was not accepted by ENFA" << std::endl;
+//}
 int main()
 {
     std::map<std::string, char> testAlphabet;
@@ -52,26 +52,27 @@ int main()
 
     const PDA * testPDA = Parser::parsePDA("./input/pda.json", testAlphabet);
     const TM * testTM = Parser::parseTM("./input/tm.json", testAlphabet);
-    const NFA *testENFA = Parser::parseNFA("./input/enfa.json", testAlphabet);
-    const DFA * testDFA = Parser::parseDFA("./input/dfa.json", testAlphabet);
 
-    std::cout << "-----------------------------------------------------------------------------------" << "\n\n";
+//    const NFA *testENFA = Parser::parseNFA("./input/enfa.json", testAlphabet);
+//    const DFA * testDFA = Parser::parseDFA("./input/dfa.json", testAlphabet);
 
-    testStringDFA(testDFA, "11100000");
-    testStringDFA(testDFA, "01010101");
-    testStringDFA(testDFA, "00010011");
+//    std::cout << "-----------------------------------------------------------------------------------" << "\n\n";
+//
+//    testStringDFA(testDFA, "11100000");
+//    testStringDFA(testDFA, "01010101");
+//    testStringDFA(testDFA, "00010011");
 
-    std::cout << "-----------------------------------------------------------------------------------" << "\n\n";
-
-    testStringENFA(testENFA, "11100000");
-    testStringENFA(testENFA, "01010101");
-    testStringENFA(testENFA, "00010011");
+//    std::cout << "-----------------------------------------------------------------------------------" << "\n\n";
+//
+//    testStringENFA(testENFA, "11100000");
+//    testStringENFA(testENFA, "01010101");
+//    testStringENFA(testENFA, "00010011");
     
     std::cout << "-----------------------------------------------------------------------------------" << "\n\n";
 
     testStringPDA(testPDA, "11110000");
     testStringPDA(testPDA, "10101010");
-    testStringPDA(testPDA, "11110000");
+    testStringPDA(testPDA, "00001111");
 
     std::cout << "-----------------------------------------------------------------------------------" << "\n\n";
 

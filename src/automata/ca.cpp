@@ -66,9 +66,11 @@ void CA::update()
     for(uint32_t x = 0; x < width; x++)
         for(uint32_t y = 0; y < height; y++)
         {
-            std::string input;
-            for(const auto& pair : neighbours)
-                input += stack.back()[getIndex(pair, x, y)];
+            std::string input(neighbours.size(), '0');
+
+            for(uint32_t i = 0; i < neighbours.size(); i++)
+                input[i] = stack.back()[getIndex(neighbours[i], x, y)];
+
             (*cells.at(y * width + x))(input);
         }
     stack.emplace_back(width*height);

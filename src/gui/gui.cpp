@@ -32,8 +32,7 @@ void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
         yPos = 0;
         for (uint32_t y = 0; y < yCells; ++y)
         {
-            QRect temp(std::floor(xPos), std::floor(yPos), std::floor(xPos + celWidth), std::floor(yPos + celHeight));
-            painter.fillRect(temp, cells.at(y*xCells + x) );
+            painter.fillRect(std::floor(xPos), std::floor(yPos), std::ceil(celWidth),  std::ceil(celHeight), cells.at(y*xCells + x));
             yPos += celHeight;
         }
         xPos += celWidth;

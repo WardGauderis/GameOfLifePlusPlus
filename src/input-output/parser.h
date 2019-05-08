@@ -99,6 +99,19 @@ public:
     }
 
 private:
+//    template<uint32_t N>
+//    static bool checkJsonParams(const json& json, const std::array<const std::string&, N>& list)
+//    {
+//        for( const auto& word : list)
+//        {
+//            auto iter = json.find(word);
+//            if( iter == end(json)) return false;
+//        }
+//        return true;
+//    }
+//    static bool checkConverter(const json& json, )
+
+
     static std::vector<char> getCharacters(const std::map<std::string, char>& alphabet)
     {
         std::vector<char> result;

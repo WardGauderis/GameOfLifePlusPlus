@@ -28,8 +28,9 @@ bool PDA::operator()(const std::string& word) const
 
         // we first pop, then push, goes against convention but we don't care.
         if(!stack.empty() and pop  != stackAlphabet.back() and stack.top() == pop) stack.pop();
-        if(push != stackAlphabet.back()) stack.push(push);
         else return false;
+
+        if(push != stackAlphabet.back()) stack.push(push);
     }
     return stack.empty();
 }
