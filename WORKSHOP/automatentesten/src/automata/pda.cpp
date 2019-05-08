@@ -17,21 +17,18 @@ PDA::PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphab
 
 bool PDA::operator()(const std::string& word) const
 {
-    stack = {};
     const PDAState* current = start;
+
     for(char c : word)
     {
-        const auto next = transition[{c, current}];
+        const auto next = transition(c, current);
         current = std::get<0>(next);
         char push = std::get<1>(next);
         char pop = std::get<2>(next);
 
         // we first pop, then push, goes against convention but we don't care.
-        if(!stack.empty() and pop != stackAlphabet.back())
-        {
-            if(stack.top() == pop) stack.pop();
-            else return false;
-        }
+        if(!stack.empty() and pop  != stackAlphabet.back() and stack.top() == pop) stack.pop();
+        else return false;
 
         if(push != stackAlphabet.back()) stack.push(push);
     }
