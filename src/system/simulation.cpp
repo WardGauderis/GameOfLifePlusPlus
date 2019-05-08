@@ -13,7 +13,7 @@
 
 Simulation::Simulation()
 {
-    if(!CAIO::generate("./input/GameOfLife/GameOfLife.ini")) exit(69);
+    if(!CAIO::generate("./input/ward_tests/test.ini")) exit(69);
     window.init(CA::getWidth(), CA::getHeight(), Color(0.5,0.5,0.5));
     window.show();
 }

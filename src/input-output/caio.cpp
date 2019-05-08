@@ -47,8 +47,9 @@ void CAIO::manual(const ini::Configuration &conf) {
     if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
     const auto layout = parseLayout(file, width, height, amount);
 
-    const auto neighbours = parseCoordinates(conf["General"]["inputs"].as_string_or_default(
-            "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)"));
+    const std::string inputs = conf["General"]["inputs"].as_string_or_default(
+            "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)");
+    const auto neighbours = parseCoordinates(inputs);
     //STATES
     const auto stateData = parseStates(conf);
     //TRANSITIONS
@@ -74,6 +75,8 @@ Color CAIO::readColor(std::string str) {
         return {str.substr(1)};
     } else if (str == "random") {
         return {double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX};
+    } else if (str == "epsilon") {
+        return {"000000"};
     } else if (str == "red") {
         return {"ff0000"};
     } else if (str == "orange") {
@@ -123,7 +126,7 @@ Color CAIO::readColor(std::string str) {
     } else if (str == "gray" || str == "grey") {
         return {"808080"};
     }
-    throw std::runtime_error("Color" + str + "not recognised");
+    throw std::runtime_error("Color " + str + "not recognised");
 }
 
 std::vector<std::pair<int, int>> CAIO::parseCoordinates(const std::string &inputs) {
@@ -134,7 +137,7 @@ std::vector<std::pair<int, int>> CAIO::parseCoordinates(const std::string &input
                  it.end());
     }
     for (auto it = seglist.begin(); it < seglist.end(); it = it + 2) {
-        neighbours.emplace_back(std::stoi(*(it)), std::stoi(*(it + 1)));
+        neighbours.emplace_back(std::stoi(*(it)), -std::stoi(*(it + 1)));
     }
     return neighbours;
 }

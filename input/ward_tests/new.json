@@ -1,0 +1,27 @@
+{
+  "type": "dfa",
+  "states": [
+    {
+      "name": "on",
+      "starting": true,
+      "accepting": false
+    }
+  ],
+  "transitions": [
+    {
+      "from": "on",
+      "to": "on",
+      "input": "off"
+    },
+    {
+      "from": "on",
+      "to": "on",
+      "input": "new"
+    },
+    {
+      "from": "on",
+      "to": "on",
+      "input": "on"
+    }
+  ]
+}
