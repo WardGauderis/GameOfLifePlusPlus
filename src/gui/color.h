@@ -48,7 +48,7 @@ public:
      */
     operator QColor()
     {
-        return {(int)(std::round(this->red * 255.99)), (int)(std::round(this->green * 255.99)), (int)(std::round(this->blue * 255.99))};
+        return {static_cast<int>(this->red * 255.99), static_cast<int>(this->green * 255.99), static_cast<int>(this->blue * 255.99)};
     }
 
     double& operator[](uint32_t index){ switch (index){ case 0: return red; case 1: return green; case 2: return blue; default: throw std::runtime_error("must be smaller than 2"); }};

@@ -38,6 +38,7 @@ bool CAIO::generate(const std::string &fileName) {
 
 void CAIO::manual(const ini::Configuration &conf) {
     //GENERAL
+    srand((int) time(nullptr));
     const int width = conf["General"]["width"].as_int_or_default(20);
     const int height = conf["General"]["height"].as_int_or_default(20);
 
@@ -72,6 +73,7 @@ Color CAIO::readColor(std::string str) {
     if (str[0] == '#') {
         return {str.substr(1)};
     } else if (str == "random") {
+        return {0, 1, -1};
         return {double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX};
     } else if (str == "red") {
         return {"ff0000"};
@@ -153,7 +155,6 @@ CAIO::parseStates(const ini::Configuration &conf) {
     }
 
     std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> stateData;
-    srand((int) time(nullptr));
     for (int i = 1; i <= amount; ++i) {
         const auto strings = byCharacter(conf["States"]["state" + std::to_string(i)].as_string_or_die(), ',');
         const std::string name = strings[0];
@@ -194,13 +195,18 @@ FSMTransition CAIO::transition(const ini::Configuration &conf,
 
 std::vector<char>
 CAIO::parseLayout(const std::string &fileName, const int width, const int height, const int amount) {
+    std::vector<char> layout;
+    if (fileName == "random") {
+        for (int i = 0; i < width * height; ++i) {
+            layout.emplace_back('a' + rand() % amount);
+        }
+        return layout;
+    }
     std::ifstream fin(fileName);
     if (!fin.is_open()) {
-        std::vector<char> layout;
         layout.resize(width * height, 'a');
         return layout;
     }
-    std::vector<char> layout;
     std::string line;
     for (int i = 0; i < height; ++i) {
         if (!getline(fin, line)) line = "";
@@ -208,8 +214,8 @@ CAIO::parseLayout(const std::string &fileName, const int width, const int height
         std::stringstream lineStream(line);
         for (int j = 0; j < width; ++j) {
             if (!getline(lineStream, value, ',')) value = "0";
-            try{layout.push_back('a' + std::max(std::min(std::stoi(value), amount - 1), 0));}
-            catch (const std::invalid_argument& ex) { layout.push_back('a'); }
+            try { layout.emplace_back('a' + std::max(std::min(std::stoi(value), amount - 1), 0)); }
+            catch (const std::invalid_argument &ex) { layout.push_back('a'); }
         }
     }
     return layout;
