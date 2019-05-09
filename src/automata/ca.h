@@ -26,7 +26,9 @@ class CA
 public:
 
     static void init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
-            const std::vector<std::tuple<const Automaton*, char, std::string, Color, bool>>& stateData, const FSMTransition& transition, const std::vector<char> start);
+            const std::vector<std::tuple<const Automaton*, char, std::string, Color, bool>>& stateData, const FSMTransition& transition);
+
+    static void setStart(const std::vector<char>& start);
 
     static void destroy();
 
@@ -40,7 +42,7 @@ public:
     static uint32_t getSize(){ return stack.size(); }
 
     static uint32_t getIndex(std::pair<int, int> offset, uint32_t x, uint32_t y);
-    static std::vector<Color> getColors();
+    static const std::map<char, Color>& getColors();
 
 private:
     static uint32_t width;
@@ -51,6 +53,8 @@ private:
 
     static std::deque<std::vector<char>> stack;
     static std::map<char, Color> converter;
+
+    static std::map<char, const Automaton*> charToState;
 };
 
 

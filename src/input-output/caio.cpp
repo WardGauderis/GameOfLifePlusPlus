@@ -55,7 +55,8 @@ void CAIO::manual(const ini::Configuration &conf) {
     //TRANSITIONS
     const auto trans = transition(conf, stateData);
 
-    CA::init(width, height, neighbours, stateData, trans, layout);
+    CA::init(width, height, neighbours, stateData, trans);
+    CA::setStart(layout);
 }
 
 std::vector<std::string> CAIO::byCharacter(const std::string &str, const char &ch) {

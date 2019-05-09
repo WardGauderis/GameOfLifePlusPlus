@@ -20,16 +20,16 @@ std::vector<std::pair<int, int>> CA::neighbours;
 
 std::deque<std::vector<char>> CA::stack;
 std::map<char, Color> CA::converter;
+std::map<char, const Automaton*> charToState;
 
 void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
-              const std::vector<std::tuple<const Automaton*, char, std::string, Color, bool>>& stateData, const FSMTransition& transition, const std::vector<char> start)
+              const std::vector<std::tuple<const Automaton*, char, std::string, Color, bool>>& stateData, const FSMTransition& transition)
 {
     CA::width = width;
     CA::height = height;
     CA::neighbours = neighbours;
 
     std::map<const Automaton*, std::pair<char, bool>> states;
-    std::map<char, const Automaton*> charToState;
 
     for(const auto& data : stateData)
     {
@@ -39,6 +39,13 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
     }
 
     FSM::init(states, transition);
+}
+
+void CA::setStart(const std::vector<char>& start)
+{
+    // this resets everything, if it hasnt been done already
+    stack = {};
+    cells = {};
 
     CA::cells.reserve(width*height);
     stack.emplace_back(start);
@@ -85,11 +92,8 @@ uint32_t CA::getIndex(std::pair<int, int> offset, uint32_t x, uint32_t y)
     return yVal * width + xVal;
 }
 
-std::vector<Color> CA::getColors()
+const std::map<char, Color>& CA::getColors()
 {
-    std::vector<Color> colors;
-    colors.reserve(converter.size());
-    for(const auto& elem : converter) colors.push_back(elem.second);
-    return colors;
+    return converter;
 }
 
