@@ -81,12 +81,13 @@ uint32_t CA::getIndex(std::pair<int, int> offset, uint32_t x, uint32_t y)
 {
     uint32_t xVal = (int(width ) + (offset.first  + int(x)) % int(width )) % int(width );
     uint32_t yVal = (int(height) + (offset.second + int(y)) % int(height)) % int(height);
+    getColors();
     return yVal * width + xVal;
 }
 
-std::vector<const Color&> CA::getColors()
+std::vector<Color> CA::getColors()
 {
-    std::vector<const Color&> colors;
+    std::vector<Color> colors;
     colors.resize(converter.size());
     for(const auto& elem : converter) colors.push_back(elem.second);
     return colors;

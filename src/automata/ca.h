@@ -40,7 +40,7 @@ public:
     static uint32_t getSize(){ return stack.size(); }
 
     static uint32_t getIndex(std::pair<int, int> offset, uint32_t x, uint32_t y);
-    static std::vector<const Color&> getColors();
+    static std::vector<Color> getColors();
 
 private:
     static uint32_t width;
