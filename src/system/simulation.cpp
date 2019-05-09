@@ -14,7 +14,10 @@
 Simulation::Simulation()
 {
     if(!CAIO::generate("./input/ward_tests/test.ini")) exit(69);
-    window.init(CA::getWidth(), CA::getHeight(), Color(0.5,0.5,0.5));
+
+    std::vector<Color> test = CA::getColors();
+
+    window.init(CA::getWidth(), CA::getHeight(), CA::getColors());
     window.show();
 }
 

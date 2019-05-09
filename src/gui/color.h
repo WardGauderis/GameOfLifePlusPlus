@@ -43,6 +43,9 @@ public:
 
     bool operator==(const Color& rhs) const { return red == rhs.red and green == rhs.green and blue == rhs.blue; }
 
+    bool operator!=(const Color& rhs) const { return red != rhs.red or green != rhs.green or blue != rhs.blue; }
+
+
     /*
      * Convert the color to a Qcolor object (loss of precision due to Qcolor using int values)
      */

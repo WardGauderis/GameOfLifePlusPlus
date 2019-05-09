@@ -88,7 +88,7 @@ uint32_t CA::getIndex(std::pair<int, int> offset, uint32_t x, uint32_t y)
 std::vector<Color> CA::getColors()
 {
     std::vector<Color> colors;
-    colors.resize(converter.size());
+    colors.reserve(converter.size());
     for(const auto& elem : converter) colors.push_back(elem.second);
     return colors;
 }
