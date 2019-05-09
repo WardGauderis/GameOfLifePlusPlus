@@ -52,7 +52,6 @@ bool& UIGrid::getRepaint() { return shouldRepaint; }
 
 void UIGrid::mousePressEvent(QMouseEvent *event)
 {
-    std::cout << "hallo" << std::flush;
 
     if (event->button() == Qt::LeftButton)
     {
