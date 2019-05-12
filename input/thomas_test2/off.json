@@ -1,0 +1,54 @@
+{
+  "type": "pa",
+  "states": [
+    {
+      "name": "off",
+      "starting": true,
+      "accepting": false
+    },
+    {
+      "name": "on",
+      "starting": false,
+      "accepting": true
+    }
+  ],
+  "transitions": [
+    {
+      "from": "off",
+      "to": "off",
+      "input": "off",
+      "probability": 0.9999
+    },
+    {
+      "from": "off",
+      "to": "on",
+      "input": "off",
+      "probability": 0.0001
+    },
+    {
+      "from": "off",
+      "to": "on",
+      "input": "new"
+    },
+    {
+      "from": "off",
+      "to": "on",
+      "input": "on"
+    },
+    {
+      "from": "on",
+      "to": "on",
+      "input": "off"
+    },
+    {
+      "from": "on",
+      "to": "on",
+      "input": "new"
+    },
+    {
+      "from": "on",
+      "to": "on",
+      "input": "on"
+    }
+  ]
+}

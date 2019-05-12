@@ -286,7 +286,8 @@ private:
             char input = alphabet.at(transition["input"]);
             State const* from  = states[converter[transition["from"]]];
             State const* to    = states[converter[transition["to"  ]]];
-            double probability = transition["probability"];
+            double probability = 1;
+            if(transition.find("probability") != end(transition)) probability = transition["probability"];
             result[{input, from}].emplace_back(probability, to);
         }
         return result;
