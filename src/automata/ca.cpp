@@ -20,7 +20,7 @@ std::vector<std::pair<int, int>> CA::neighbours;
 
 std::deque<std::vector<char>> CA::stack;
 std::map<char, Color> CA::converter;
-std::map<char, const Automaton*> charToState;
+std::map<char, const Automaton*> CA::charToState;
 
 void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
               const std::vector<std::tuple<const Automaton*, char, std::string, Color, bool>>& stateData, const FSMTransition& transition)
