@@ -23,7 +23,6 @@
 #include <QSpacerItem>
 #include <QSlider>
 #include <QMessageBox>
-#include <QMouseEvent>
 
 
 #include <random>
@@ -46,12 +45,8 @@ public:
     void setYCells(uint32_t yCells);
 
     std::vector<Color> cells;
-    std::vector<Color> allColors;
-
 
     bool& getRepaint();
-
-    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     uint32_t xCells;
@@ -63,7 +58,7 @@ private:
 class Window: public QMainWindow
 {
 
-    Q_OBJECT
+Q_OBJECT
 
 public:
     enum state {play, pause, next, previous, quit};
@@ -86,6 +81,9 @@ public:
     void closeEvent(QCloseEvent *event);
 
     int getSliderValue() const;
+
+    std::string askString(std::string example);
+    double askDouble(double min, double max, double step, double example);
 
 protected:
 

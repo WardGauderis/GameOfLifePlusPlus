@@ -15,7 +15,7 @@ Simulation::Simulation()
 {
     if(!CAIO::generate("./input/ward_tests/test.ini")) exit(69);
 
-    window.init(CA::getWidth(), CA::getHeight(), CA::getColors());
+    window.init(CA::getWidth(), CA::getHeight(), {Color(0, 1, 0)});
     window.show();
 }
 

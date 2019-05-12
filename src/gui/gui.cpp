@@ -1,10 +1,10 @@
 //============================================================================
-// @name        : 
+// @name        :
 // @author      : Mano Marichal
-// @date        : 
-// @version     : 
+// @date        :
+// @version     :
 // @copyright   : BA1 Informatica - Mano Marichal - University of Antwerp
-// @description : 
+// @description :
 //============================================================================
 
 #include <QtCore/QTime>
@@ -32,7 +32,7 @@ void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
         yPos = 0;
         for (uint32_t y = 0; y < yCells; ++y)
         {
-            painter.fillRect(std::floor(xPos), std::floor(yPos), std::ceil(celWidth),  std::ceil(celHeight), cells.at(y*xCells + x));
+            painter.fillRect(std::floor(xPos), std::floor(yPos), std::ceil(celWidth),  std::ceil(celHeight),cells.at(y*xCells + x));
             yPos += celHeight;
         }
         xPos += celWidth;
@@ -50,6 +50,7 @@ void UIGrid::setYCells(uint32_t yCells) {
 
 bool& UIGrid::getRepaint() { return shouldRepaint; }
 
+/*
 void UIGrid::mousePressEvent(QMouseEvent *event)
 {
 
@@ -60,27 +61,17 @@ void UIGrid::mousePressEvent(QMouseEvent *event)
 
         int x = std::floor(event->pos().x()/celWidth);
         int y = std::floor(event->pos().y()/celHeight);
-
-        std::vector<Color>::iterator it = std::find(allColors.begin(), allColors.end(), cells.at(y*xCells + x));
-
-        if (*it !=  allColors[allColors.size() - 1])
-        {
-            it++;
-            cells.at(y*xCells + x) = *it;
-        }
-        else cells.at(y*xCells + x) = allColors[0];
-
-        shouldRepaint = true;
     }
-
 }
-
+*/
 //--------------------------WINDOW CLASS----------------------------------------
 
 Window::Window(QWidget *parent) : QMainWindow(parent)
 {
 }
 
+
+//const std::map<char, Color> &colormap
 void Window::init(uint32_t _xCells, uint32_t _yCells, const std::vector<Color> &colors)
 {
     this->setWindowTitle("GameOfLife++");
@@ -92,10 +83,10 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const std::vector<Color> &
     xCells = _xCells;
     yCells = _yCells;
 
+
     layout->addWidget(raster, 0, 0, 1, 10);
 
-    raster->cells = std::vector<Color>(xCells*yCells,Color(0, 0, 0));
-    raster->allColors = colors;
+    raster->cells = std::vector<Color>(xCells*yCells, Color(0, 0 ,0));
 
     raster->setXCells(xCells);
     raster->setYCells(yCells);
@@ -261,7 +252,34 @@ int Window::getSliderValue() const
     return sliderValue;
 }
 
+std::string Window::askString(std::string example)
+{
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("enter your filename"),
+                                         tr("filename"), QLineEdit::Normal,
+                                         QString(example.c_str()), &ok);
+
+    if (ok && !text.isEmpty())
+        return text.toStdString();
+    else return "";
+}
+
+double Window::askDouble(double min, double max, double step, double example)
+{
+    bool ok;
+    double val = QInputDialog::getDouble(this, tr(""),
+                                         tr("New value:"), example, min, max, step, &ok);
+    if (ok)
+    {
+        return val;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 void Window::onLoadIniFile()
 {
-
+    std::string fileName = askString("./input/ward_test/test.ini");
 }
