@@ -243,8 +243,8 @@ private:
                 PDAState const* from = states[converter.at(fromName)];
                 PDAState const* to   = states[converter.at(toName)];
                 char input = alphabet.at(inputName);
-                char push  = static_cast<std::string> (transition["push" ])[0];
-                char pop   = static_cast<std::string> (transition["pop"  ])[0];
+                const std::string& push  = static_cast<std::string> (transition["push" ]);
+                const std::string& pop   = static_cast<std::string> (transition["pop"  ]);
 
                 result.find_if_unique({input, from}) = {to, push, pop};
             }

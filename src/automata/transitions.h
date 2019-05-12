@@ -51,7 +51,7 @@ struct Transition
 
 typedef Transition<std::pair<char, const State*>, const State*> DFATransition;
 typedef Transition<std::pair<char, const State*>, std::vector<const State*>> NFATransition;
-typedef Transition<std::pair<char, const PDAState*>, std::tuple<const PDAState*, char, char>> PDATransition;
+typedef Transition<std::pair<char, const PDAState*>, std::tuple<const PDAState*, std::string, std::string>> PDATransition;
 typedef Transition<std::pair<char, const TMState*>, std::tuple<const TMState*, char, char>> TMTransition;
 typedef Transition<std::pair<char, const State*>, std::vector<std::pair<double, const State*>>> PATransition;
 typedef Transition<std::pair<bool, const Automaton*>, const Automaton*> FSMTransition;

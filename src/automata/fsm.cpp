@@ -13,7 +13,7 @@
 std::map<const Automaton*, std::pair<char, bool>> FSM::states = {};
 FSMTransition FSM::transition = {};
 
-FSM::FSM(const Automaton* start) : current(start) {}
+FSM::FSM(const Automaton* start) : current(start), stack() {}
 
 void FSM::init(const std::map<const Automaton*, std::pair<char, bool>>& states, const FSMTransition& transition)
 {
@@ -23,10 +23,7 @@ void FSM::init(const std::map<const Automaton*, std::pair<char, bool>>& states, 
 
 void FSM::operator()(const std::string& word) const
 {
-    do
-    {
-        current = transition[{(*current)(word), current}];
-    } while (states.at(current).second);
+    do{ current = transition[{(*current)(word, stack), current}]; } while (states.at(current).second);
 }
 
 char FSM::getCurrent() const

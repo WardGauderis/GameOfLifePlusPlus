@@ -9,31 +9,37 @@
 #include <algorithm>
 #include "pda.h"
 
+const char PDA::epsilon = '~';
+
 PDA::PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphabet, const std::vector<const PDAState*>& states, const PDATransition& transition)
 : alphabet(alphabet), stackAlphabet(stackAlphabet), states(states), transition(transition)
 {
     start = *std::find_if(begin(states), end(states), [](const auto& state){ return state->starting; });
 }
 
-bool PDA::operator()(const std::string& word) const
+bool PDA::operator()(const std::string& word, std::stack<char>& stack) const
 {
-    stack = {};
     const PDAState* current = start;
     for(char c : word)
     {
         const auto next = transition[{c, current}];
         current = std::get<0>(next);
-        char push = std::get<1>(next);
-        char pop = std::get<2>(next);
+        const std::string& push = std::get<1>(next);
+        const std::string& pop = std::get<2>(next);
 
         // we first pop, then push, goes against convention but we don't care.
-        if(!stack.empty() and pop != stackAlphabet.back())
+        for(char character : pop)
         {
-            if(stack.top() == pop) stack.pop();
-            else return false;
+            if(!stack.empty() and character != epsilon)
+            {
+                if(stack.top() == character) stack.pop();
+                else return false;
+            }
         }
-
-        if(push != stackAlphabet.back()) stack.push(push);
+        for(char character : push)
+        {
+            if(character != epsilon) stack.push(character);
+        }
     }
     return stack.empty();
 }

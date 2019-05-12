@@ -27,7 +27,9 @@ public:
     DFA(const std::vector<char>& alphabet, const std::vector<const State*>& states, const DFATransition& transition);
     ~DFA() override;
 
-    bool operator()(const std::string& word) const override;
+    bool operator()(const std::string& word, std::stack<char>& stack) const override;
+    Automaton::Type getType() const override { return Automaton::Type::dfa; }
+
     void dot(const std::string& name) const;
 
     static DFA* SSC(const NFA* fa);

@@ -16,8 +16,9 @@
 #include "transitions.h"
 #include "automaton.h"
 #include "cell.h"
+#include <stack>
 
-class FSM: public Cell
+class FSM : public Cell
 {
 public:
     FSM(const Automaton* start);
@@ -32,6 +33,7 @@ private:
     static FSMTransition transition;
 
     mutable const Automaton* current;
+    mutable std::stack<char> stack;
 };
 
 

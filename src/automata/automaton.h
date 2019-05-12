@@ -11,10 +11,13 @@
 
 #include <string>
 #include <vector>
+#include <stack>
 
 struct Automaton
 {
+    enum Type{dfa, pda, tm, pa};
+
     virtual ~Automaton() = default;
-    virtual bool operator()(const std::string& word) const = 0;
-    static std::vector<char> alphabet; // moet eerst geïnitialiseerd worden, daarna pas aangepast
+    virtual bool operator()(const std::string& word, std::stack<char>& stack) const = 0;
+    virtual Type getType() const = 0;
 };

@@ -18,7 +18,7 @@ TM::TM(const std::vector<char>& alphabet, const std::vector<char>& tapeAlphabet,
         start = *std::find_if(begin(states), end(states), [](const auto& state){ return state->type == TMState::Type::start; });
     }
 
-bool TM::operator()(const std::string& word) const
+bool TM::operator()(const std::string& word, [[maybe_unused]] std::stack<char>& stack) const
 {
     uint32_t index = 0;
     const TMState* current = start;

@@ -20,7 +20,7 @@ PA::~PA()
     for(const State* state : states) delete state;
 }
 
-bool PA::operator()(const std::string& word) const
+bool PA::operator()(const std::string& word, [[maybe_unused]] std::stack<char>& stack) const
 {
     const State* current = start;
     for(char c : word)
