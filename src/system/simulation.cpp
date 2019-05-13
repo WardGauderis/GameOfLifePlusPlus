@@ -22,7 +22,7 @@ Simulation::Simulation()
         window.delay(50);
     }
 
-    if(!CAIO::generate("./input/thomas_test2/test.ini")) exit(69);
+    if(!CAIO::generate(window.getFilename())) exit(69);
     window.initCA(CA::getWidth(), CA::getHeight());
 
     window.createEditButtons();
