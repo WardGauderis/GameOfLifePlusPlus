@@ -20,12 +20,18 @@ using nlohmann::json;
 
 class Parser
 {
-public:
-    static const Automaton* parseAutomaton(const std::string& path, const std::map<std::string, char>& alphabet)
+private:
+    static auto openJson(const std::string& path)
     {
         std::ifstream file(path);
         if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
-        auto json = json::parse(file);
+        return json::parse(file);
+    }
+
+public:
+    static const Automaton* parseAutomaton(const std::string& path, const std::map<std::string, char>& alphabet)
+    {
+        auto json = openJson(path);
 
         std::string type = json["type"];
         if     (type == "dfa") return parseDFA(path, alphabet);
@@ -38,25 +44,23 @@ public:
 
     static const DFA* parseDFA(const std::string &path, const std::map<std::string, char> &alphabet)
     {
-        std::ifstream file(path);
-        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
-        auto json = json::parse(file);
+        auto json = openJson(path);
+        checkJsonParams<2>(json, std::array<std::string, 2>{"states", "transitions"}, "main file", path);
 
         const std::vector<const State*> states = parseStates(json["states"]);
-        DFATransition transition = parseDFATransitions(json["transitions"], json["states"], states, alphabet);
+        DFATransition transition = parseDFATransitions(json["transitions"], json["states"], states, alphabet, path);
         return new DFA{getCharacters(alphabet), states, transition};
     }
 
     static const NFA* parseNFA(const std::string &path, const std::map<std::string, char> &alphabet)
     {
-        std::ifstream file(path);
-        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
-        auto json = json::parse(file);
+        auto json = openJson(path);
+        checkJsonParams<2>(json, std::array<std::string, 2>{"states", "transitions"}, "main file", path);
 
         std::vector<const State*> states = parseStates(json["states"]);
         NFATransition transition;
-        if(json["type"] == "enfa"){ auto newAlphabet = alphabet; newAlphabet.emplace("~", '~');  transition = parseNFATransitions(json["transitions"], json["states"], states, newAlphabet); }
-        else transition = parseNFATransitions(json["transitions"], json["states"], states, alphabet);
+        if(json["type"] == "enfa"){ auto newAlphabet = alphabet; newAlphabet.emplace("~", '~');  transition = parseNFATransitions(json["transitions"], json["states"], states, newAlphabet, path); }
+        else transition = parseNFATransitions(json["transitions"], json["states"], states, alphabet, path);
 
         auto chars = getCharacters(alphabet);
         if(json["type"] == "enfa") chars.push_back('~');
@@ -65,51 +69,62 @@ public:
 
     static const PDA* parsePDA(const std::string& path, const std::map<std::string, char>& alphabet)
     {
-        std::ifstream file(path);
-        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
-        auto json = json::parse(file);
+        auto json = openJson(path);
+        checkJsonParams<2>(json, std::array<std::string, 2>{"states", "transitions"}, "main file", path);
 
-        std::vector<char> stackAlphabet     = parseAlphabet(json["stack_alphabet"], json["stack_eps"]);
+        std::vector<char> stackAlphabet     = parseAlphabet(json["stack_alphabet"], nullptr);
         std::vector<const PDAState*> states = parsePDAStates(json["states"]);
-        PDATransition transition            = parsePDATransitions(json["transitions"], json["states"], states, alphabet);
+        PDATransition transition            = parsePDATransitions(json["transitions"], json["states"], states, alphabet, path);
 
         return new PDA{getCharacters(alphabet), stackAlphabet, states, transition};
     }
+
     static const TM* parseTM(const std::string& path, const std::map<std::string, char>& alphabet)
     {
-        std::ifstream file(path);
-        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
-        auto json = json::parse(file);
+        auto json = openJson(path);
+        checkJsonParams<3>(json, std::array<std::string, 3>{"tape_alphabet", "states", "transitions"}, "main file", path);
 
         std::vector<char> tapeAlphabet  = parseAlphabet(json["tape_alphabet"], nullptr);
         std::vector<TMState*> states    = parseTMStates(json["states"]);
-        TMTransition transition         = parseTMTransitions(json["transitions"], json["states"], states, alphabet);
+        TMTransition transition         = parseTMTransitions(json["transitions"], json["states"], states, alphabet, path);
+
+        checkStartState(states, path);
 
         return new TM{getCharacters(alphabet), tapeAlphabet, states, transition};
     }
+
     static const PA* parsePA(const std::string& path, const std::map<std::string, char>& alphabet)
     {
-        std::ifstream file(path);
-        if(!file.is_open()) throw std::runtime_error("could not find specified file: " + path);
-        auto json = json::parse(file);
+        auto json = openJson(path);
+        checkJsonParams<2>(json, std::array<std::string, 2>{"states", "transitions"}, "main file", path);
 
         std::vector<const State*> states = parseStates(json["states"]);
-        PATransition transition          = parsePATransitions(json["transitions"], json["states"], states, alphabet);
+        PATransition transition          = parsePATransitions(json["transitions"], json["states"], states, alphabet, path);
         return new PA{getCharacters(alphabet), states, transition};
     }
 
 private:
-//    template<uint32_t N>
-//    static bool checkJsonParams(const json& json, const std::array<const std::string&, N>& list)
-//    {
-//        for( const auto& word : list)
-//        {
-//            auto iter = json.find(word);
-//            if( iter == end(json)) return false;
-//        }
-//        return true;
-//    }
-//    static bool checkConverter(const json& json, )
+    template<uint32_t N>
+    static void checkJsonParams(const json& json, const std::array<std::string, N>& list, const std::string& origin, const std::string& path)
+    {
+        for( const auto& word : list)
+        {
+            auto iter = json.find(word);
+            if( iter == end(json)) throw std::runtime_error("could not find parameter " + word + " in " + origin + " located in file " + path);
+        }
+    }
+
+    template<typename T>
+    static void checkStartState(const std::vector<T>& states, const std::string& path)
+    {
+        const auto iter = std::find_if(begin(states), end(states), [](const auto& state){ return state->start; });
+        if(iter == end(states)) throw std::runtime_error("could not find start state located in file " + path);
+    }
+    static void checkStartState(const std::vector<const TMState*>& states, const std::string& path)
+    {
+        const auto iter = std::find_if(begin(states), end(states), [](const auto& state){ return state->type == TMState::Type::start; });
+        if(iter == end(states)) throw std::runtime_error("could not find start state located in file " + path);
+    }
 
 
     static std::vector<char> getCharacters(const std::map<std::string, char>& alphabet)
@@ -133,8 +148,7 @@ private:
         states.resize(state_values.size());
         for(uint32_t i = 0; i < state_values.size(); i++)
         {
-            try{ states[i] = new State{state_values[i]["name"], state_values[i]["starting"], state_values[i]["accepting"], i}; }
-            catch(std::exception& e){ throw std::runtime_error("something went wrong parsing state " + std::to_string(i) + "\n"); }
+            states[i] = new State{state_values[i]["name"], state_values[i]["starting"], state_values[i]["accepting"], i};
         }
         return states;
     }
@@ -145,8 +159,7 @@ private:
         states.reserve(state_values.size());
         for(const auto& value : state_values)
         {
-            try{ states.push_back(new PDAState{value["name"], value["starting"]}); }
-            catch(std::exception& e){ throw std::runtime_error("something went wrong parsing a state\n"); }
+            states.push_back(new PDAState{value["name"], value["starting"]});
         }
         return states;
     }
@@ -169,7 +182,7 @@ private:
         return states;
     }
 
-    static DFATransition parseDFATransitions(const json &transition_values, const json &state_values,const std::vector<const State*> &states,const std::map<std::string, char> &alphabet)
+    static DFATransition parseDFATransitions(const json &transition_values, const json &state_values,const std::vector<const State*> &states,const std::map<std::string, char> &alphabet, const std::string& path)
     {
         DFATransition result(nullptr);
 
@@ -178,6 +191,7 @@ private:
 
         for(const auto& transition : transition_values)
         {
+            checkJsonParams<3>(transition, std::array<std::string, 3>{"from", "to", "input"}, "transitions" , path);
             const std::string& fromName = transition["from"];
             const std::string& toName = transition["to"];
             const std::string& inputName = transition["input"];
@@ -191,14 +205,14 @@ private:
             }
             catch(std::exception& e)
             {
-                throw std::runtime_error("something went from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters and check for accidental duplicates\n");
+                throw std::runtime_error("something went wrong from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters and check for accidental duplicates\n");
             }
 
         }
         return result;
     }
 
-    static NFATransition parseNFATransitions(const json &transition_values, const json &state_values,const std::vector<const State *> &states,const std::map<std::string, char> &alphabet)
+    static NFATransition parseNFATransitions(const json &transition_values, const json &state_values,const std::vector<const State *> &states,const std::map<std::string, char> &alphabet, const std::string& path)
     {
         NFATransition result;
 
@@ -207,6 +221,7 @@ private:
 
         for(const auto& transition : transition_values)
         {
+            checkJsonParams<3>(transition, std::array<std::string, 3>{"from", "to", "input"}, "transitions" , path);
             const std::string& fromName = transition["from"];
             const std::string& toName = transition["to"];
             const std::string& inputName = transition["input"];
@@ -219,13 +234,13 @@ private:
             }
             catch(std::exception& e)
             {
-                throw std::runtime_error("something went from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters\n");
+                throw std::runtime_error("something went wrong from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters\n");
             }
         }
         return result;
     }
 
-    static PDATransition parsePDATransitions(const json& transition_values, const json& state_values, const std::vector<const PDAState*>& states, const std::map<std::string, char>& alphabet)
+    static PDATransition parsePDATransitions(const json& transition_values, const json& state_values, const std::vector<const PDAState*>& states, const std::map<std::string, char>& alphabet, const std::string& path)
     {
         PDATransition result;
 
@@ -234,6 +249,7 @@ private:
 
         for(const auto& transition : transition_values)
         {
+            checkJsonParams<3>(transition, std::array<std::string, 3>{"from", "to", "input"}, "transitions" , path);
             const std::string& fromName = transition["from"];
             const std::string& toName = transition["to"];
             const std::string& inputName = transition["input"];
@@ -250,12 +266,12 @@ private:
             }
             catch(std::exception& e)
             {
-                throw std::runtime_error("something went from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters\n");
+                throw std::runtime_error("something went wrong from parsing the transition of state " + fromName + " to state " + toName + " please check all parameters\n");
             }
         }
         return result;
     }
-    static TMTransition parseTMTransitions(const json& transition_values, const json& state_values, const std::vector<TMState*>& states, const std::map<std::string, char>& alphabet)
+    static TMTransition parseTMTransitions(const json& transition_values, const json& state_values, const std::vector<TMState*>& states, const std::map<std::string, char>& alphabet, const std::string& path)
     {
         TMTransition result;
 
@@ -264,6 +280,7 @@ private:
 
         for(const auto& transition : transition_values)
         {
+            checkJsonParams<3>(transition, std::array<std::string, 3>{"from", "to", "input"}, "transitions" , path);
             TMState const* from = states[converter[transition["from"]]];
             TMState const* to   = states[converter[transition["to"  ]]];
             char input = alphabet.at(transition["input"]);
@@ -274,7 +291,7 @@ private:
         return result;
     }
 
-    static PATransition parsePATransitions(const json& transition_values, const json& state_values, const std::vector<const State*>& states, const std::map<std::string, char>& alphabet)
+    static PATransition parsePATransitions(const json& transition_values, const json& state_values, const std::vector<const State*>& states, const std::map<std::string, char>& alphabet, const std::string& path)
     {
         PATransition result;
 
@@ -283,9 +300,10 @@ private:
 
         for(const auto& transition : transition_values)
         {
-            char input = alphabet.at(transition["input"]);
+            checkJsonParams<3>(transition, std::array<std::string, 3>{"from", "to", "input"}, "transitions" , path);
             State const* from  = states[converter[transition["from"]]];
             State const* to    = states[converter[transition["to"  ]]];
+            char input = alphabet.at(transition["input"]);
             double probability = 1;
             if(transition.find("probability") != end(transition)) probability = transition["probability"];
             result[{input, from}].emplace_back(probability, to);

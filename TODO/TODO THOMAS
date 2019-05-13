@@ -1,5 +1,0 @@
-- exception wanneer startstate vergeten
-- something went from parsing the transition of state on to state on please check all parameters and check for accidental duplicates
-                ^                                    ^  ^        ^  ^
-              wrong                                  "  "        "  "
-              Misschien toch erbij zeggen 'on input of state "..."' of in welk bestand exact?

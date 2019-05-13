@@ -63,8 +63,8 @@ std::vector<std::string> CAIO::byCharacter(const std::string &str, const char &c
     std::stringstream s(str);
     std::string segment;
     std::vector<std::string> seglist;
-    while (std::getline(s, segment, ',')) {
-        segment.erase(remove_if(segment.begin(), segment.end(), [&ch](const char &a) { return a == ' ' || a == ch; }),
+    while (std::getline(s, segment, ch)) {
+        segment.erase(remove_if(segment.begin(), segment.end(), [](const char &a) { return a == ' ' || a == '\t'; }),
                       segment.end());
         seglist.push_back(segment);
     }
@@ -137,8 +137,14 @@ std::vector<std::pair<int, int>> CAIO::parseCoordinates(const std::string &input
         it.erase(remove_if(it.begin(), it.end(), [](const char &a) { return a == '(' || a == ')'; }),
                  it.end());
     }
-    for (auto it = seglist.begin(); it < seglist.end(); it = it + 2) {
-        neighbours.emplace_back(std::stoi(*(it)), -std::stoi(*(it + 1)));
+    if (seglist.size() % 2 != 0)
+        throw std::runtime_error("inputs are not correctly formatted: '(x1, y1), (x2, y2), ...'");
+    try {
+        for (auto it = seglist.begin(); it < seglist.end(); it = it + 2) {
+            neighbours.emplace_back(std::stoi(*(it)), -std::stoi(*(it + 1)));
+        }
+    } catch (const std::exception &exception) {
+        throw std::runtime_error("inputs are not correctly formatted: '(x1, y1), (x2, y2), ...'");
     }
     return neighbours;
 }
