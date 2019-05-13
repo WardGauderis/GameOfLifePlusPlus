@@ -1,10 +1,10 @@
 //============================================================================
-// @name        :
+// @name        : 
 // @author      : Mano Marichal
-// @date        :
-// @version     :
+// @date        : 
+// @version     : 
 // @copyright   : BA1 Informatica - Mano Marichal - University of Antwerp
-// @description :
+// @description : 
 //============================================================================
 
 #include <QtCore/QTime>
@@ -83,7 +83,7 @@ void Window::init(uint32_t _xCells, uint32_t _yCells, const std::vector<Color> &
     xCells = _xCells;
     yCells = _yCells;
 
-
+    
     layout->addWidget(raster, 0, 0, 1, 10);
 
     raster->cells = std::vector<Color>(xCells*yCells, Color(0, 0 ,0));
@@ -268,7 +268,7 @@ double Window::askDouble(double min, double max, double step, double example)
 {
     bool ok;
     double val = QInputDialog::getDouble(this, tr(""),
-                                         tr("New value:"), example, min, max, step, &ok);
+                                       tr("New value:"), example, min, max, step, &ok);
     if (ok)
     {
         return val;
