@@ -25,13 +25,13 @@ bool PA::operator()(const std::string& word, [[maybe_unused]] std::stack<char>& 
     const State* current = start;
     for(char c : word)
     {
-        double random = drand48();
+        double value = random(generator);
         const auto next = transition[{c, current}];
 
         for(const auto& pair : next)
         {
-            random -= pair.first;
-            if(random < 0)
+            value -= pair.first;
+            if(value < 0)
             {
                 current = pair.second;
                 break;

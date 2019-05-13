@@ -16,6 +16,7 @@
 #include "transitions.h"
 #include <vector>
 #include <map>
+#include <random>
 
 class PA : public Automaton
 {
@@ -31,6 +32,9 @@ private:
     std::vector<const State*> states;
     const State* start;
     PATransition transition;
+
+    mutable std::default_random_engine generator;
+    mutable std::uniform_real_distribution<double> random;
 };
 
 
