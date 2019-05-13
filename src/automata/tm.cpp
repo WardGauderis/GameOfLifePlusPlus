@@ -11,6 +11,7 @@
 #include <tuple>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 TM::TM(const std::vector<char>& alphabet, const std::vector<char>& tapeAlphabet, const std::vector<TMState*>& states, const TMTransition& transition) :
     alphabet(alphabet), tapeAlphabet(tapeAlphabet), states(states), transition(transition)
@@ -48,4 +49,23 @@ bool TM::operator()(const std::string& word, [[maybe_unused]] std::stack<char>& 
         else if(std::get<1>(next) == 'R') index++;
         if(index > tape.size()) tape.reserve(2 * tape.size());
     }
+}
+
+void TM::dot(const std::string& path) const
+{
+    std::ofstream file(path + ".dot");
+
+    file << "digraph G {\n";
+    file << "NULL -> " << start->name << ";\n";
+    file << "NULL [style=invis];\n";
+
+    for(const TMState* state: states)
+        for(const char c : alphabet)
+        {
+            const auto next = transition[{c, state}];
+            file << state->name << " -> " << std::get<0>(next)->name << "[label=\"" << c << " " << std::get<1>(next) << " / " << std::get<2>(next) << "\"];\n";
+        }
+
+    file << "}" << std::endl; // Flushing is very important.
+    [[maybe_unused]] int res = system(("dot -Tpng " + path + ".dot -o " + path + ".png").c_str());
 }

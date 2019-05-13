@@ -32,14 +32,17 @@ public:
     static const Automaton* parseAutomaton(const std::string& path, const std::map<std::string, char>& alphabet)
     {
         auto json = openJson(path);
+        const Automaton* result;
 
         std::string type = json["type"];
-        if     (type == "dfa") return parseDFA(path, alphabet);
-        else if(type == "nfa" or type == "enfa") return DFA::SSC( parseNFA(path, alphabet));
-        else if(type == "pda") return parsePDA(path, alphabet);
-        else if(type == "tm" ) return parseTM(path, alphabet);
-        else if(type == "pa") return parsePA(path, alphabet);
+        if     (type == "dfa") result = parseDFA(path, alphabet);
+        else if(type == "nfa" or type == "enfa") result = DFA::SSC(parseNFA(path, alphabet));
+        else if(type == "pda") result = parsePDA(path, alphabet);
+        else if(type == "tm" ) result = parseTM(path, alphabet);
+        else if(type == "pa") result = parsePA(path, alphabet);
         else throw std::runtime_error("unknown automaton type");
+        result->dot(path);
+        return result;
     }
 
     static const DFA* parseDFA(const std::string &path, const std::map<std::string, char> &alphabet)

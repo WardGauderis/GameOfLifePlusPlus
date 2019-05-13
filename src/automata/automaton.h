@@ -18,6 +18,8 @@ struct Automaton
     enum Type{dfa, pda, tm, pa};
 
     virtual ~Automaton() = default;
+
     virtual bool operator()(const std::string& word, std::stack<char>& stack) const = 0;
     virtual Type getType() const = 0;
+    virtual void dot(const std::string& path) const = 0;
 };

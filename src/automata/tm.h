@@ -23,6 +23,7 @@ public:
     TM(const std::vector<char>& alphabet, const std::vector<char>& tapeAlphabet, const std::vector<TMState*>& states, const TMTransition& transition);
     bool operator()(const std::string& word, std::stack<char>& stack) const override;
     Automaton::Type getType() const override { return Automaton::Type::tm; }
+    void dot(const std::string &path) const override;
 
 private:
     std::vector<char> alphabet;

@@ -25,6 +25,7 @@ public:
     PDA(const std::vector<char>& alphabet, const std::vector<char>& stackAlphabet, const std::vector<const PDAState*>& states, const PDATransition& transition);
     bool operator()(const std::string& word, std::stack<char>& stack) const override;
     Automaton::Type getType() const override { return Automaton::Type::pda; }
+    void dot(const std::string& path) const override;
 
 private:
     std::vector<char> alphabet;

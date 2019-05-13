@@ -7,6 +7,7 @@
 // @description :
 //============================================================================
 #include <algorithm>
+#include <fstream>
 #include "pda.h"
 
 const char PDA::epsilon = '~';
@@ -42,5 +43,24 @@ bool PDA::operator()(const std::string& word, std::stack<char>& stack) const
         }
     }
     return stack.empty();
+}
+
+void PDA::dot(const std::string& path) const
+{
+    std::ofstream file(path + ".dot");
+
+    file << "digraph G {\n";
+    file << "NULL -> " << start->name << ";\n";
+    file << "NULL [style=invis];\n";
+
+    for(const PDAState* state: states)
+        for(const char c : alphabet)
+        {
+            const auto next = transition[{c, state}];
+            file << state->name << " -> " << std::get<0>(next)->name << "[label=\"" << c << " " << std::get<1>(next) << " / " << std::get<2>(next) << "\"];\n";
+        }
+
+    file << "}" << std::endl; // Flushing is very important.
+    [[maybe_unused]] int res = system(("dot -Tpng " + path + ".dot -o " + path + ".png").c_str());
 }
 

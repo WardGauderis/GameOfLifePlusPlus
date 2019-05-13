@@ -8,6 +8,7 @@
 //============================================================================
 
 #include <algorithm>
+#include <fstream>
 #include "pa.h"
 
 PA::PA(const std::vector<char>& alphabet, const std::vector<const State*>& states, const PATransition& transition) : alphabet(alphabet), states(states), transition(transition)
@@ -39,4 +40,29 @@ bool PA::operator()(const std::string& word, [[maybe_unused]] std::stack<char>& 
         }
     }
     return current->accepting;
+}
+
+void PA::dot(const std::string& path) const
+{
+    std::ofstream file(path + ".dot");
+
+    file << "digraph G {\n";
+    file << "NULL -> " << start->name << ";\n";
+    file << "NULL [style=invis];\n";
+
+    for(const State* state: states)
+    {
+        for(const char c : alphabet)
+        {
+            const auto transitions = transition[{c, state}];
+            for(const auto next : transitions) file << state->name << " -> " << next.second->name << "[label=\"" << c << ", " << next.first << "\"];\n";
+        }
+    }
+    for(const State* state : states)
+    {
+        if(state->accepting) file << state->name << "[peripheries=2];\n";
+    }
+
+    file << "}" << std::endl; // Flushing is very important.
+    [[maybe_unused]] int res = system(("dot -Tpng " + path + ".dot -o " + path + ".png").c_str());
 }

@@ -30,7 +30,7 @@ bool DFA::operator()(const std::string& word, [[maybe_unused]] std::stack<char>&
 
 void DFA::dot(const std::string& path) const
 {
-    std::ofstream file(path);
+    std::ofstream file(path + ".dot");
 
     file << "digraph G {\n";
     file << "NULL -> " << start->name << ";\n";
@@ -49,8 +49,7 @@ void DFA::dot(const std::string& path) const
     }
 
     file << "}" << std::endl; // Flushing is very important.
-    std::string pngPath = path.substr(0, path.size() - 3) + "png";
-    [[maybe_unused]] int res = system(("dot -Tpng " + path + " -o " + pngPath).c_str());
+    [[maybe_unused]] int res = system(("dot -Tpng " + path + " -o " + path + ".png").c_str());
 }
 
 DFA* DFA::SSC(const NFA* fa)

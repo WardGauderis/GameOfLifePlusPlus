@@ -30,7 +30,7 @@ public:
     bool operator()(const std::string& word, std::stack<char>& stack) const override;
     Automaton::Type getType() const override { return Automaton::Type::dfa; }
 
-    void dot(const std::string& name) const;
+    void dot(const std::string& name) const override;
 
     static DFA* SSC(const NFA* fa);
 

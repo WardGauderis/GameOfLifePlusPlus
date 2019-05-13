@@ -26,6 +26,7 @@ public:
 
     bool operator()(const std::string& word, std::stack<char>& stack) const override;
     Automaton::Type getType() const override { return Automaton::Type::pa; }
+    void dot(const std::string& path) const override;
 
 private:
     std::vector<char> alphabet;
