@@ -67,7 +67,11 @@ bool Simulation::simulate()
                 window.repaint();
                 window.delay(10);
                 break;
-
+            case Window::playback:
+                if(iteration > 0) draw(--iteration);
+                window.repaint();
+                window.delay(getDelay(window.getSliderValue()));
+                break;
             case Window::quit:
                 exit(0);
 

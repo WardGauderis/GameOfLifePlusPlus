@@ -198,7 +198,7 @@ void Window::showPlayButton()
     QPushButton* goBackOne = new QPushButton("Previous tick", this);
 
     playBtn->show();
-    pauseBtn->hide();
+    pauseBtn->show();
     skipOne->show();
     goBackOne->show();
 
@@ -207,9 +207,9 @@ void Window::showPlayButton()
     skipOne->setFixedHeight(size);
     goBackOne->setFixedHeight(size);
 
-    layout-> addWidget(playBtn, 1, 4 ,1, 1);
-    layout-> addWidget(pauseBtn, 1, 4 ,1, 1);
-    layout-> addWidget(skipOne, 1, 5 ,1, 1);
+    layout-> addWidget(playBtn, 1, 6 ,1, 1);
+    layout-> addWidget(pauseBtn, 1, 5 ,1, 1);
+    layout-> addWidget(skipOne, 1, 7 ,1, 1);
     layout-> addWidget(goBackOne, 1, 3 ,1, 1);
 
 
@@ -218,6 +218,12 @@ void Window::showPlayButton()
     connect(skipOne, SIGNAL(pressed()), this, SLOT(onNext()));
     connect(goBackOne, SIGNAL(pressed()), this, SLOT(onPrevious()));
 
+
+    playBackBtn = new QPushButton("Play Back", this);
+    playBackBtn->setFixedHeight(size);
+    playBackBtn->show();
+    layout-> addWidget(playBackBtn, 1, 4 ,1, 1);
+    connect(playBackBtn, SIGNAL(pressed()), this, SLOT(onPlayBack()));
 
     // slider
     fancySlider = new QSlider(Qt::Orientation::Horizontal, this);
@@ -231,30 +237,27 @@ void Window::showPlayButton()
 
 void Window::onPlay()
 {
-    playBtn->hide();
-    pauseBtn->show();
     crState = play;
 }
 
 void Window::onPause()
 {
-    playBtn->show();
-    pauseBtn->hide();
     crState = pause;
 }
 
 void Window::onNext()
 {
-    playBtn->show();
-    pauseBtn->hide();
     crState = next;
 }
 
 void Window::onPrevious()
 {
-    playBtn->show();
-    pauseBtn->hide();
     crState = previous;
+}
+
+void Window::onPlayBack()
+{
+    crState = playback;
 }
 
 Window::state Window::getState()

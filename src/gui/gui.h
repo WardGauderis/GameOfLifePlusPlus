@@ -64,7 +64,7 @@ class Window: public QMainWindow
 Q_OBJECT
 
 public:
-    enum state {play, pause, next, previous, quit};
+    enum state {play, pause, next, previous, quit, playback};
 
     explicit Window(QWidget* parent = nullptr);
     ~Window() override;
@@ -118,8 +118,11 @@ private:
     QWidget *root = new QWidget(this);
     QGridLayout *layout = new QGridLayout;
     UIGrid *raster = new UIGrid(root);
+
     QPushButton* playBtn;
     QPushButton* pauseBtn;
+    QPushButton* pauseBtn2;
+    QPushButton* playBackBtn;
 
     std::vector<QWidget*> widgetsToDelete;
     std::vector<QWidget*> iniWidgets;
@@ -140,6 +143,7 @@ private slots:
     void onLoadIniFile();
     void onStartSimulation();
     void onLoadLayout();
+    void onPlayBack();
 };
 
 
