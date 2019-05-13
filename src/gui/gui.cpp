@@ -19,6 +19,7 @@ UIGrid::UIGrid(QWidget *parent) : QWidget(parent)
 
 void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
+    if (!initialized) return;
     double celWidth  = double(this->size().width() ) / double(xCells);
     double celHeight = double(this->size().height()) / double(yCells);
 
@@ -86,6 +87,7 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells)
 
     raster->setXCells(xCells);
     raster->setYCells(yCells);
+    raster->initialized = true;
 }
 
 void Window::processEverything()

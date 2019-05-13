@@ -25,8 +25,8 @@ Simulation::Simulation()
     if(!CAIO::generate("./input/thomas_test2/test.ini")) exit(69);
     window.initCA(CA::getWidth(), CA::getHeight());
 
-    //window.createEditButtons();
-    window.setInitialized(true);
+    window.createEditButtons();
+    window.setInitialized(false);
     while(!window.isInitialized())
     {
         window.delay(500);

@@ -49,6 +49,8 @@ public:
 
     bool& getRepaint();
 
+    bool initialized;
+
 private:
     uint32_t xCells;
     uint32_t yCells;
