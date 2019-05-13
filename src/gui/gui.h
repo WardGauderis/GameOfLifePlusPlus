@@ -23,6 +23,7 @@
 #include <QSpacerItem>
 #include <QSlider>
 #include <QMessageBox>
+#include <QLabel>
 
 
 #include <random>
@@ -66,7 +67,7 @@ public:
     explicit Window(QWidget* parent = nullptr);
     ~Window() override;
 
-    void init(uint32_t _xCells, uint32_t _yCells, const std::vector<Color> &colors);
+    void initCA(uint32_t _xCells, uint32_t _yCells);
 
     const Color& getColor(uint32_t x, uint32_t y) const;
     void setColor(uint32_t x, uint32_t y, const Color& color);
@@ -85,11 +86,27 @@ public:
     std::string askString(std::string example);
     double askDouble(double min, double max, double step, double example);
 
+    bool isInitialized() const;
+
+    const std::string &getFilename() const;
+
+    void createIniButtons();
+    void createEditButtons();
+
+    void setInitialized(bool initialized);
+
+    const std::string &getLayoutFilename() const;
+
 protected:
 
 private:
 
-    void createButtons();
+    const int size = 35;
+
+    bool initialized = false;
+
+    std::string filename;
+    std::string layoutFilename;
 
     uint32_t xCells;
     uint32_t yCells;
@@ -103,6 +120,8 @@ private:
     QPushButton* pauseBtn;
 
     std::vector<QWidget*> widgetsToDelete;
+    std::vector<QWidget*> iniWidgets;
+    std::vector<QWidget*> editWidgets;
 
     int sliderValue = 1;
     QSlider* fancySlider;
@@ -117,7 +136,8 @@ private slots:
     void onPrevious();
     void setSliderValue(int val);
     void onLoadIniFile();
-
+    void onStartSimulation();
+    void onLoadLayout();
 };
 
 
