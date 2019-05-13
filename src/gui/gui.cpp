@@ -106,7 +106,6 @@ void Window::delay(uint32_t ms)
     while (QTime::currentTime() < stopTime)
     {
         processEverything();
-        system("sleep 0.01");
     }
 }
 
@@ -142,6 +141,7 @@ void Window::createIniButtons()
     this->setWindowTitle("GameOfLife++");
     this->setCentralWidget(root);
     root->setLayout(layout);
+    root->show();
 
     QLabel* hallo = new QLabel(this);
     hallo->setText("Welcome To GameOfLife++");

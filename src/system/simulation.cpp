@@ -13,18 +13,20 @@
 
 Simulation::Simulation()
 {
-    window.show();
     window.createIniButtons();
+    window.show();
+
+
     while(!window.isInitialized())
     {
         window.delay(50);
     }
 
-    if(!CAIO::generate(window.getFilename())) exit(69);
+    if(!CAIO::generate("./input/thomas_test2/test.ini")) exit(69);
     window.initCA(CA::getWidth(), CA::getHeight());
 
-    window.createEditButtons();
-    window.setInitialized(false);
+    //window.createEditButtons();
+    window.setInitialized(true);
     while(!window.isInitialized())
     {
         window.delay(500);
