@@ -13,11 +13,22 @@
 
 Simulation::Simulation()
 {
-    if(!CAIO::generate("./input/GameOfLife/GameOfLife.ini")) exit(69);
-
-    std::vector<Color> temp = {Color(0, 0, 1)};
-    window.init(CA::getWidth(), CA::getHeight(), temp);
     window.show();
+    window.createIniButtons();
+    while(!window.isInitialized())
+    {
+        window.delay(50);
+    }
+
+    if(!CAIO::generate(window.getFilename())) exit(69);
+    window.initCA(CA::getWidth(), CA::getHeight());
+
+    window.createEditButtons();
+    window.setInitialized(false);
+    while(!window.isInitialized())
+    {
+        window.delay(500);
+    }
 }
 
 bool Simulation::simulate()
