@@ -1,0 +1,23 @@
+states
+    (alive) #ffffff
+    (dead) black
+    (zombie) random
+
+alive
+    (0 == dead) dead
+    (dead == 4) zombie
+    (alive == 1 && zombie == 3) alive
+    (default) alive
+
+dead
+    (5 == zombie || 4 == zombie) dead
+    ([1-5]& == alive) alive
+    ([1-5]| == dead) zombie
+    (zombie == [5-7]) alive
+
+zombie
+    ([-5]| == dead) zombie
+    ([5-]& == dead) zombie
+    (!5 == dead) alive
+    (!(dead == 5)) alive
+    (!(alive == [3-5] || !([-5] == dead))) zombie;

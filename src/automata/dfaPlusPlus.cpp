@@ -19,6 +19,8 @@ std::vector<StatePlusPlus *> DFAPlusPlus::states = {};
 
 DFAPlusPlusTransition DFAPlusPlus::transition = DFAPlusPlusTransition();
 
+StatePlusPlus *DFAPlusPlus::start = nullptr;
+
 DFAPlusPlus::DFAPlusPlus(const StatePlusPlus *current) : current(current) {}
 
 void DFAPlusPlus::operator()(const std::string &word) const {
@@ -27,7 +29,9 @@ void DFAPlusPlus::operator()(const std::string &word) const {
 
 // was eerst const string& return current->type
 char DFAPlusPlus::getCurrent() const {
-    return current->type;
+    char type = current->type;
+    current = start;
+    return type;
 }
 
 void DFAPlusPlus::TFAPlusPlus() {
@@ -86,6 +90,7 @@ void DFAPlusPlus::TFAPlusPlus() {
     std::vector<StatePlusPlus *> minStates;
     upgradeToMin(minTransition, minStates, minStatesmap, minCurrent);
     current = minStatesmap[minCurrent];
+    start = minStatesmap[minCurrent];
     transition = minTransition;
     for (const auto &state: states) delete state;
     states = minStates;
@@ -184,7 +189,10 @@ DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
         StatePlusPlus *newState = new StatePlusPlus(name, type);
         states.emplace_back(newState);
         dict[name] = newState;
-        if (state["starting"]) current = newState;
+        if (state["starting"]) {
+            start = newState;
+            current = newState;
+        }
     }
 
     transition = DFAPlusPlusTransition();

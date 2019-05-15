@@ -12,6 +12,7 @@
 #include "caio.h"
 #include "../automata/transitions.h"
 #include "parser.h"
+#include "lawParser.h"
 
 bool CAIO::generate(const std::string &fileName) {
     try {
@@ -267,7 +268,12 @@ bool CAIO::automatic(const ini::Configuration &conf) {
 
     const std::string laws = conf["General"]["layout"].as_string_or_default("");
 
-//    CA::init(width, height, neighbours, stateData, trans);
-//    CA::setStart(layout);
+    LawParser parser;
+    bool success = parser.parseLaws(laws);
+    if (success) {
+//        CA::init(width, height, neighbours, stateData, trans);
+//        CA::setStart(layout);
+    }
+    return success;
 }
 

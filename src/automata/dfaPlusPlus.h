@@ -23,6 +23,8 @@ public:
 
     static DFAPlusPlusTransition transition;
 
+    static StatePlusPlus *start;
+
     void operator()(const std::string &word) const override;
 
     char getCurrent() const override;
@@ -39,8 +41,8 @@ private:
     mutable const StatePlusPlus *current;
 
     static StatePlusPlus *upgradeToMin(DFAPlusPlusTransition &minTransition, std::vector<StatePlusPlus *> &minStates,
-                                std::map<std::set<const StatePlusPlus *>, StatePlusPlus *> &minStatesMap,
-                                const std::set<const StatePlusPlus *> &minState);
+                                       std::map<std::set<const StatePlusPlus *>, StatePlusPlus *> &minStatesMap,
+                                       const std::set<const StatePlusPlus *> &minState);
 
 };
 
