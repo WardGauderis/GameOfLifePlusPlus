@@ -6,22 +6,14 @@
 // @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
 // @description : 
 //============================================================================
-//#include <QApplication>
-//#include "system/simulation.h"
-//
-//int main(int argc, char *argv[]) {
-//    QApplication application(argc, argv);
-//    Simulation simulation;
-//
-//    simulation.simulate();
-//
-//    return QApplication::exec();
-//}
+#include <QApplication>
+#include "system/simulation.h"
 
-#include "input-output/lawParser.h"
+int main(int argc, char *argv[]) {
+    QApplication application(argc, argv);
+    Simulation simulation;
 
-int main(int argc, char *argv[]){
-    LawParser parser;
-    parser.parseLaws("input/official_examples/laws_example.law");
-    return 0;
+    simulation.simulate();
+
+    return QApplication::exec();
 }

@@ -25,10 +25,11 @@ class LawParser {
 
     Section getSection(const std::string &name);
 
+    static std::pair<std::string, std::string> splitBrackets(const std::string &line);
+
 public:
     bool parseLaws(const std::string &fileName);
 
-    std::string getInBrackets(const std::string &line);
 };
 
 

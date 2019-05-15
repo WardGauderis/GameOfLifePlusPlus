@@ -28,7 +28,9 @@ bool LawParser::parseLaws(const std::string &fileName) {
 void LawParser::parseStates() {
     Section states = getSection("states");
     for (const auto &rule: states) {
-        std::string name = getInBrackets(rule);
+        std::pair<std::string, std::string> pair = splitBrackets(rule);
+        auto name = pair.first;
+        auto color = pair.second;
     }
 }
 
@@ -63,6 +65,28 @@ Section LawParser::getSection(const std::string &name) {
     }
 }
 
-std::string LawParser::getInBrackets(const std::string &line) {
-    std::stack<char> stack;
+std::pair<std::string, std::string> LawParser::splitBrackets(const std::string &line) {
+    std::stack<int> indices;
+    std::pair<std::string, std::string> inside;
+    bool empty = true;
+    for (unsigned int i = 0; i < line.size(); ++i) {
+        char c = line[i];
+        if (c == '(') {
+            indices.push(i);
+        } else if (c == ')') {
+            try {
+                if (indices.size() == 1 && empty) {
+                    inside.first = line.substr(indices.top() + 1, i - indices.top() - 1);
+                    inside.second = line.substr(i + 1);
+                    empty = false;
+                }
+                indices.pop();
+            }
+            catch (const std::exception &ex) {
+                throw std::runtime_error("Amount of brackets is incorrect on line: " + line);
+            }
+        }
+    }
+    if (!indices.empty())throw std::runtime_error("Amount of brackets is incorrect on line: " + line);
+    return inside;
 }
