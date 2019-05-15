@@ -28,6 +28,8 @@ private:
 
     static void manual(const ini::Configuration &conf);
 
+    static bool automatic(const ini::Configuration &conf);
+
     static std::vector<std::string> byCharacter(const std::string &str, const char &ch);
 
     static Color readColor(std::string str);

@@ -26,7 +26,7 @@ bool CAIO::generate(const std::string &fileName) {
         std::string mode = conf["General"]["mode"].as_string_or_die();
         std::transform(mode.begin(), mode.end(), mode.begin(), tolower);
         if (mode == "manual") manual(conf);
-        else if (mode == "automatic")std::cerr << "Coming soon!!!\n";
+        else if (mode == "automatic") return automatic(conf);
         else throw std::runtime_error("Mode not recognised");
         return true;
     }
@@ -248,5 +248,26 @@ bool CAIO::exportCA(const std::vector<char> &CA, const int width, const int heig
         std::cerr << "Error exporting to file " << fileName << ": " << ex.what() << std::endl;
         return false;
     }
+}
+
+bool CAIO::automatic(const ini::Configuration &conf) {
+    //GENERAL
+    srand((int) time(nullptr));
+    const int width = conf["General"]["width"].as_int_or_default(20);
+    const int height = conf["General"]["height"].as_int_or_default(20);
+
+    const std::string file = conf["General"]["layout"].as_string_or_default("");
+    const int amount = conf["States"]["amount"].as_int_or_die();
+    if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
+    const auto layout = parseLayout(file, width, height, amount);
+
+    const std::string inputs = conf["General"]["inputs"].as_string_or_default(
+            "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)");
+    const auto neighbours = parseCoordinates(inputs);
+
+    const std::string laws = conf["General"]["layout"].as_string_or_default("");
+
+//    CA::init(width, height, neighbours, stateData, trans);
+//    CA::setStart(layout);
 }
 
