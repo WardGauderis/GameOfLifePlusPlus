@@ -33,7 +33,7 @@ public:
 
     DFAPlusPlus(const StatePlusPlus *current);
 
-    void print(const std::string &fileName) const;
+    static void print(const std::string &fileName);
 
     DFAPlusPlus(const std::string &fileName);
 

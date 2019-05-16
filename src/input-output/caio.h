@@ -32,8 +32,6 @@ private:
 
     static std::vector<std::string> byCharacter(const std::string &str, const char &ch);
 
-    static Color readColor(std::string str);
-
     static std::vector<char>
     parseLayout(const std::string &fileName, const int width, const int height, const int amount);
 

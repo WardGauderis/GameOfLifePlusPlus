@@ -24,7 +24,7 @@ StatePlusPlus *DFAPlusPlus::start = nullptr;
 DFAPlusPlus::DFAPlusPlus(const StatePlusPlus *current) : current(current) {}
 
 void DFAPlusPlus::operator()(const std::string &word) const {
-    for (const auto &c: word) current = transition(c, current);
+    for (const auto &c: word) current = transition[{c, current}];
 }
 
 // was eerst const string& return current->type
@@ -54,8 +54,8 @@ void DFAPlusPlus::TFAPlusPlus() {
             for (const auto &pair: pairs.second) {
                 if (!pair.second) {
                     for (const auto &c: alphabet) {
-                        const StatePlusPlus *aNext = transition(c, pair.first);
-                        const StatePlusPlus *bNext = transition(c, pairs.first);
+                        const StatePlusPlus *aNext = transition[{c, pair.first}];
+                        const StatePlusPlus *bNext = transition[{c, pairs.first}];
                         if (aNext != bNext &&
                             table[std::min(aNext, bNext, compare)][std::max(aNext, bNext, compare)]) {
                             table[pairs.first][pair.first] = true;
@@ -82,7 +82,7 @@ void DFAPlusPlus::TFAPlusPlus() {
             }
         }
         minStatesmap[minState] = nullptr;
-        if (state == current) {
+        if (state == start) {
             minCurrent = minState;
         }
     }
@@ -108,13 +108,13 @@ StatePlusPlus *DFAPlusPlus::upgradeToMin(DFAPlusPlusTransition &minTransition, s
     minStates.push_back(temp);
 
     for (const auto &c: alphabet) {
-        const StatePlusPlus *next = transition(c, (*minState.begin()));
+        const StatePlusPlus *next = transition[{c, (*minState.begin())}];
         for (auto &minStatePair: minStatesMap) {
             if (minStatePair.first.find(next) != minStatePair.first.end()) {   //minState met next gevonden
                 if (!minStatePair.second) { //  state nog niet aangemaakt
                     minStatePair.second = upgradeToMin(minTransition, minStates, minStatesMap, minStatePair.first);
                 }
-                minTransition.getMap()[{temp, c}] = minStatePair.second;
+                minTransition[{c, temp}] = minStatePair.second;
                 break;
             }
         }
@@ -122,7 +122,7 @@ StatePlusPlus *DFAPlusPlus::upgradeToMin(DFAPlusPlusTransition &minTransition, s
     return minStatesMap[minState];
 }
 
-void DFAPlusPlus::print(const std::string &fileName) const {
+void DFAPlusPlus::print(const std::string &fileName) {
     std::ofstream wFile(fileName + ".dot");
     if (!wFile.is_open()) {
         std::cerr << "Error opening file " + fileName + ".dot\n";
@@ -135,7 +135,7 @@ void DFAPlusPlus::print(const std::string &fileName) const {
              "\tedge [fontname = \"roboto\"]\n"
              "\tnode [ shape = circle ];\n"
              "\tstart [ style = invis, label = \"\" ];\n"
-             "\tstart -> \"" + current->name + "\";\n";
+             "\tstart -> \"" + start->name + "\";\n";
 
     for (const auto &state: states) {
         wFile << "\t\"" + state->name + "\" [ label = <" + std::string(1, state->type) +
@@ -143,7 +143,7 @@ void DFAPlusPlus::print(const std::string &fileName) const {
                  "</FONT>> ];\n";
         std::map<std::string, std::vector<char >> arrows;
         for (const auto &symbol: alphabet) {
-            auto next = transition(symbol, state);
+            auto next = transition[{symbol, state}];
             arrows[next->name].push_back(symbol);
         }
         for (const auto &arrow: arrows) {
@@ -200,7 +200,7 @@ DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
         StatePlusPlus *from = dict[trans["from"]];
         StatePlusPlus *to = dict[trans["to"]];
         char input = std::string(trans["input"])[0];
-        transition(input, from) = to;
+        transition[{input, from}] = to;
     }
     rFile.close();
 }
