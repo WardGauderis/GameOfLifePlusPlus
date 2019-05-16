@@ -13,6 +13,7 @@
 #include <vector>
 #include "../gui/color.h"
 #include "../automata/states.h"
+#include "../automata/dfaPlusPlus.h"
 
 struct Section : public std::vector<std::string> {
 
@@ -21,7 +22,7 @@ struct Section : public std::vector<std::string> {
 class LawParser {
     std::map<std::string, Section> sections;
 
-    std::vector<std::tuple<std::string, char, Color>> states;
+    StateMap states;
 
     void parseStates();
 

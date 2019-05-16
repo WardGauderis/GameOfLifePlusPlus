@@ -15,6 +15,11 @@
 #include <vector>
 #include <set>
 
+struct StateMap : public std::vector<std::tuple<std::string, char, Color>>{
+    Color color(char c) const;
+};
+
+
 class DFAPlusPlus : public Cell {
 public:
     static std::vector<char> alphabet;
@@ -29,16 +34,16 @@ public:
 
     char getCurrent() const override;
 
-    void TFAPlusPlus();
+    static void TFAPlusPlus();
 
-    DFAPlusPlus(const StatePlusPlus *current);
-
-    static void print(const std::string &fileName);
+    static void print(const std::string &fileName, const StateMap &stateMap);
 
     DFAPlusPlus(const std::string &fileName);
 
+    DFAPlusPlus(char current);
+
 private:
-    mutable const StatePlusPlus *current;
+    mutable char current;
 
     static StatePlusPlus *upgradeToMin(DFAPlusPlusTransition &minTransition, std::vector<StatePlusPlus *> &minStates,
                                        std::map<std::set<const StatePlusPlus *>, StatePlusPlus *> &minStatesMap,

@@ -102,14 +102,14 @@ std::pair<std::string, std::string> LawParser::splitBrackets(const std::string &
 }
 
 void LawParser::generateDFAPlusPlus(const unsigned int inputs) {
-    unsigned int size = states.size();
     for (const auto &state: states) {
         DFAPlusPlus::alphabet.emplace_back(std::get<1>(state));
     }
-    DFAPlusPlus::start = new StatePlusPlus("start", 'a' - 1);
+    DFAPlusPlus::start = new StatePlusPlus('a' - 1);
     DFAPlusPlus::states.emplace_back(DFAPlusPlus::start);
     addStatesRec(inputs, DFAPlusPlus::start);
-    DFAPlusPlus::print("TESTTEST");
+    DFAPlusPlus::TFAPlusPlus();
+    DFAPlusPlus::print("TESTTEST", states);
 }
 
 Color LawParser::readColor(std::string str) {
@@ -171,17 +171,20 @@ Color LawParser::readColor(std::string str) {
     throw std::runtime_error("Color " + str + "not recognised");
 }
 
-void LawParser::addStatesRec(unsigned int inputs, StatePlusPlus *previous) {
+void LawParser::addStatesRec(const unsigned int inputs, StatePlusPlus *previous) {
     if (inputs == 0) {
         for (const auto &state: states) {
-            auto next = new StatePlusPlus(std::get<0>(state), std::get<1>(state));
+            auto next = new StatePlusPlus(std::get<1>(state));
             DFAPlusPlus::states.emplace_back(next);
             DFAPlusPlus::transition[{std::get<1>(state), previous}] = next;
+            for (const auto &input: states) {
+                DFAPlusPlus::transition[{std::get<1>(input), next}] = next;
+            }
         }
         return;
     }
     for (const auto &state: states) {
-        auto next = new StatePlusPlus(std::get<0>(state)+std::to_string(inputs), 'a' - 1);
+        auto next = new StatePlusPlus('a' - 1);
         DFAPlusPlus::states.emplace_back(next);
         DFAPlusPlus::transition[{std::get<1>(state), previous}] = next;
         addStatesRec(inputs - 1, next);

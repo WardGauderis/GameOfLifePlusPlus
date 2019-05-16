@@ -21,24 +21,21 @@ DFAPlusPlusTransition DFAPlusPlus::transition = DFAPlusPlusTransition();
 
 StatePlusPlus *DFAPlusPlus::start = nullptr;
 
-DFAPlusPlus::DFAPlusPlus(const StatePlusPlus *current) : current(current) {}
-
 void DFAPlusPlus::operator()(const std::string &word) const {
-    for (const auto &c: word) current = transition[{c, current}];
+    std::string path = current + word;
+    const StatePlusPlus *node = DFAPlusPlus::start;
+    for (const auto &c: path) node = transition[{c, node}];
+    current = node->type;
 }
 
 // was eerst const string& return current->type
 char DFAPlusPlus::getCurrent() const {
-    char type = current->type;
-    current = start;
-    return type;
+    return current;
 }
 
 void DFAPlusPlus::TFAPlusPlus() {
     auto compare = [](const StatePlusPlus *a, const StatePlusPlus *b) {
-        if ((*a).name < (*b).name) return true;
-        if ((*b).name < (*a).name) return false;
-        return (*a).type < (*b).type;
+        return a < b;
     };
     std::sort(states.begin(), states.end(), compare);
     std::map<const StatePlusPlus *, std::map<const StatePlusPlus *, bool >> table;
@@ -89,7 +86,6 @@ void DFAPlusPlus::TFAPlusPlus() {
     DFAPlusPlusTransition minTransition;
     std::vector<StatePlusPlus *> minStates;
     upgradeToMin(minTransition, minStates, minStatesmap, minCurrent);
-    current = minStatesmap[minCurrent];
     start = minStatesmap[minCurrent];
     transition = minTransition;
     for (const auto &state: states) delete state;
@@ -99,11 +95,7 @@ void DFAPlusPlus::TFAPlusPlus() {
 StatePlusPlus *DFAPlusPlus::upgradeToMin(DFAPlusPlusTransition &minTransition, std::vector<StatePlusPlus *> &minStates,
                                          std::map<std::set<const StatePlusPlus *>, StatePlusPlus *> &minStatesMap,
                                          const std::set<const StatePlusPlus *> &minState) {
-    std::string name = "{";
-    for (const auto &oldState: minState) {
-        name += oldState->name + ", ";
-    }
-    auto *temp = new StatePlusPlus(name.substr(0, name.size() - 2) + "}", (*minState.begin())->type);
+    auto *temp = new StatePlusPlus((*minState.begin())->type);
     minStatesMap[minState] = temp;
     minStates.push_back(temp);
 
@@ -122,36 +114,37 @@ StatePlusPlus *DFAPlusPlus::upgradeToMin(DFAPlusPlusTransition &minTransition, s
     return minStatesMap[minState];
 }
 
-void DFAPlusPlus::print(const std::string &fileName) {
+void DFAPlusPlus::print(const std::string &fileName, const StateMap &stateMap) {
     std::ofstream wFile(fileName + ".dot");
     if (!wFile.is_open()) {
         std::cerr << "Error opening file " + fileName + ".dot\n";
         return;
     }
+
     wFile << "digraph DFAPlusPlus{\n"
-             "\tresolution=250;\n"
              "\trankdir=LR;\n"
              "\tnode [fontname = \"roboto\"]\n"
              "\tedge [fontname = \"roboto\"]\n"
-             "\tnode [ shape = circle ];\n"
-             "\tstart [ style = invis, label = \"\" ];\n"
-             "\tstart -> \"" + start->name + "\";\n";
+             "\tnode [ shape = circle, style=filled ];\n"
+             "\tbeginz [ style = invis, label = \"\" ];\n"
+             "\tbeginz -> \"" + std::to_string(intptr_t(start)) + "\";\n";
 
     for (const auto &state: states) {
-        wFile << "\t\"" + state->name + "\" [ label = <" + std::string(1, state->type) +
-                 "<br/><FONT POINT-SIZE=\"8\">" + state->name +
-                 "</FONT>> ];\n";
+        Color color = stateMap.color(state->type);
+        wFile << "\t\"" + std::to_string(intptr_t(state)) + "\" [ label = \"\", fillcolor = \"" + color.to_string() +
+                 "\" ];\n";
         std::map<std::string, std::vector<char >> arrows;
         for (const auto &symbol: alphabet) {
             auto next = transition[{symbol, state}];
-            arrows[next->name].push_back(symbol);
+            arrows[std::to_string(intptr_t(next))].push_back(symbol);
         }
         for (const auto &arrow: arrows) {
             std::string labels = std::string(1, arrow.second[0]);
             for (unsigned int i = 1; i < arrow.second.size(); ++i) {
                 labels += ", " + std::string(1, arrow.second[i]);
             }
-            wFile << "\t\"" + state->name + "\" -> \"" + arrow.first + "\" [ label = \"" + labels + "\" ];\n";
+            wFile << "\t\"" + std::to_string(intptr_t(state)) + "\" -> \"" + arrow.first + "\" [ label = \"" + labels +
+                     "\" ];\n";
         }
     }
 
@@ -186,12 +179,11 @@ DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
     for (const auto &state: parser["states"]) {
         std::string name = state["name"];
         char type = std::string(state["type"])[0];
-        StatePlusPlus *newState = new StatePlusPlus(name, type);
+        StatePlusPlus *newState = new StatePlusPlus(type);
         states.emplace_back(newState);
         dict[name] = newState;
         if (state["starting"]) {
             start = newState;
-            current = newState;
         }
     }
 
@@ -203,4 +195,12 @@ DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
         transition[{input, from}] = to;
     }
     rFile.close();
+}
+
+DFAPlusPlus::DFAPlusPlus(char current) : current(current) {}
+
+Color StateMap::color(const char c) const {
+    return std::get<2>(*std::find_if(begin(), end(), [c](const std::tuple<std::string, char, Color> &state) {
+        return std::get<1>(state) == c;
+    }));
 }

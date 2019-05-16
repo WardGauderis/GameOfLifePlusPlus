@@ -212,8 +212,8 @@ bool CAIO::automatic(const ini::Configuration &conf) {
     LawParser parser;
     bool success = parser.parseLaws(laws, inputs.size());
     if (success) {
-//        CA::init(width, height, neighbours, stateData, trans);
-//        CA::setStart(layout);
+        CA::init(width, height, neighbours, new DFAPlusPlus('a'));
+        CA::setStart(layout);
     }
     return success;
 }
