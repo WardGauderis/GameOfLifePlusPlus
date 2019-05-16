@@ -51,20 +51,37 @@ void UIGrid::setYCells(uint32_t yCells) {
 
 bool& UIGrid::getRepaint() { return shouldRepaint; }
 
-/*
+
 void UIGrid::mousePressEvent(QMouseEvent *event)
 {
 
-    if (event->button() == Qt::LeftButton)
-    {
-        double celWidth  = double(this->size().width() ) / double(xCells);
-        double celHeight = double(this->size().height()) / double(yCells);
+    if (event->button() != Qt::LeftButton or !canChange) return;
 
-        int x = std::floor(event->pos().x()/celWidth);
-        int y = std::floor(event->pos().y()/celHeight);
+    double celWidth  = double(this->size().width() ) / double(xCells);
+    double celHeight = double(this->size().height()) / double(yCells);
+
+    int x = std::floor(event->pos().x()/celWidth);
+    int y = std::floor(event->pos().y()/celHeight);
+
+    std::map<char, Color>::iterator it = caMap.begin();
+
+    while (true)
+    {
+        if (it->second != cells.at(y*xCells + x))
+        {
+            it++;
+            continue;
+        }
+
+        it++;
+        if (it == caMap.end()) it = caMap.begin();
+        cells.at(y*xCells + x) = it->second;
+        charCells.at(y*xCells + x) = it->first;
+        this->repaint();
+        break;
     }
 }
-*/
+
 //--------------------------WINDOW CLASS----------------------------------------
 
 Window::Window(QWidget *parent) : QMainWindow(parent)
@@ -73,7 +90,7 @@ Window::Window(QWidget *parent) : QMainWindow(parent)
 
 
 //const std::map<char, Color> &colormap
-void Window::initCA(uint32_t _xCells, uint32_t _yCells)
+void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Color> &caMap)
 {
     this->setMinimumSize(750, 750);
 
@@ -83,10 +100,13 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells)
     
     layout->addWidget(raster, 0, 0, 1, 10);
 
-    raster->cells = std::vector<Color>(xCells*yCells, Color(0, 0 ,0));
+    raster->cells = std::vector<Color>(xCells*yCells, caMap.begin()->second);
+    raster->charCells = std::vector<char>(xCells*yCells, caMap.begin()->first);
+    raster->caMap = caMap;
 
     raster->setXCells(xCells);
     raster->setYCells(yCells);
+
     raster->initialized = true;
 }
 
@@ -183,10 +203,14 @@ void Window::createEditButtons()
     iniWidgets.emplace_back(loadLayout);
     connect(loadLayout, SIGNAL(pressed()), this, SLOT(onLoadLayout()));
     editWidgets.emplace_back(loadLayout);
+
+    raster->canChange = true;
 }
 
 void Window::showPlayButton()
 {
+    raster->canChange = false;
+
     for (auto &widget:editWidgets)
     {
         widget->hide();
@@ -235,6 +259,34 @@ void Window::showPlayButton()
     layout->addWidget(fancySlider,1, 0, 1, 3);
 }
 
+std::string Window::askString(std::string example)
+{
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("enter your filename"),
+                                         tr("filename"), QLineEdit::Normal,
+                                         QString(example.c_str()), &ok);
+
+    if (ok && !text.isEmpty())
+        return text.toStdString();
+    else return "";
+}
+
+double Window::askDouble(double min, double max, double step, double example)
+{
+    bool ok;
+    double val = QInputDialog::getDouble(this, tr(""),
+                                         tr("New value:"), example, min, max, step, &ok);
+    if (ok)
+    {
+        return val;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+// ------------------------------------- SLOTS, GETTERS AND SETTERS ----------------------------------------------
 void Window::onPlay()
 {
     crState = play;
@@ -291,33 +343,6 @@ int Window::getSliderValue() const
     return sliderValue;
 }
 
-std::string Window::askString(std::string example)
-{
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("enter your filename"),
-                                         tr("filename"), QLineEdit::Normal,
-                                         QString(example.c_str()), &ok);
-
-    if (ok && !text.isEmpty())
-        return text.toStdString();
-    else return "";
-}
-
-double Window::askDouble(double min, double max, double step, double example)
-{
-    bool ok;
-    double val = QInputDialog::getDouble(this, tr(""),
-                                       tr("New value:"), example, min, max, step, &ok);
-    if (ok)
-    {
-        return val;
-    }
-    else
-    {
-        return -1;
-    }
-}
-
 void Window::onLoadIniFile()
 {
     filename = askString("./input/thomas_test2/test.ini");
@@ -346,4 +371,9 @@ void Window::setInitialized(bool initialized) {
 
 const std::string &Window::getLayoutFilename() const {
     return layoutFilename;
+}
+
+const std::vector<char>& Window::getStartVec() const
+{
+    return raster->charCells;
 }

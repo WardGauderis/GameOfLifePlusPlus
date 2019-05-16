@@ -24,6 +24,7 @@
 #include <QSlider>
 #include <QMessageBox>
 #include <QLabel>
+#include <QMouseEvent>
 
 
 #include <random>
@@ -33,6 +34,7 @@
 #include <cmath>
 
 #include "color.h"
+#include "../automata/ca.h"
 
 class UIGrid: public QWidget
 {
@@ -46,10 +48,15 @@ public:
     void setYCells(uint32_t yCells);
 
     std::vector<Color> cells;
+    std::vector<char> charCells;
+    std::map<char, Color> caMap;
 
     bool& getRepaint();
 
     bool initialized;
+    bool canChange = false;
+
+    void mousePressEvent(QMouseEvent *event);
 
 private:
     uint32_t xCells;
@@ -69,7 +76,7 @@ public:
     explicit Window(QWidget* parent = nullptr);
     ~Window() override;
 
-    void initCA(uint32_t _xCells, uint32_t _yCells);
+    void initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Color> &caMap);
 
     const Color& getColor(uint32_t x, uint32_t y) const;
     void setColor(uint32_t x, uint32_t y, const Color& color);
@@ -98,6 +105,7 @@ public:
     void setInitialized(bool initialized);
 
     const std::string &getLayoutFilename() const;
+    const std::vector<char> &getStartVec() const;
 
 protected:
 

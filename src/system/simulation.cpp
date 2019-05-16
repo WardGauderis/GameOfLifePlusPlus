@@ -23,8 +23,7 @@ Simulation::Simulation()
     }
 
     if(!CAIO::generate(window.getFilename())) exit(69);
-    window.initCA(CA::getWidth(), CA::getHeight());
-
+    window.initCA(CA::getWidth(), CA::getHeight(), CA::getColors());
     window.createEditButtons();
     window.setInitialized(false);
     while(!window.isInitialized())
@@ -39,6 +38,7 @@ bool Simulation::simulate()
     uint32_t iteration = 0;
     window.showPlayButton();
 
+    CA::setStart(window.getStartVec());
     draw(0);
     window.repaint();
 
