@@ -332,7 +332,7 @@ Window::state Window::getState()
 
 void Window::closeEvent([[maybe_unused]] QCloseEvent *event)
 {
-    crState = quit;
+    exit(0);
 }
 
 void Window::setSliderValue(int val)

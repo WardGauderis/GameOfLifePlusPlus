@@ -58,6 +58,7 @@ public:
 
     void mousePressEvent(QMouseEvent *event);
 
+
 private:
     uint32_t xCells;
     uint32_t yCells;
