@@ -16,6 +16,7 @@
 #include <string>
 #include "../gui/color.h"
 #include "transitions.h"
+#include "dfaPlusPlus.h"
 #include <map>
 #include <deque>
 
@@ -24,14 +25,16 @@ struct Automaton;
 class CA
 {
 public:
+    enum Type{none, fsm, dfaPlusPlus};
 
     static void init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
             const std::vector<std::tuple<const Automaton*, char, std::string, Color, bool>>& stateData, const FSMTransition& transition);
 
+    static void init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours, const DFAPlusPlus* dfa);
+
     static void setStart(const std::vector<char>& start);
 
     static void destroy();
-
     static void update();
 
     static const Color& getColor(uint32_t i, uint32_t iteration);
@@ -53,8 +56,7 @@ private:
 
     static std::deque<std::vector<char>> stack;
     static std::map<char, Color> converter;
-
-    static std::map<char, const Automaton*> charToState;
+    static Type type;
 };
 
 
