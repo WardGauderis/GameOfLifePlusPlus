@@ -97,7 +97,6 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Col
     xCells = _xCells;
     yCells = _yCells;
 
-    
     layout->addWidget(raster, 0, 0, 1, 10);
 
     raster->cells = std::vector<Color>(xCells*yCells, caMap.begin()->second);
@@ -108,6 +107,12 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Col
     raster->setYCells(yCells);
 
     raster->initialized = true;
+}
+
+void Window::paintEvent([[maybe_unused]] QPaintEvent *event)
+{
+    if (raster->canChange) return;
+    labelTicksPassed->setText(("Ticks passed:\n" + std::to_string(ticksPassed)).c_str());
 }
 
 void Window::processEverything()
@@ -249,7 +254,6 @@ void Window::showPlayButton()
     layout-> addWidget(playBackBtn, 1, 4 ,1, 1);
     connect(playBackBtn, SIGNAL(pressed()), this, SLOT(onPlayBack()));
 
-    // slider
     fancySlider = new QSlider(Qt::Orientation::Horizontal, this);
     fancySlider->setSingleStep(1);
     fancySlider->setTickInterval(10);
@@ -257,6 +261,13 @@ void Window::showPlayButton()
     fancySlider->setMinimum(0);
     connect(fancySlider, SIGNAL(valueChanged(int)), this, SLOT(setSliderValue(int)));
     layout->addWidget(fancySlider,1, 0, 1, 3);
+
+    labelTicksPassed = new QLabel(this);
+    labelTicksPassed->setText(("Ticks passed:\n" + std::to_string(ticksPassed)).c_str());
+    labelTicksPassed->show();
+    layout-> addWidget(labelTicksPassed, 1, 8 ,1, 1);
+
+
 }
 
 std::string Window::askString(std::string example)
@@ -376,4 +387,12 @@ const std::string &Window::getLayoutFilename() const {
 const std::vector<char>& Window::getStartVec() const
 {
     return raster->charCells;
+}
+
+uint32_t Window::getTicksPassed() const {
+    return ticksPassed;
+}
+
+void Window::setTicksPassed(uint32_t ticksPassed) {
+    Window::ticksPassed = ticksPassed;
 }

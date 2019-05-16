@@ -54,7 +54,7 @@ public:
     bool& getRepaint();
 
     bool initialized;
-    bool canChange = false;
+    bool canChange = true;
 
     void mousePressEvent(QMouseEvent *event);
 
@@ -107,6 +107,13 @@ public:
     const std::string &getLayoutFilename() const;
     const std::vector<char> &getStartVec() const;
 
+    void paintEvent([[maybe_unused]] QPaintEvent *event);
+
+    uint32_t getTicksPassed() const;
+
+    void setTicksPassed(uint32_t ticksPassed);
+
+
 protected:
 
 private:
@@ -129,8 +136,10 @@ private:
 
     QPushButton* playBtn;
     QPushButton* pauseBtn;
-    QPushButton* pauseBtn2;
     QPushButton* playBackBtn;
+
+    QLabel* labelTicksPassed;
+    uint32_t ticksPassed = 0;
 
     std::vector<QWidget*> widgetsToDelete;
     std::vector<QWidget*> iniWidgets;

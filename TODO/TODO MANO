@@ -1,5 +1,4 @@
 - rechthoeken
 - tick counter
-- play back button (niet per tick)
 - knop /exporten CA layout
-- via gui state aanpassen
+- close event

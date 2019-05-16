@@ -89,6 +89,7 @@ void Simulation::draw(uint32_t iteration)
     else if(iteration > CA::getSize()) throw std::runtime_error("multiple steps at once");
 
     for(uint32_t i = 0; i < CA::getData(iteration).size(); i++) window.setColor(i, CA::getColor(i, iteration));
+    window.setTicksPassed(iteration);
 }
 
 uint32_t Simulation::getDelay(uint32_t val)
