@@ -20,7 +20,8 @@ std::vector<std::pair<int, int>> CA::neighbours;
 
 std::deque<std::vector<char>> CA::stack;
 std::map<char, Color> CA::converter;
-std::map<char, const Automaton*> CA::charToState;
+CA::Type CA::type = Type::none;
+
 
 void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
               const std::vector<std::tuple<const Automaton*, char, std::string, Color, bool>>& stateData, const FSMTransition& transition)
@@ -28,6 +29,8 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
     CA::width = width;
     CA::height = height;
     CA::neighbours = neighbours;
+
+    std::map<char, const Automaton*> charToState;
 
     std::map<const Automaton*, std::pair<char, bool>> states;
 
@@ -38,7 +41,18 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
         states.emplace(std::get<0>(data), std::pair<char, bool>{std::get<1>(data), std::get<4>(data)});
     }
 
-    FSM::init(states, transition);
+    FSM::init(states, transition, charToState);
+    type = Type::fsm;
+}
+
+void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>> &neighbours, const DFAPlusPlus* dfa)
+{
+    CA::width = width;
+    CA::height = height;
+    CA::neighbours = neighbours;
+
+    cells = {width*height, dfa};
+    type = Type::dfaPlusPlus;
 }
 
 void CA::setStart(const std::vector<char>& start)
@@ -47,10 +61,21 @@ void CA::setStart(const std::vector<char>& start)
     stack = {};
     cells = {};
 
-    CA::cells.reserve(width*height);
     stack.emplace_back(start);
 
-    for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new FSM{charToState.at(stack.back()[i])});
+    CA::cells.reserve(width*height);
+    switch(type)
+    {
+        case Type::fsm:
+            for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new FSM{ start[i] });
+            break;
+        case Type::dfaPlusPlus:
+            for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new DFAPlusPlus{ start[i] });
+            break;
+        default:
+            throw std::runtime_error("CA not initialized correctly before calling this function\n");
+    }
+
 }
 
 void CA::destroy()

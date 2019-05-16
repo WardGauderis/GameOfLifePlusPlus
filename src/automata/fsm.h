@@ -21,9 +21,9 @@
 class FSM : public Cell
 {
 public:
-    FSM(const Automaton* start);
+    FSM(char start);
 
-    static void init(const std::map<const Automaton*, std::pair<char, bool>>& stateData, const FSMTransition& transition);
+    static void init(const std::map<const Automaton*, std::pair<char, bool>>& stateData, const FSMTransition& transition, const std::map<char, const Automaton*>& charToState);
 
     void operator()(const std::string &word) const override;
     char getCurrent() const override;
@@ -31,6 +31,7 @@ public:
 private:
     static std::map<const Automaton*, std::pair<char, bool>> states;
     static FSMTransition transition;
+    static std::map<char, const Automaton*> charToState;
 
     mutable const Automaton* current;
     mutable std::stack<char> stack;

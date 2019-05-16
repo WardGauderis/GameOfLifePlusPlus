@@ -19,7 +19,7 @@ class DFAPlusPlus : public Cell {
 public:
     static std::vector<char> alphabet;
 
-    static std::vector<StatePlusPlus *> states;
+    static std::vector<StatePlusPlus*> states;
 
     static DFAPlusPlusTransition transition;
 

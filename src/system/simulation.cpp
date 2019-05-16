@@ -19,7 +19,7 @@ Simulation::Simulation()
 
     while(!window.isInitialized())
     {
-        window.delay(50);
+        window.delay(500);
     }
 
     if(!CAIO::generate(window.getFilename())) exit(69);
