@@ -148,6 +148,7 @@ void Window::delay(uint32_t ms)
     while (QTime::currentTime() < stopTime)
     {
         processEverything();
+        [[maybe_unused]] int res = system("sleep 0.01");
     }
 }
 
