@@ -17,6 +17,11 @@ public:
     //True if success, else false and cerr message
     static bool generate(const std::string &fileName);
 
+    static std::vector<char>
+    parseLayout(const std::string &fileName, const int width, const int height, const int amount);
+
+    static bool exportCA(const std::vector<char> &CA, int width, int height, const std::string &fileName);
+
 private:
     static FSMTransition transition(const ini::Configuration &conf,
                                     const std::vector<std::tuple<const Automaton *, char, std::string, Color, bool>> &stateData);
@@ -31,11 +36,6 @@ private:
     static std::vector<std::string> byCharacter(const std::string &str, const char &ch);
 
     static Color readColor(std::string str);
-
-    static std::vector<char>
-    parseLayout(const std::string &fileName, const int width, const int height, const int amount);
-
-    static bool exportCA(const std::vector<char> &CA, int width, int height, const std::string &fileName);
 };
 
 

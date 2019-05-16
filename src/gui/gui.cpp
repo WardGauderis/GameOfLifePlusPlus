@@ -82,6 +82,16 @@ void UIGrid::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void UIGrid::resync()
+{
+    for (unsigned int x=0;x<xCells;x++)
+    {
+        for (unsigned int y=0;y<yCells;y++)
+        {
+            cells.at(y*xCells + x) = caMap[charCells.at(y*xCells + x)];
+        }
+    }
+}
 //--------------------------WINDOW CLASS----------------------------------------
 
 Window::Window(QWidget *parent) : QMainWindow(parent)
@@ -101,7 +111,13 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Col
 
     raster->cells = std::vector<Color>(xCells*yCells, caMap.begin()->second);
     raster->charCells = std::vector<char>(xCells*yCells, caMap.begin()->first);
+
     raster->caMap = caMap;
+
+    for (auto it=caMap.begin();it != caMap.end();it++)
+    {
+        raster->rCaMap.insert( std::pair<Color, char>(it->second, it->first) );
+    }
 
     raster->setXCells(xCells);
     raster->setYCells(yCells);
@@ -111,8 +127,7 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Col
 
 void Window::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
-    if (raster->canChange) return;
-    labelTicksPassed->setText(("Ticks passed:\n" + std::to_string(ticksPassed)).c_str());
+    if (!(raster->canChange)) labelTicksPassed->setText(("Ticks passed:\n" + std::to_string(ticksPassed)).c_str());
 }
 
 void Window::processEverything()
@@ -145,12 +160,15 @@ void Window::setColor(uint32_t x, uint32_t y, const Color& color)
 {
     raster->getRepaint() = true;
     raster->cells.at(y*xCells + x) = color;
+    raster->charCells.at(y*xCells + x) = raster->rCaMap[color];
+
 }
 
 void Window::setColor(uint32_t i, const Color& color)
 {
     raster->getRepaint() = true;
     raster->cells.at(i) = color;
+    raster->charCells.at(i) = raster->rCaMap[color];
 }
 
 
@@ -236,10 +254,10 @@ void Window::showPlayButton()
     skipOne->setFixedHeight(size);
     goBackOne->setFixedHeight(size);
 
-    layout-> addWidget(playBtn, 1, 6 ,1, 1);
-    layout-> addWidget(pauseBtn, 1, 5 ,1, 1);
-    layout-> addWidget(skipOne, 1, 7 ,1, 1);
-    layout-> addWidget(goBackOne, 1, 3 ,1, 1);
+    layout-> addWidget(playBtn, 1, 5 ,1, 1);
+    layout-> addWidget(pauseBtn, 1, 4 ,1, 1);
+    layout-> addWidget(skipOne, 1, 6 ,1, 1);
+    layout-> addWidget(goBackOne, 1, 2 ,1, 1);
 
 
     connect(playBtn, SIGNAL(pressed()), this, SLOT(onPlay()));
@@ -251,7 +269,7 @@ void Window::showPlayButton()
     playBackBtn = new QPushButton("Play Back", this);
     playBackBtn->setFixedHeight(size);
     playBackBtn->show();
-    layout-> addWidget(playBackBtn, 1, 4 ,1, 1);
+    layout-> addWidget(playBackBtn, 1, 3 ,1, 1);
     connect(playBackBtn, SIGNAL(pressed()), this, SLOT(onPlayBack()));
 
     fancySlider = new QSlider(Qt::Orientation::Horizontal, this);
@@ -260,14 +278,18 @@ void Window::showPlayButton()
     fancySlider->setMaximum(110);
     fancySlider->setMinimum(0);
     connect(fancySlider, SIGNAL(valueChanged(int)), this, SLOT(setSliderValue(int)));
-    layout->addWidget(fancySlider,1, 0, 1, 3);
+    layout->addWidget(fancySlider,1, 0, 1, 2);
 
     labelTicksPassed = new QLabel(this);
     labelTicksPassed->setText(("Ticks passed:\n" + std::to_string(ticksPassed)).c_str());
     labelTicksPassed->show();
     layout-> addWidget(labelTicksPassed, 1, 8 ,1, 1);
 
-
+    QPushButton * exportButton = new QPushButton("Export current\nstate as layout", this);
+    exportButton->setFixedHeight(size);
+    exportButton->show();
+    layout-> addWidget(exportButton, 1, 7 ,1, 1);
+    connect(exportButton, SIGNAL(pressed()), this, SLOT(onExportLayout()));
 }
 
 std::string Window::askString(std::string example)
@@ -338,14 +360,6 @@ void Window::closeEvent([[maybe_unused]] QCloseEvent *event)
 void Window::setSliderValue(int val)
 {
     fancySlider->setToolTip(QString(std::to_string(sliderValue).c_str()));
-
-    if (sliderValue > 100 and val > sliderValue)
-    {
-        QMessageBox msgBox;
-        msgBox.setText("ARE YOU SURE YOU WANT TO GO MAXIMUM POWER??");
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        [[maybe_unused]] int ret =  msgBox.exec();
-    }
     sliderValue = val;
 }
 
@@ -362,7 +376,16 @@ void Window::onLoadIniFile()
 
 void Window::onLoadLayout()
 {
-    layoutFilename = askString("./input/thomas_test2/test.csv");
+    std::string fileName = askString("./layout.csv");
+    raster->charCells = CAIO::parseLayout(fileName, raster->xCells, raster->yCells, raster->caMap.size());
+    raster->resync();
+    this->repaint();
+
+}
+void Window::onExportLayout()
+{
+    std::string fileName = askString("layout");
+    CAIO::exportCA(raster->charCells, raster->xCells, raster->yCells, fileName);
 }
 void Window::onStartSimulation()
 {
@@ -378,10 +401,6 @@ const std::string &Window::getFilename() const {
 
 void Window::setInitialized(bool initialized) {
     Window::initialized = initialized;
-}
-
-const std::string &Window::getLayoutFilename() const {
-    return layoutFilename;
 }
 
 const std::vector<char>& Window::getStartVec() const

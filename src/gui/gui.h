@@ -34,7 +34,7 @@
 #include <cmath>
 
 #include "color.h"
-#include "../automata/ca.h"
+#include "../input-output/caio.h"
 
 class UIGrid: public QWidget
 {
@@ -50,6 +50,7 @@ public:
     std::vector<Color> cells;
     std::vector<char> charCells;
     std::map<char, Color> caMap;
+    std::map<Color, char> rCaMap;
 
     bool& getRepaint();
 
@@ -58,10 +59,11 @@ public:
 
     void mousePressEvent(QMouseEvent *event);
 
+    void resync();
 
-private:
     uint32_t xCells;
     uint32_t yCells;
+private:
 
     bool shouldRepaint = false;
 };
@@ -124,7 +126,6 @@ private:
     bool initialized = false;
 
     std::string filename;
-    std::string layoutFilename;
 
     uint32_t xCells;
     uint32_t yCells;
@@ -162,6 +163,7 @@ private slots:
     void onStartSimulation();
     void onLoadLayout();
     void onPlayBack();
+    void onExportLayout();
 };
 
 
