@@ -25,6 +25,8 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QMouseEvent>
+#include <qpixmap.h>
+#include <QIcon>
 
 
 #include <random>

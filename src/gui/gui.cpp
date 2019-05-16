@@ -239,10 +239,45 @@ void Window::showPlayButton()
         widget->hide();
     }
 
+//    //ICONS
+//
+//    QPixmap icons("./icons/mediaplayer.png");
+//    icons.save("hallo");
+//    icons = icons.scaledToHeight(size);
+//
+//    int w = icons.size().width()/3;
+//    int h = icons.size().height()/3;
+//
+//    QRect playRect(w, 0, w, h);
+//    QRect pauseRect(w, 2*h, w, h);
+//    QRect nextRect(w, h, w, h);
+//    QRect prevRect(w, h, w, h);
+//
+//    QIcon playIcon(icons.copy(playRect));
+//    QIcon pauseIcon(icons.copy(pauseRect));
+//    QIcon nextIcon(icons.copy(prevRect));
+//    QIcon prevIcon(icons.copy(nextRect));
+//
+//    playBtn->setIcon(playIcon);
+//    pauseBtn->setIcon(pauseIcon);
+//    skipOne->setIcon(nextIcon);
+//    goBackOne->setIcon(prevIcon);
+//
+//    playBtn->setIconSize(QSize(this->width()/10, size));
+//    pauseBtn->setIconSize(QSize(this->width()/10, size));
+//    skipOne->setIconSize(QSize(this->width()/10, size));
+//    goBackOne->setIconSize(QSize(this->width()/10, size));
+
+    //BUTTONS
     playBtn = new QPushButton("Play", this);
     pauseBtn = new QPushButton("Pause", this);
     QPushButton* skipOne = new QPushButton("Next tick", this);
     QPushButton* goBackOne = new QPushButton("Previous tick", this);
+
+//    playBtn = new QPushButton(this);
+//    pauseBtn = new QPushButton(this);
+//    QPushButton* skipOne = new QPushButton(this);
+//    QPushButton* goBackOne = new QPushButton(this);
 
     playBtn->show();
     pauseBtn->show();
