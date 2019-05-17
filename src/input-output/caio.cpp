@@ -198,19 +198,21 @@ bool CAIO::automatic(const ini::Configuration &conf) {
     const int width = conf["General"]["width"].as_int_or_default(20);
     const int height = conf["General"]["height"].as_int_or_default(20);
 
-    const std::string file = conf["General"]["layout"].as_string_or_default("");
-    const int amount = conf["States"]["amount"].as_int_or_die();
-    if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
-    const auto layout = parseLayout(file, width, height, amount);
 
     const std::string inputs = conf["General"]["inputs"].as_string_or_default(
             "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)");
     const auto neighbours = parseCoordinates(inputs);
 
-    const std::string laws = conf["General"]["layout"].as_string_or_default("");
+    const std::string laws = conf["General"]["laws"].as_string_or_default("");
 
     LawParser parser;
     bool success = parser.parseLaws(laws);
+
+    const std::string file = conf["General"]["layout"].as_string_or_default("");
+    unsigned int amount = DFAPlusPlus::states.size();
+    if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
+    const auto layout = parseLayout(file, width, height, amount);
+
     if (success) {
         CA::init(width, height, neighbours, new DFAPlusPlus('a'));
         CA::setStart(layout);

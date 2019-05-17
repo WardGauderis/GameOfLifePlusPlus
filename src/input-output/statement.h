@@ -33,6 +33,8 @@ class POSITION : public Statement {
     char next;
 public:
     TempDFA generateTempDFA() override;
+
+    POSITION(int pos, char state, char next);
 };
 
 class AMOUNT : public Statement {
@@ -41,6 +43,8 @@ class AMOUNT : public Statement {
     char next;
 public:
     TempDFA generateTempDFA() override;
+
+    AMOUNT(int amount, char state, char next);
 };
 
 class RANGEAND : public Statement {
@@ -50,6 +54,8 @@ class RANGEAND : public Statement {
     char next;
 public:
     TempDFA generateTempDFA() override;
+
+    RANGEAND(int min, int max, char state, char next);
 };
 
 class RANGEOR : public Statement {
@@ -59,6 +65,8 @@ class RANGEOR : public Statement {
     char next;
 public:
     TempDFA generateTempDFA() override;
+
+    RANGEOR(int min, int max, char state, char next);
 };
 
 class RANGEAMOUNT : public Statement {
@@ -68,6 +76,8 @@ class RANGEAMOUNT : public Statement {
     char next;
 public:
     TempDFA generateTempDFA() override;
+
+    RANGEAMOUNT(int min, int max, char state, char next);
 };
 
 class AND : public Statement {
@@ -75,6 +85,8 @@ class AND : public Statement {
     Statement *second;
 public:
     TempDFA generateTempDFA() override;
+
+    AND(Statement *first, Statement *second);
 };
 
 class OR : public Statement {
@@ -82,18 +94,16 @@ class OR : public Statement {
     Statement *second;
 public:
     TempDFA generateTempDFA() override;
+
+    OR(Statement *first, Statement *second);
 };
 
 class NOT : public Statement {
     Statement *statement;
 public:
     TempDFA generateTempDFA() override;
-};
 
-class DEFAULT : public Statement {
-    char next;
-public:
-    TempDFA generateTempDFA() override;
+    NOT(Statement *statement);
 };
 
 

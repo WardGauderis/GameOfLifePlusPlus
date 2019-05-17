@@ -2,25 +2,18 @@
 // @name        : main.cpp
 // @author      : Thomas Dooms
 // @date        : 3/28/19
-// @version     : 
+// @version     :
 // @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
-// @description : 
+// @description :
 //============================================================================
-//#include <QApplication>
-//#include "system/simulation.h"
-//
-//int main(int argc, char *argv[]) {
-//    QApplication application(argc, argv);
-//    Simulation simulation;
-//
-//    simulation.simulate();
-//
-//    return QApplication::exec();
-//}
+#include <QApplication>
+#include "system/simulation.h"
 
-#include "input-output/lawParser.h"
+int main(int argc, char *argv[]) {
+    QApplication application(argc, argv);
+    Simulation simulation;
 
-int main() {
-    LawParser parser;
-    parser.parseLaws("input/ward_tests/laws.law", 7);
+    simulation.simulate();
+
+    return QApplication::exec();
 }
