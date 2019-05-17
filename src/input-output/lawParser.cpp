@@ -14,12 +14,11 @@
 #include <algorithm>
 #include <stack>
 
-bool LawParser::parseLaws(const std::string &fileName, const unsigned int inputs) {
+bool LawParser::parseLaws(const std::string &fileName) {
     try {
         parseSections(fileName);
         parseStates();
-        generateDFAPlusPlus(inputs);
-        return true;
+        generateDFAPlusPlus();
     }
     catch (const std::exception &ex) {
         std::cerr << "Error parsing file " << fileName << ": " << ex.what() << std::endl;
@@ -31,12 +30,28 @@ void LawParser::parseStates() {
     Section rules = getSection("states");
     unsigned int i = 0;
     for (const auto &rule: rules) {
-        std::pair<std::string, std::string> pair = splitBrackets(rule);
-        auto name = pair.first;
-        Color color = readColor(pair.second);
+        std::pair<std::string, std::string> pair = splitDoublePoint(rule);
+        auto name = splitBrackets(pair.first).first;
+
+        size_t index = pair.second.find(',');
+        if (index == std::string::npos) index = pair.second.size();
+        std::string c = pair.second.substr(0, index);
+
+        Color color = readColor(c);
         char character = 'a' + i;
-        states.emplace_back(name, character, color);
-        i++;
+        try {
+            states.character(name);
+            std::cerr << "Second definition of state '" + name + "' is ignored";
+        }
+        catch (const std::exception &exception) {
+            states.emplace_back(name, character, color, character);
+            i++;
+        }
+    }
+    for (unsigned int j = 0; j < states.size(); ++j) {
+        std::pair<std::string, std::string> pair = splitDoublePoint(rules[j]);
+        pair = splitStatement(pair.second, ",");
+        std::get<3>(states[j]) = states.character(pair.second);
     }
 }
 
@@ -65,7 +80,7 @@ void LawParser::parseSections(const std::string &fileName) {
 }
 
 Section LawParser::getSection(const std::string &name) {
-    try { return sections.at("states"); }
+    try { return sections.at(name); }
     catch (const std::exception &ex) {
         throw std::runtime_error("Section " + name + " is not defined");
     }
@@ -101,15 +116,11 @@ std::pair<std::string, std::string> LawParser::splitBrackets(const std::string &
     return inside;
 }
 
-void LawParser::generateDFAPlusPlus(const unsigned int inputs) {
+void LawParser::generateDFAPlusPlus() {
+    std::vector<TempDFA> dfas;
     for (const auto &state: states) {
-        DFAPlusPlus::alphabet.emplace_back(std::get<1>(state));
+        dfas.emplace_back(generatePerState(state));
     }
-    DFAPlusPlus::start = new StatePlusPlus('a' - 1);
-    DFAPlusPlus::states.emplace_back(DFAPlusPlus::start);
-    addStatesRec(inputs, DFAPlusPlus::start);
-    DFAPlusPlus::TFAPlusPlus();
-    DFAPlusPlus::print("TESTTEST", states);
 }
 
 Color LawParser::readColor(std::string str) {
@@ -168,25 +179,111 @@ Color LawParser::readColor(std::string str) {
     } else if (str == "gray" || str == "grey") {
         return {"808080"};
     }
-    throw std::runtime_error("Color " + str + "not recognised");
+    throw std::runtime_error("Color '" + str + "' not recognised");
 }
 
-void LawParser::addStatesRec(const unsigned int inputs, StatePlusPlus *previous) {
-    if (inputs == 0) {
-        for (const auto &state: states) {
-            auto next = new StatePlusPlus(std::get<1>(state));
-            DFAPlusPlus::states.emplace_back(next);
-            DFAPlusPlus::transition[{std::get<1>(state), previous}] = next;
-            for (const auto &input: states) {
-                DFAPlusPlus::transition[{std::get<1>(input), next}] = next;
-            }
-        }
-        return;
+TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, char> &state) {
+    Section laws = getSection(std::get<0>(state));
+    std::vector<TempDFA> dfas;
+    for (const auto &law: laws) {
+        dfas.emplace_back(generateLaw(law));
     }
-    for (const auto &state: states) {
-        auto next = new StatePlusPlus('a' - 1);
-        DFAPlusPlus::states.emplace_back(next);
-        DFAPlusPlus::transition[{std::get<1>(state), previous}] = next;
-        addStatesRec(inputs - 1, next);
+    return TempDFA();
+}
+
+TempDFA LawParser::generateLaw(const std::string &law) {
+    auto pair = splitDoublePoint(law);
+    std::string condition = splitBrackets(pair.first).first;
+    char next = states.character(pair.second);
+    readCondition(condition);
+    return TempDFA();
+}
+
+std::pair<std::string, std::string> LawParser::splitDoublePoint(const std::string &line) {
+    try {
+        return splitStatement(line, ":");
+    } catch (const std::exception &exception) {
+        throw std::runtime_error("Line '" + line + "' is missing a ':'");
+    }
+}
+
+void LawParser::readCondition(std::string condition) {
+    if (condition[0] == '(') {
+        auto pair = splitBrackets(condition);
+        readCondition(pair.first);
+        if (pair.second.substr(0, 2) == "&&") {
+            readCondition(splitBrackets(pair.second.substr(2)).first);
+        } else if (pair.second.substr(0, 2) == "||") {
+            readCondition(splitBrackets(pair.second.substr(2)).first);
+        } else {
+            throw std::runtime_error(
+                    "Unnecessary brackets or incorrect composition of statements in statement '" + condition + "'");
+        }
+    } else if (condition[0] == '!') {
+        readCondition(splitBrackets(condition).first);
+    } else if (condition[0] == '[') {
+        auto pair = splitStatement(condition, "==");
+        std::size_t index = pair.first.find(']');
+        if (index == std::string::npos)
+            throw std::runtime_error("']' is missing in range statement '" + condition + "'");
+        auto range = parseRange(pair.first.substr(1, index - 1));
+        char state = states.character(pair.second);
+        if (pair.first[index + 1] == '&') {
+        } else if (pair.first[index + 1] == '|') {
+        } else {
+            throw std::runtime_error(
+                    "A type declaration ('&' or '|') of the position range was forgotten in statement '" + condition +
+                    "'");
+        }
+    } else if (isdigit(condition[0])) {
+        auto pair = splitStatement(condition, "==");
+        unsigned int position = parseInt(pair.first);
+        char state = states.character(pair.second);
+    } else {
+        auto pair = splitStatement(condition, "==");
+        char state = states.character(pair.first);
+        if (pair.second[0] == '[') {
+            std::size_t index = pair.second.find(']');
+            if (index == std::string::npos)
+                throw std::runtime_error("']' is missing in range statement '" + condition + "'");
+            auto range = parseRange(pair.second.substr(1, index - 1));
+        } else {
+            unsigned int amount = parseInt(pair.second);
+        }
+    }
+}
+
+std::pair<unsigned int, unsigned int> LawParser::parseRange(const std::string &range) {
+    size_t index = range.find('-');
+    if (index == std::string::npos) throw std::runtime_error("'-' is missing in range '" + range + "'");
+    unsigned int begin;
+    unsigned int end;
+    try {
+        begin = parseInt(range.substr(0, index));
+        end = parseInt(range.substr(index + 1));
+    } catch (const std::exception &exception) {
+        throw std::runtime_error("Operand is not an unsigned integer in range '" + range + "'");
+    }
+    return {begin, end};
+}
+
+std::pair<std::string, std::string>
+LawParser::splitStatement(const std::string &statement, const std::string &splitter) {
+    size_t index = statement.find(splitter);
+    if (index == std::string::npos)
+        throw std::runtime_error("'" + splitter + "' is missing in statement '" + statement + "'");
+    return {statement.substr(0, index), statement.substr(index + splitter.size())};
+}
+
+unsigned int LawParser::parseInt(const std::string &str) {
+    std::string::const_iterator it1 = str.begin();
+    while (it1 != str.end() && std::isdigit(*it1)) ++it1;
+    if (!(!str.empty() && it1 == str.end())) {
+        throw std::runtime_error("'" + str + "' should be an unsigned int, but isn't");
+    }
+    try {
+        return std::stoi(str);
+    } catch (const std::exception &ex) {
+        throw std::runtime_error("'" + str + "' should be an unsigned int, but isn't");
     }
 }

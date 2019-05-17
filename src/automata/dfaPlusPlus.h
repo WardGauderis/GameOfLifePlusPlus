@@ -15,8 +15,10 @@
 #include <vector>
 #include <set>
 
-struct StateMap : public std::vector<std::tuple<std::string, char, Color>>{
+struct StateMap : public std::vector<std::tuple<std::string, char, Color, char>>{
     Color color(char c) const;
+
+    char character(const std::string &name) const;
 };
 
 

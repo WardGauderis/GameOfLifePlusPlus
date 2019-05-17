@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(GOL)
 
-set(CMAKE_CXX_FLAGS "-O3 -Wextra -Wall -Wpedantic -Wnon-virtual-dtor -Woverloaded-virtual -Wunused -Wduplicated-branches -Wduplicated-cond")
+set(CMAKE_CXX_FLAGS "-Wextra -Wall -Wpedantic -Wnon-virtual-dtor -Woverloaded-virtual -Wunused -Wduplicated-branches -Wduplicated-cond")
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE HDRS ${GOL_SOURCE_DIR}/src/*.h  )

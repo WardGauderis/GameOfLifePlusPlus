@@ -200,7 +200,17 @@ DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
 DFAPlusPlus::DFAPlusPlus(char current) : current(current) {}
 
 Color StateMap::color(const char c) const {
-    return std::get<2>(*std::find_if(begin(), end(), [c](const std::tuple<std::string, char, Color> &state) {
+    return std::get<2>(*std::find_if(begin(), end(), [c](const std::tuple<std::string, char, Color, char> &state) {
         return std::get<1>(state) == c;
     }));
+}
+
+char StateMap::character(const std::string &name) const {
+    auto it =std::find_if(begin(), end(), [name](const std::tuple<std::string, char, Color, char> &state) {
+        return std::get<0>(state) == name;
+    });
+    if (it == end()) {
+        throw std::runtime_error("State with name '" + name + "' was not defined in section states");
+    }
+    return std::get<1>(*it);
 }

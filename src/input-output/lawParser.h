@@ -14,6 +14,8 @@
 #include "../gui/color.h"
 #include "../automata/states.h"
 #include "../automata/dfaPlusPlus.h"
+#include "statement.h"
+
 
 struct Section : public std::vector<std::string> {
 
@@ -32,12 +34,25 @@ class LawParser {
 
     static std::pair<std::string, std::string> splitBrackets(const std::string &line);
 
-    void generateDFAPlusPlus(unsigned int inputs);
+    static std::pair<std::string, std::string> splitDoublePoint(const std::string &line);
 
-    void addStatesRec(unsigned int inputs, StatePlusPlus *previous);
+    void generateDFAPlusPlus();
+
+    TempDFA generatePerState(const std::tuple<std::string, char, Color, char> &state);
+
+    TempDFA generateLaw(const std::string &law);
+
+    void readCondition(std::string condition);
+
+    static std::pair<unsigned int, unsigned int> parseRange(const std::string &range);
+
+    static std::pair<std::string, std::string>
+    splitStatement(const std::string &statement, const std::string &splitter);
+
+    static unsigned int parseInt(const std::string &str);
 
 public:
-    bool parseLaws(const std::string &fileName, unsigned int inputs);
+    bool parseLaws(const std::string &fileName);
 
     static Color readColor(std::string str);
 };

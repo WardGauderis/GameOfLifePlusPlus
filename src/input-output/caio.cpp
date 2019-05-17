@@ -210,7 +210,7 @@ bool CAIO::automatic(const ini::Configuration &conf) {
     const std::string laws = conf["General"]["layout"].as_string_or_default("");
 
     LawParser parser;
-    bool success = parser.parseLaws(laws, inputs.size());
+    bool success = parser.parseLaws(laws);
     if (success) {
         CA::init(width, height, neighbours, new DFAPlusPlus('a'));
         CA::setStart(layout);
