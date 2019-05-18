@@ -40,9 +40,9 @@ class LawParser {
 
     TempDFA generatePerState(const std::tuple<std::string, char, Color, char> &state);
 
-    TempDFA generateLaw(const std::string &law);
+    TempDFA generateLaw(const std::string &law, char def);
 
-    void readCondition(std::string condition);
+    Statement *readCondition(std::string condition, const char next);
 
     static std::pair<unsigned int, unsigned int> parseRange(const std::string &range);
 

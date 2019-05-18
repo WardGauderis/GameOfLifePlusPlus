@@ -41,7 +41,7 @@ void LawParser::parseStates() {
         char character = 'a' + i;
         try {
             states.character(name);
-            std::cerr << "Second definition of state '" + name + "' is ignored";
+            std::cerr << "Redefinition of state '" + name + "' is ignored\n";
         }
         catch (const std::exception &exception) {
             states.emplace_back(name, character, color, character);
@@ -52,6 +52,19 @@ void LawParser::parseStates() {
         std::pair<std::string, std::string> pair = splitDoublePoint(rules[j]);
         pair = splitStatement(pair.second, ",");
         std::get<3>(states[j]) = states.character(pair.second);
+    }
+    for (const auto &section: sections) {
+        try {
+            states.character(section.first);
+        } catch (const std::exception &exception) {
+            if (section.first != "states") {
+                std::cerr << "The section '" + section.first +
+                             "' is not a state defined in the section 'states' and will be ignored\n";
+            }
+        }
+    }
+    for (const auto &state: states) {
+        DFAPlusPlus::alphabet.emplace_back(std::get<1>(state));
     }
 }
 
@@ -184,19 +197,22 @@ Color LawParser::readColor(std::string str) {
 
 TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, char> &state) {
     Section laws = getSection(std::get<0>(state));
+    char def = std::get<3>(state);
     std::vector<TempDFA> dfas;
     for (const auto &law: laws) {
-        dfas.emplace_back(generateLaw(law));
+        dfas.emplace_back(generateLaw(law, def));
     }
     return TempDFA();
 }
 
-TempDFA LawParser::generateLaw(const std::string &law) {
+TempDFA LawParser::generateLaw(const std::string &law, const char def) {
     auto pair = splitDoublePoint(law);
     std::string condition = splitBrackets(pair.first).first;
     char next = states.character(pair.second);
-    readCondition(condition);
-    return TempDFA();
+    Statement *statement = readCondition(condition, next);
+    auto test = statement->generateTempDFA(def);
+    test.print("TEST", states);
+    return statement->generateTempDFA(def);
 }
 
 std::pair<std::string, std::string> LawParser::splitDoublePoint(const std::string &line) {
@@ -207,20 +223,24 @@ std::pair<std::string, std::string> LawParser::splitDoublePoint(const std::strin
     }
 }
 
-void LawParser::readCondition(std::string condition) {
+Statement *LawParser::readCondition(std::string condition, const char next) {
     if (condition[0] == '(') {
         auto pair = splitBrackets(condition);
-        readCondition(pair.first);
+        Statement *first = readCondition(pair.first, next);
+        Statement *second;
         if (pair.second.substr(0, 2) == "&&") {
-            readCondition(splitBrackets(pair.second.substr(2)).first);
+            second = readCondition(splitBrackets(pair.second.substr(2)).first, next);
+            return new AND(first, second);
         } else if (pair.second.substr(0, 2) == "||") {
-            readCondition(splitBrackets(pair.second.substr(2)).first);
+            second = readCondition(splitBrackets(pair.second.substr(2)).first, next);
+            return new OR(first, second);
         } else {
             throw std::runtime_error(
                     "Unnecessary brackets or incorrect composition of statements in statement '" + condition + "'");
         }
     } else if (condition[0] == '!') {
-        readCondition(splitBrackets(condition).first);
+        Statement *statement = readCondition(splitBrackets(condition).first, next);
+        return new NOT(statement);
     } else if (condition[0] == '[') {
         auto pair = splitStatement(condition, "==");
         std::size_t index = pair.first.find(']');
@@ -229,7 +249,9 @@ void LawParser::readCondition(std::string condition) {
         auto range = parseRange(pair.first.substr(1, index - 1));
         char state = states.character(pair.second);
         if (pair.first[index + 1] == '&') {
+            return new RANGEAND(range.first, range.second, state, next);
         } else if (pair.first[index + 1] == '|') {
+            return new RANGEOR(range.first, range.second, state, next);
         } else {
             throw std::runtime_error(
                     "A type declaration ('&' or '|') of the position range was forgotten in statement '" + condition +
@@ -239,6 +261,7 @@ void LawParser::readCondition(std::string condition) {
         auto pair = splitStatement(condition, "==");
         unsigned int position = parseInt(pair.first);
         char state = states.character(pair.second);
+        return new POSITION(position, state, next);
     } else {
         auto pair = splitStatement(condition, "==");
         char state = states.character(pair.first);
@@ -247,8 +270,10 @@ void LawParser::readCondition(std::string condition) {
             if (index == std::string::npos)
                 throw std::runtime_error("']' is missing in range statement '" + condition + "'");
             auto range = parseRange(pair.second.substr(1, index - 1));
+            return new RANGEAMOUNT(range.first, range.second, state, next);
         } else {
             unsigned int amount = parseInt(pair.second);
+            return new AMOUNT(amount, state, next);
         }
     }
 }
@@ -263,6 +288,9 @@ std::pair<unsigned int, unsigned int> LawParser::parseRange(const std::string &r
         end = parseInt(range.substr(index + 1));
     } catch (const std::exception &exception) {
         throw std::runtime_error("Operand is not an unsigned integer in range '" + range + "'");
+    }
+    if (begin >= end) {
+        throw std::runtime_error("First operand must be smaller than second operand in range '" + range + "'");
     }
     return {begin, end};
 }

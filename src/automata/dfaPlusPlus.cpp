@@ -214,3 +214,9 @@ char StateMap::character(const std::string &name) const {
     }
     return std::get<1>(*it);
 }
+
+char StateMap::next(const char c) const {
+    return std::get<3>(*std::find_if(begin(), end(), [c](const std::tuple<std::string, char, Color, char> &state) {
+        return std::get<1>(state) == c;
+    }));
+}

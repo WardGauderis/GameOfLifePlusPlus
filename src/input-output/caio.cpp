@@ -207,13 +207,12 @@ bool CAIO::automatic(const ini::Configuration &conf) {
 
     LawParser parser;
     bool success = parser.parseLaws(laws);
-
-    const std::string file = conf["General"]["layout"].as_string_or_default("");
-    unsigned int amount = DFAPlusPlus::states.size();
-    if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
-    const auto layout = parseLayout(file, width, height, amount);
-
     if (success) {
+        const std::string file = conf["General"]["layout"].as_string_or_default("");
+        unsigned int amount = DFAPlusPlus::states.size();
+        if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
+        const auto layout = parseLayout(file, width, height, amount);
+
         CA::init(width, height, neighbours, new DFAPlusPlus('a'));
         CA::setStart(layout);
     }
