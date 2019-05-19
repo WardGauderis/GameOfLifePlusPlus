@@ -19,22 +19,23 @@ std::vector<StatePlusPlus *> DFAPlusPlus::states = {};
 
 DFAPlusPlusTransition DFAPlusPlus::transition = DFAPlusPlusTransition();
 
-DFAPlusPlus::DFAPlusPlus(const StatePlusPlus *current) : current(current) {}
+StatePlusPlus *DFAPlusPlus::start = nullptr;
 
 void DFAPlusPlus::operator()(const std::string &word) const {
-    for (const auto &c: word) current = transition(c, current);
+    std::string path = current + word;
+    const StatePlusPlus *node = DFAPlusPlus::start;
+    for (const auto &c: path) node = transition[{c, node}];
+    current = node->type;
 }
 
 // was eerst const string& return current->type
 char DFAPlusPlus::getCurrent() const {
-    return current->type;
+    return current;
 }
 
 void DFAPlusPlus::TFAPlusPlus() {
     auto compare = [](const StatePlusPlus *a, const StatePlusPlus *b) {
-        if ((*a).name < (*b).name) return true;
-        if ((*b).name < (*a).name) return false;
-        return (*a).type < (*b).type;
+        return a < b;
     };
     std::sort(states.begin(), states.end(), compare);
     std::map<const StatePlusPlus *, std::map<const StatePlusPlus *, bool >> table;
@@ -50,8 +51,8 @@ void DFAPlusPlus::TFAPlusPlus() {
             for (const auto &pair: pairs.second) {
                 if (!pair.second) {
                     for (const auto &c: alphabet) {
-                        const StatePlusPlus *aNext = transition(c, pair.first);
-                        const StatePlusPlus *bNext = transition(c, pairs.first);
+                        const StatePlusPlus *aNext = transition[{c, pair.first}];
+                        const StatePlusPlus *bNext = transition[{c, pairs.first}];
                         if (aNext != bNext &&
                             table[std::min(aNext, bNext, compare)][std::max(aNext, bNext, compare)]) {
                             table[pairs.first][pair.first] = true;
@@ -78,14 +79,14 @@ void DFAPlusPlus::TFAPlusPlus() {
             }
         }
         minStatesmap[minState] = nullptr;
-        if (state == current) {
+        if (state == start) {
             minCurrent = minState;
         }
     }
     DFAPlusPlusTransition minTransition;
     std::vector<StatePlusPlus *> minStates;
     upgradeToMin(minTransition, minStates, minStatesmap, minCurrent);
-    current = minStatesmap[minCurrent];
+    start = minStatesmap[minCurrent];
     transition = minTransition;
     for (const auto &state: states) delete state;
     states = minStates;
@@ -94,22 +95,18 @@ void DFAPlusPlus::TFAPlusPlus() {
 StatePlusPlus *DFAPlusPlus::upgradeToMin(DFAPlusPlusTransition &minTransition, std::vector<StatePlusPlus *> &minStates,
                                          std::map<std::set<const StatePlusPlus *>, StatePlusPlus *> &minStatesMap,
                                          const std::set<const StatePlusPlus *> &minState) {
-    std::string name = "{";
-    for (const auto &oldState: minState) {
-        name += oldState->name + ", ";
-    }
-    auto *temp = new StatePlusPlus(name.substr(0, name.size() - 2) + "}", (*minState.begin())->type);
+    auto *temp = new StatePlusPlus((*minState.begin())->type);
     minStatesMap[minState] = temp;
     minStates.push_back(temp);
 
     for (const auto &c: alphabet) {
-        const StatePlusPlus *next = transition(c, (*minState.begin()));
+        const StatePlusPlus *next = transition[{c, (*minState.begin())}];
         for (auto &minStatePair: minStatesMap) {
             if (minStatePair.first.find(next) != minStatePair.first.end()) {   //minState met next gevonden
                 if (!minStatePair.second) { //  state nog niet aangemaakt
                     minStatePair.second = upgradeToMin(minTransition, minStates, minStatesMap, minStatePair.first);
                 }
-                minTransition.getMap()[{temp, c}] = minStatePair.second;
+                minTransition[{c, temp}] = minStatePair.second;
                 break;
             }
         }
@@ -117,36 +114,37 @@ StatePlusPlus *DFAPlusPlus::upgradeToMin(DFAPlusPlusTransition &minTransition, s
     return minStatesMap[minState];
 }
 
-void DFAPlusPlus::print(const std::string &fileName) const {
+void DFAPlusPlus::print(const std::string &fileName, const StateMap &stateMap) {
     std::ofstream wFile(fileName + ".dot");
     if (!wFile.is_open()) {
         std::cerr << "Error opening file " + fileName + ".dot\n";
         return;
     }
+
     wFile << "digraph DFAPlusPlus{\n"
-             "\tresolution=250;\n"
              "\trankdir=LR;\n"
              "\tnode [fontname = \"roboto\"]\n"
              "\tedge [fontname = \"roboto\"]\n"
-             "\tnode [ shape = circle ];\n"
-             "\tstart [ style = invis, label = \"\" ];\n"
-             "\tstart -> \"" + current->name + "\";\n";
+             "\tnode [ shape = circle, style=filled ];\n"
+             "\tbeginz [ style = invis, label = \"\" ];\n"
+             "\tbeginz -> \"" + std::to_string(intptr_t(start)) + "\";\n";
 
     for (const auto &state: states) {
-        wFile << "\t\"" + state->name + "\" [ label = <" + std::string(1, state->type) +
-                 "<br/><FONT POINT-SIZE=\"8\">" + state->name +
-                 "</FONT>> ];\n";
+        Color color = stateMap.color(state->type);
+        wFile << "\t\"" + std::to_string(intptr_t(state)) + "\" [ label = \"\", fillcolor = \"" + color.to_string() +
+                 "\" ];\n";
         std::map<std::string, std::vector<char >> arrows;
         for (const auto &symbol: alphabet) {
-            auto next = transition(symbol, state);
-            arrows[next->name].push_back(symbol);
+            auto next = transition[{symbol, state}];
+            arrows[std::to_string(intptr_t(next))].push_back(symbol);
         }
         for (const auto &arrow: arrows) {
-            std::string labels = std::string(1, arrow.second[0]);
+            std::string labels = stateMap.name(arrow.second[0]);
             for (unsigned int i = 1; i < arrow.second.size(); ++i) {
-                labels += ", " + std::string(1, arrow.second[i]);
+                labels += ", " + stateMap.name(arrow.second[i]);
             }
-            wFile << "\t\"" + state->name + "\" -> \"" + arrow.first + "\" [ label = \"" + labels + "\" ];\n";
+            wFile << "\t\"" + std::to_string(intptr_t(state)) + "\" -> \"" + arrow.first + "\" [ label = \"" + labels +
+                     "\" ];\n";
         }
     }
 
@@ -181,10 +179,12 @@ DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
     for (const auto &state: parser["states"]) {
         std::string name = state["name"];
         char type = std::string(state["type"])[0];
-        StatePlusPlus *newState = new StatePlusPlus(name, type);
+        StatePlusPlus *newState = new StatePlusPlus(type);
         states.emplace_back(newState);
         dict[name] = newState;
-        if (state["starting"]) current = newState;
+        if (state["starting"]) {
+            start = newState;
+        }
     }
 
     transition = DFAPlusPlusTransition();
@@ -192,7 +192,37 @@ DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
         StatePlusPlus *from = dict[trans["from"]];
         StatePlusPlus *to = dict[trans["to"]];
         char input = std::string(trans["input"])[0];
-        transition(input, from) = to;
+        transition[{input, from}] = to;
     }
     rFile.close();
+}
+
+DFAPlusPlus::DFAPlusPlus(char current) : current(current) {}
+
+Color StateMap::color(const char c) const {
+    return std::get<2>(*std::find_if(begin(), end(), [c](const std::tuple<std::string, char, Color, char> &state) {
+        return std::get<1>(state) == c;
+    }));
+}
+
+char StateMap::character(const std::string &name) const {
+    auto it = std::find_if(begin(), end(), [name](const std::tuple<std::string, char, Color, char> &state) {
+        return std::get<0>(state) == name;
+    });
+    if (it == end()) {
+        throw std::runtime_error("State with name '" + name + "' was not defined in section states");
+    }
+    return std::get<1>(*it);
+}
+
+char StateMap::next(const char c) const {
+    return std::get<3>(*std::find_if(begin(), end(), [c](const std::tuple<std::string, char, Color, char> &state) {
+        return std::get<1>(state) == c;
+    }));
+}
+
+std::string StateMap::name(const char c) const {
+    return std::get<0>(*std::find_if(begin(), end(), [c](const std::tuple<std::string, char, Color, char> &state) {
+        return std::get<1>(state) == c;
+    }));
 }

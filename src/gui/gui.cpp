@@ -359,7 +359,7 @@ const std::vector<char>& Window::getStart() const
 
 void Window::onLoadIniFile()
 {
-    filename = askString("./input/thomas_test2/test.ini");
+    filename = askString("./input/ward_tests/auto.ini");
     if (!filename.empty()) initialized = true;
 }
 

@@ -8,5 +8,3 @@
 //============================================================================
 
 #include "transitions.h"
-
-const StatePlusPlus* DFAPlusPlusTransition::empty = nullptr;

@@ -41,8 +41,7 @@ struct TMState
 
 
 struct StatePlusPlus {
-    std::string name;
     char type;
 
-    StatePlusPlus(std::string name, char type) : name(std::move(name)), type(type) {}
+    StatePlusPlus(char type) : type(type) {}
 };

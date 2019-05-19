@@ -12,6 +12,7 @@
 #include "caio.h"
 #include "../automata/transitions.h"
 #include "parser.h"
+#include "lawParser.h"
 
 bool CAIO::generate(const std::string &fileName) {
     try {
@@ -26,7 +27,7 @@ bool CAIO::generate(const std::string &fileName) {
         std::string mode = conf["General"]["mode"].as_string_or_die();
         std::transform(mode.begin(), mode.end(), mode.begin(), tolower);
         if (mode == "manual") manual(conf);
-        else if (mode == "automatic")std::cerr << "Coming soon!!!\n";
+        else if (mode == "automatic") return automatic(conf);
         else throw std::runtime_error("Mode not recognised");
         return true;
     }
@@ -71,65 +72,6 @@ std::vector<std::string> CAIO::byCharacter(const std::string &str, const char &c
     return seglist;
 }
 
-Color CAIO::readColor(std::string str) {
-    if (str[0] == '#') {
-        return {str.substr(1)};
-    } else if (str == "random") {
-        return {double(rand()) / RAND_MAX, double(rand()) / RAND_MAX, double(rand()) / RAND_MAX};
-    } else if (str == "epsilon") {
-        return {"000000"};
-    } else if (str == "red") {
-        return {"ff0000"};
-    } else if (str == "orange") {
-        return {"ffa500"};
-    } else if (str == "yellow") {
-        return {"ffff00"};
-    } else if (str == "green") {
-        return {"008000"};
-    } else if (str == "blue") {
-        return {"0000ff"};
-    } else if (str == "purple") {
-        return {"800080"};
-    } else if (str == "brown") {
-        return {"a52a2a"};
-    } else if (str == "magenta") {
-        return {"ff00ff"};
-    } else if (str == "tan") {
-        return {"d2b48c"};
-    } else if (str == "cyan") {
-        return {"00ffff"};
-    } else if (str == "olive") {
-        return {"808000"};
-    } else if (str == "maroon") {
-        return {"800000"};
-    } else if (str == "navy") {
-        return {"000080"};
-    } else if (str == "aquamarine") {
-        return {"7fffd4"};
-    } else if (str == "turquoise") {
-        return {"40e0d0"};
-    } else if (str == "silver") {
-        return {"c0c0c0"};
-    } else if (str == "lime") {
-        return {"00ff00"};
-    } else if (str == "teal") {
-        return {"008080"};
-    } else if (str == "indigo") {
-        return {"4b0082"};
-    } else if (str == "violet") {
-        return {"ee82ee"};
-    } else if (str == "pink") {
-        return {"ffc0cb"};
-    } else if (str == "black") {
-        return {"000000"};
-    } else if (str == "white") {
-        return {"ffffff"};
-    } else if (str == "gray" || str == "grey") {
-        return {"808080"};
-    }
-    throw std::runtime_error("Color " + str + "not recognised");
-}
-
 std::vector<std::pair<int, int>> CAIO::parseCoordinates(const std::string &inputs) {
     auto seglist = byCharacter(inputs, ',');
     std::vector<std::pair<int, int>> neighbours;
@@ -172,7 +114,7 @@ CAIO::parseStates(const ini::Configuration &conf) {
         const bool epsilon = color == "epsilon";
         const std::string filename = strings[2];
         auto automaton = Parser::parseAutomaton(filename, stateNames);
-        stateData.emplace_back(automaton, stateNames[name], name, readColor(color), epsilon);
+        stateData.emplace_back(automaton, stateNames[name], name, LawParser::readColor(color), epsilon);
     }
     return stateData;
 }
@@ -248,5 +190,32 @@ bool CAIO::exportCA(const std::vector<char> &CA, const int width, const int heig
         std::cerr << "Error exporting to file " << fileName << ": " << ex.what() << std::endl;
         return false;
     }
+}
+
+bool CAIO::automatic(const ini::Configuration &conf) {
+    //GENERAL
+    srand((int) time(nullptr));
+    const int width = conf["General"]["width"].as_int_or_default(20);
+    const int height = conf["General"]["height"].as_int_or_default(20);
+
+
+    const std::string inputs = conf["General"]["inputs"].as_string_or_default(
+            "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)");
+    const auto neighbours = parseCoordinates(inputs);
+
+    const std::string laws = conf["General"]["laws"].as_string_or_default("");
+
+    LawParser parser;
+    bool success = parser.parseLaws(laws);
+    if (success) {
+        const std::string file = conf["General"]["layout"].as_string_or_default("");
+        unsigned int amount = DFAPlusPlus::states.size();
+        if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
+        const auto layout = parseLayout(file, width, height, amount);
+
+        CA::init(width, height, neighbours, new DFAPlusPlus('a'));
+        CA::setStart(layout);
+    }
+    return success;
 }
 

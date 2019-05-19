@@ -33,9 +33,9 @@ private:
 
     static void manual(const ini::Configuration &conf);
 
-    static std::vector<std::string> byCharacter(const std::string &str, const char &ch);
+    static bool automatic(const ini::Configuration &conf);
 
-    static Color readColor(std::string str);
+    static std::vector<std::string> byCharacter(const std::string &str, const char &ch);
 };
 
 

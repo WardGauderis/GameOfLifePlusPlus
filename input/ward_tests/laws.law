@@ -1,0 +1,9 @@
+states
+    (alive): white, alive
+    (dead): black, dead
+
+alive
+    ((alive == [0-1]) || (alive == [4-8])): dead
+
+dead
+    (alive == 3): alive

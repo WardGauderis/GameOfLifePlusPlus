@@ -2,9 +2,9 @@
 // @name        : main.cpp
 // @author      : Thomas Dooms
 // @date        : 3/28/19
-// @version     : 
+// @version     :
 // @copyright   : BA1 Informatica - Thomas Dooms - University of Antwerp
-// @description : 
+// @description :
 //============================================================================
 #include <QApplication>
 #include "system/simulation.h"
