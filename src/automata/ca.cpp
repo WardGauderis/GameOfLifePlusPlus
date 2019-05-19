@@ -70,7 +70,7 @@ void CA::setStart(const std::vector<char>& start)
             for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new FSM{ start[i] });
             break;
         case Type::dfaPlusPlus:
-            for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new DFAPlusPlus{ start[i] });
+//            for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new DFAPlusPlus{ start[i] });
             break;
         default:
             throw std::runtime_error("CA not initialized correctly before calling this function\n");
@@ -86,6 +86,11 @@ void CA::destroy()
 const Color& CA::getColor(uint32_t i, uint32_t iteration)
 {
     return converter.at(stack[iteration].at(i));
+}
+
+char CA::getChar(uint32_t i, uint32_t iteration)
+{
+    return stack[iteration].at(i);
 }
 
 const std::vector<char>& CA::getData(uint32_t iteration)

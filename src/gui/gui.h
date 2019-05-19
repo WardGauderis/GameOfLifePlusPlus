@@ -49,10 +49,8 @@ public:
     void setXCells(uint32_t xCells);
     void setYCells(uint32_t yCells);
 
-    std::vector<Color> cells;
-    std::vector<char> charCells;
-    std::map<char, Color> caMap;
-    std::map<Color, char> rCaMap;
+    std::vector<char> cells;
+    std::map<char, Color> converter;
 
     bool& getRepaint();
 
@@ -61,13 +59,8 @@ public:
 
     void mousePressEvent(QMouseEvent *event);
 
-    void resync();
-
     uint32_t xCells;
     uint32_t yCells;
-private:
-
-    bool shouldRepaint = false;
 };
 
 class Window: public QMainWindow
@@ -83,9 +76,7 @@ public:
 
     void initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Color> &caMap);
 
-    const Color& getColor(uint32_t x, uint32_t y) const;
-    void setColor(uint32_t x, uint32_t y, const Color& color);
-    void setColor(uint32_t i, const Color& color);
+    char& operator[](uint32_t index) const;
 
     void delay(uint32_t ms);
     void processEverything();
@@ -96,6 +87,7 @@ public:
     void closeEvent(QCloseEvent *event);
 
     int getSliderValue() const;
+    const std::vector<char>& getStart() const;
 
     std::string askString(std::string example);
     double askDouble(double min, double max, double step, double example);
@@ -110,16 +102,11 @@ public:
     void setInitialized(bool initialized);
 
     const std::string &getLayoutFilename() const;
-    const std::vector<char> &getStartVec() const;
 
     void paintEvent([[maybe_unused]] QPaintEvent *event);
 
     uint32_t getTicksPassed() const;
-
     void setTicksPassed(uint32_t ticksPassed);
-
-
-protected:
 
 private:
 
@@ -153,7 +140,6 @@ private:
     QSlider* fancySlider;
 
     static QTime prev;
-    bool shouldRepaint = false;
 
 private slots:
     void onPlay();

@@ -38,7 +38,7 @@ struct Transition
     // creates a new element if not found, throws error if not unique
     Value& find_if_unique(const Key& key)
     {
-        if(map.find(key) != end(map)) throw std::runtime_error("element not found in transition");
+        if(map.find(key) != end(map)) throw std::runtime_error("element already found in transition");
         return map[key];
     }
 

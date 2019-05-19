@@ -33,12 +33,11 @@ void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
         yPos = 0;
         for (uint32_t y = 0; y < yCells; ++y)
         {
-            painter.fillRect(std::floor(xPos), std::floor(yPos), std::ceil(celWidth), std::ceil(celHeight), cells.at(y*xCells + x));
+            painter.fillRect(std::floor(xPos), std::floor(yPos), std::ceil(celWidth), std::ceil(celHeight), converter.at(cells.at(y*xCells + x)));
             yPos += celHeight;
         }
         xPos += celWidth;
     }
-    shouldRepaint = false;
 }
 
 void UIGrid::setXCells(uint32_t xCells) {
@@ -49,12 +48,9 @@ void UIGrid::setYCells(uint32_t yCells) {
     UIGrid::yCells = yCells;
 }
 
-bool& UIGrid::getRepaint() { return shouldRepaint; }
-
 
 void UIGrid::mousePressEvent(QMouseEvent *event)
 {
-
     if (event->button() != Qt::LeftButton or !canChange) return;
 
     double celWidth  = double(this->size().width() ) / double(xCells);
@@ -63,35 +59,14 @@ void UIGrid::mousePressEvent(QMouseEvent *event)
     int x = std::floor(event->pos().x()/celWidth);
     int y = std::floor(event->pos().y()/celHeight);
 
-    std::map<char, Color>::iterator it = caMap.begin();
+    uint32_t index = y*xCells + x;
+    const auto iter = ++converter.find(cells.at(index));
+    if(iter == end(converter)) cells.at(y * xCells + x) = begin(converter)->first;
+    else cells.at(y * xCells + x) = iter->first;
 
-    while (true)
-    {
-        if (it->second != cells.at(y*xCells + x))
-        {
-            it++;
-            continue;
-        }
-
-        it++;
-        if (it == caMap.end()) it = caMap.begin();
-        cells.at(y*xCells + x) = it->second;
-        charCells.at(y*xCells + x) = it->first;
-        this->repaint();
-        break;
-    }
+    this->repaint();
 }
 
-void UIGrid::resync()
-{
-    for (unsigned int x=0;x<xCells;x++)
-    {
-        for (unsigned int y=0;y<yCells;y++)
-        {
-            cells.at(y*xCells + x) = caMap[charCells.at(y*xCells + x)];
-        }
-    }
-}
 //--------------------------WINDOW CLASS----------------------------------------
 
 Window::Window(QWidget *parent) : QMainWindow(parent)
@@ -100,7 +75,7 @@ Window::Window(QWidget *parent) : QMainWindow(parent)
 
 
 //const std::map<char, Color> &colormap
-void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Color> &caMap)
+void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Color>& converter)
 {
     this->setMinimumSize(750, 750);
 
@@ -108,16 +83,8 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Col
     yCells = _yCells;
 
     layout->addWidget(raster, 0, 0, 1, 10);
-
-    raster->cells = std::vector<Color>(xCells*yCells, caMap.begin()->second);
-    raster->charCells = std::vector<char>(xCells*yCells, caMap.begin()->first);
-
-    raster->caMap = caMap;
-
-    for (auto it=caMap.begin();it != caMap.end();it++)
-    {
-        raster->rCaMap.insert( std::pair<Color, char>(it->second, it->first) );
-    }
+    raster->cells = std::vector<char>(xCells*yCells, converter.begin()->first);
+    raster->converter = converter;
 
     raster->setXCells(xCells);
     raster->setYCells(yCells);
@@ -134,7 +101,7 @@ void Window::processEverything()
 {
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     QTime current = QTime::currentTime();
-    if(prev.addMSecs(20) < current and raster->getRepaint())
+    if(prev.addMSecs(20) < current)
     {
         prev = current;
         repaint();
@@ -152,34 +119,16 @@ void Window::delay(uint32_t ms)
     }
 }
 
-const Color& Window::getColor(uint32_t x, uint32_t y) const
+char& Window::operator[](uint32_t index) const
 {
-    return raster->cells.at(y*xCells + x);
+    return raster->cells.at(index);
 }
-
-void Window::setColor(uint32_t x, uint32_t y, const Color& color)
-{
-    raster->getRepaint() = true;
-    raster->cells.at(y*xCells + x) = color;
-    raster->charCells.at(y*xCells + x) = raster->rCaMap[color];
-
-}
-
-void Window::setColor(uint32_t i, const Color& color)
-{
-    raster->getRepaint() = true;
-    raster->cells.at(i) = color;
-    raster->charCells.at(i) = raster->rCaMap[color];
-}
-
-
 
 Window::~Window()
 {
     for (auto widget:widgetsToDelete) delete widget;
     delete this;
 }
-
 
 void Window::createIniButtons()
 {
@@ -403,6 +352,10 @@ int Window::getSliderValue() const
 {
     return sliderValue;
 }
+const std::vector<char>& Window::getStart() const
+{
+    return raster->cells;
+}
 
 void Window::onLoadIniFile()
 {
@@ -413,15 +366,12 @@ void Window::onLoadIniFile()
 void Window::onLoadLayout()
 {
     std::string fileName = askString("./layout.csv");
-    raster->charCells = CAIO::parseLayout(fileName, raster->xCells, raster->yCells, raster->caMap.size());
-    raster->resync();
-    this->repaint();
-
+    raster->cells = CAIO::parseLayout(fileName, raster->xCells, raster->yCells, raster->converter.size());
 }
 void Window::onExportLayout()
 {
     std::string fileName = askString("layout");
-    CAIO::exportCA(raster->charCells, raster->xCells, raster->yCells, fileName);
+    CAIO::exportCA(raster->cells, raster->xCells, raster->yCells, fileName);
 }
 void Window::onStartSimulation()
 {
@@ -437,11 +387,6 @@ const std::string &Window::getFilename() const {
 
 void Window::setInitialized(bool initialized) {
     Window::initialized = initialized;
-}
-
-const std::vector<char>& Window::getStartVec() const
-{
-    return raster->charCells;
 }
 
 uint32_t Window::getTicksPassed() const {

@@ -30,6 +30,7 @@ Simulation::Simulation()
     {
         window.delay(500);
     }
+    CA::setStart(window.getStart());
 }
 
 bool Simulation::simulate()
@@ -38,7 +39,6 @@ bool Simulation::simulate()
     uint32_t iteration = 0;
     window.showPlayButton();
 
-    CA::setStart(window.getStartVec());
     draw(0);
     window.repaint();
 
@@ -52,24 +52,20 @@ bool Simulation::simulate()
 
             case Window::play:
                 draw(++iteration);
-                window.repaint();
                 window.delay(getDelay(window.getSliderValue()));
                 break;
 
             case Window::next:
                 draw(++iteration);
-                window.repaint();
                 window.delay(10);
                 break;
 
             case Window::previous:
                 if(iteration > 0) draw(--iteration);
-                window.repaint();
                 window.delay(10);
                 break;
             case Window::playback:
                 if(iteration > 0) draw(--iteration);
-                window.repaint();
                 window.delay(getDelay(window.getSliderValue()));
                 break;
             case Window::quit:
@@ -88,7 +84,7 @@ void Simulation::draw(uint32_t iteration)
     if(iteration == CA::getSize()) CA::update();
     else if(iteration > CA::getSize()) throw std::runtime_error("multiple steps at once");
 
-    for(uint32_t i = 0; i < CA::getData(iteration).size(); i++) window.setColor(i, CA::getColor(i, iteration));
+    for(uint32_t i = 0; i < CA::getData(iteration).size(); i++) window[i] = CA::getChar(i, iteration);
     window.setTicksPassed(iteration);
 }
 
