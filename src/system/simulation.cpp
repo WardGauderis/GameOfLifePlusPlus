@@ -16,7 +16,6 @@ Simulation::Simulation()
     window.createIniButtons();
     window.show();
 
-
     while(!window.isInitialized())
     {
         window.delay(500);
@@ -24,8 +23,11 @@ Simulation::Simulation()
 
     if(!CAIO::generate(window.getFilename())) exit(69);
     window.initCA(CA::getWidth(), CA::getHeight(), CA::getColors());
+    window.repaint();
+
     window.createEditButtons();
     window.setInitialized(false);
+
     while(!window.isInitialized())
     {
         window.delay(500);

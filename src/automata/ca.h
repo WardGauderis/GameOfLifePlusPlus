@@ -30,14 +30,13 @@ public:
     static void init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours,
             const std::vector<std::tuple<const Automaton*, char, std::string, Color, bool>>& stateData, const FSMTransition& transition);
 
-    static void init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours, const DFAPlusPlus* dfa);
+    static void init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>>& neighbours, const DFAPlusPlus* dfa, const std::map<char, Color>& converter);
 
     static void setStart(const std::vector<char>& start);
 
     static void destroy();
     static void update();
 
-    static const Color& getColor(uint32_t i, uint32_t iteration);
     static char getChar(uint32_t i, uint32_t iteration);
     static const std::vector<char>& getData(uint32_t iteration);
 

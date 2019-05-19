@@ -45,11 +45,12 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
     type = Type::fsm;
 }
 
-void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>> &neighbours, const DFAPlusPlus* dfa)
+void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>> &neighbours, const DFAPlusPlus* dfa, const std::map<char, Color>& converter)
 {
     CA::width = width;
     CA::height = height;
     CA::neighbours = neighbours;
+    CA::converter = converter;
 
     cells = {width*height, dfa};
     type = Type::dfaPlusPlus;
@@ -83,11 +84,6 @@ void CA::destroy()
     for(const auto& cell : cells) delete cell;
 }
 
-const Color& CA::getColor(uint32_t i, uint32_t iteration)
-{
-    return converter.at(stack[iteration].at(i));
-}
-
 char CA::getChar(uint32_t i, uint32_t iteration)
 {
     return stack[iteration].at(i);
@@ -118,7 +114,6 @@ uint32_t CA::getIndex(std::pair<int, int> offset, uint32_t x, uint32_t y)
 {
     uint32_t xVal = (int(width ) + (offset.first  + int(x)) % int(width )) % int(width );
     uint32_t yVal = (int(height) + (offset.second + int(y)) % int(height)) % int(height);
-    getColors();
     return yVal * width + xVal;
 }
 
