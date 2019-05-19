@@ -45,14 +45,13 @@ void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, 
     type = Type::fsm;
 }
 
-void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>> &neighbours, const DFAPlusPlus* dfa, const std::map<char, Color>& converter)
+void CA::init(uint32_t width, uint32_t height, const std::vector<std::pair<int, int>> &neighbours, const std::map<char, Color>& converter)
 {
     CA::width = width;
     CA::height = height;
     CA::neighbours = neighbours;
     CA::converter = converter;
 
-    cells = {width*height, dfa};
     type = Type::dfaPlusPlus;
 }
 
@@ -71,7 +70,7 @@ void CA::setStart(const std::vector<char>& start)
             for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new FSM{ start[i] });
             break;
         case Type::dfaPlusPlus:
-//            for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new DFAPlusPlus{ start[i] });
+            for(uint32_t i = 0; i < width*height; i++) cells.emplace_back(new DFAPlusPlus{ start[i] });
             break;
         default:
             throw std::runtime_error("CA not initialized correctly before calling this function\n");
