@@ -139,9 +139,9 @@ void DFAPlusPlus::print(const std::string &fileName, const StateMap &stateMap) {
             arrows[std::to_string(intptr_t(next))].push_back(symbol);
         }
         for (const auto &arrow: arrows) {
-            std::string labels = std::string(1, arrow.second[0]);
+            std::string labels = stateMap.name(arrow.second[0]);
             for (unsigned int i = 1; i < arrow.second.size(); ++i) {
-                labels += ", " + std::string(1, arrow.second[i]);
+                labels += ", " + stateMap.name(arrow.second[i]);
             }
             wFile << "\t\"" + std::to_string(intptr_t(state)) + "\" -> \"" + arrow.first + "\" [ label = \"" + labels +
                      "\" ];\n";
@@ -206,7 +206,7 @@ Color StateMap::color(const char c) const {
 }
 
 char StateMap::character(const std::string &name) const {
-    auto it =std::find_if(begin(), end(), [name](const std::tuple<std::string, char, Color, char> &state) {
+    auto it = std::find_if(begin(), end(), [name](const std::tuple<std::string, char, Color, char> &state) {
         return std::get<0>(state) == name;
     });
     if (it == end()) {

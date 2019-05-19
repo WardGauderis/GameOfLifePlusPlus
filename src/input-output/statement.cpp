@@ -219,9 +219,9 @@ void TempDFA::print(const std::string &fileName, const StateMap &stateMap) const
             arrows[std::to_string(intptr_t(next))].push_back(std::get<1>(symbol));
         }
         for (const auto &arrow: arrows) {
-            std::string labels = std::string(1, arrow.second[0]);
+            std::string labels = stateMap.name(arrow.second[0]);
             for (unsigned int i = 1; i < arrow.second.size(); ++i) {
-                labels += ", " + std::string(1, arrow.second[i]);
+                labels += ", " + stateMap.name(arrow.second[i]);
             }
             wFile << "\t\"" + std::to_string(intptr_t(state)) + "\" -> \"" + arrow.first + "\" [ label = \"" + labels +
                      "\" ];\n";
