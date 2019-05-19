@@ -42,8 +42,12 @@ class LawParser {
 
     TempDFA generateLaw(const std::string &law, char def);
 
-    Statement *readCondition(std::string condition, const char next);
+    Statement *readCondition(std::string condition, char next);
 
+public:
+    const StateMap &getStates() const;
+
+private:
     static std::pair<unsigned int, unsigned int> parseRange(const std::string &range);
 
     static std::pair<std::string, std::string>

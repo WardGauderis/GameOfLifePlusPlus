@@ -346,3 +346,7 @@ unsigned int LawParser::parseInt(const std::string &str) {
         throw std::runtime_error("'" + str + "' should be an unsigned int, but isn't");
     }
 }
+
+const StateMap &LawParser::getStates() const {
+    return states;
+}
