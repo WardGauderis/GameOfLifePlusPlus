@@ -24,6 +24,9 @@
 #include <QSlider>
 #include <QMessageBox>
 #include <QLabel>
+#include <QMouseEvent>
+#include <qpixmap.h>
+#include <QIcon>
 
 
 #include <random>
@@ -33,6 +36,7 @@
 #include <cmath>
 
 #include "color.h"
+#include "../input-output/caio.h"
 
 class UIGrid: public QWidget
 {
@@ -46,14 +50,22 @@ public:
     void setYCells(uint32_t yCells);
 
     std::vector<Color> cells;
+    std::vector<char> charCells;
+    std::map<char, Color> caMap;
+    std::map<Color, char> rCaMap;
 
     bool& getRepaint();
 
     bool initialized;
+    bool canChange = true;
 
-private:
+    void mousePressEvent(QMouseEvent *event);
+
+    void resync();
+
     uint32_t xCells;
     uint32_t yCells;
+private:
 
     bool shouldRepaint = false;
 };
@@ -69,7 +81,7 @@ public:
     explicit Window(QWidget* parent = nullptr);
     ~Window() override;
 
-    void initCA(uint32_t _xCells, uint32_t _yCells);
+    void initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Color> &caMap);
 
     const Color& getColor(uint32_t x, uint32_t y) const;
     void setColor(uint32_t x, uint32_t y, const Color& color);
@@ -98,6 +110,14 @@ public:
     void setInitialized(bool initialized);
 
     const std::string &getLayoutFilename() const;
+    const std::vector<char> &getStartVec() const;
+
+    void paintEvent([[maybe_unused]] QPaintEvent *event);
+
+    uint32_t getTicksPassed() const;
+
+    void setTicksPassed(uint32_t ticksPassed);
+
 
 protected:
 
@@ -108,7 +128,6 @@ private:
     bool initialized = false;
 
     std::string filename;
-    std::string layoutFilename;
 
     uint32_t xCells;
     uint32_t yCells;
@@ -121,8 +140,10 @@ private:
 
     QPushButton* playBtn;
     QPushButton* pauseBtn;
-    QPushButton* pauseBtn2;
     QPushButton* playBackBtn;
+
+    QLabel* labelTicksPassed;
+    uint32_t ticksPassed = 0;
 
     std::vector<QWidget*> widgetsToDelete;
     std::vector<QWidget*> iniWidgets;
@@ -144,6 +165,7 @@ private slots:
     void onStartSimulation();
     void onLoadLayout();
     void onPlayBack();
+    void onExportLayout();
 };
 
 

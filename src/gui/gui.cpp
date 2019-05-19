@@ -51,20 +51,47 @@ void UIGrid::setYCells(uint32_t yCells) {
 
 bool& UIGrid::getRepaint() { return shouldRepaint; }
 
-/*
+
 void UIGrid::mousePressEvent(QMouseEvent *event)
 {
 
-    if (event->button() == Qt::LeftButton)
-    {
-        double celWidth  = double(this->size().width() ) / double(xCells);
-        double celHeight = double(this->size().height()) / double(yCells);
+    if (event->button() != Qt::LeftButton or !canChange) return;
 
-        int x = std::floor(event->pos().x()/celWidth);
-        int y = std::floor(event->pos().y()/celHeight);
+    double celWidth  = double(this->size().width() ) / double(xCells);
+    double celHeight = double(this->size().height()) / double(yCells);
+
+    int x = std::floor(event->pos().x()/celWidth);
+    int y = std::floor(event->pos().y()/celHeight);
+
+    std::map<char, Color>::iterator it = caMap.begin();
+
+    while (true)
+    {
+        if (it->second != cells.at(y*xCells + x))
+        {
+            it++;
+            continue;
+        }
+
+        it++;
+        if (it == caMap.end()) it = caMap.begin();
+        cells.at(y*xCells + x) = it->second;
+        charCells.at(y*xCells + x) = it->first;
+        this->repaint();
+        break;
     }
 }
-*/
+
+void UIGrid::resync()
+{
+    for (unsigned int x=0;x<xCells;x++)
+    {
+        for (unsigned int y=0;y<yCells;y++)
+        {
+            cells.at(y*xCells + x) = caMap[charCells.at(y*xCells + x)];
+        }
+    }
+}
 //--------------------------WINDOW CLASS----------------------------------------
 
 Window::Window(QWidget *parent) : QMainWindow(parent)
@@ -73,21 +100,34 @@ Window::Window(QWidget *parent) : QMainWindow(parent)
 
 
 //const std::map<char, Color> &colormap
-void Window::initCA(uint32_t _xCells, uint32_t _yCells)
+void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Color> &caMap)
 {
     this->setMinimumSize(750, 750);
 
     xCells = _xCells;
     yCells = _yCells;
 
-    
     layout->addWidget(raster, 0, 0, 1, 10);
 
-    raster->cells = std::vector<Color>(xCells*yCells, Color(0, 0 ,0));
+    raster->cells = std::vector<Color>(xCells*yCells, caMap.begin()->second);
+    raster->charCells = std::vector<char>(xCells*yCells, caMap.begin()->first);
+
+    raster->caMap = caMap;
+
+    for (auto it=caMap.begin();it != caMap.end();it++)
+    {
+        raster->rCaMap.insert( std::pair<Color, char>(it->second, it->first) );
+    }
 
     raster->setXCells(xCells);
     raster->setYCells(yCells);
+
     raster->initialized = true;
+}
+
+void Window::paintEvent([[maybe_unused]] QPaintEvent *event)
+{
+    if (!(raster->canChange)) labelTicksPassed->setText(("Ticks passed:\n" + std::to_string(ticksPassed)).c_str());
 }
 
 void Window::processEverything()
@@ -108,6 +148,7 @@ void Window::delay(uint32_t ms)
     while (QTime::currentTime() < stopTime)
     {
         processEverything();
+        [[maybe_unused]] int res = system("sleep 0.01");
     }
 }
 
@@ -120,12 +161,15 @@ void Window::setColor(uint32_t x, uint32_t y, const Color& color)
 {
     raster->getRepaint() = true;
     raster->cells.at(y*xCells + x) = color;
+    raster->charCells.at(y*xCells + x) = raster->rCaMap[color];
+
 }
 
 void Window::setColor(uint32_t i, const Color& color)
 {
     raster->getRepaint() = true;
     raster->cells.at(i) = color;
+    raster->charCells.at(i) = raster->rCaMap[color];
 }
 
 
@@ -183,19 +227,58 @@ void Window::createEditButtons()
     iniWidgets.emplace_back(loadLayout);
     connect(loadLayout, SIGNAL(pressed()), this, SLOT(onLoadLayout()));
     editWidgets.emplace_back(loadLayout);
+
+    raster->canChange = true;
 }
 
 void Window::showPlayButton()
 {
+    raster->canChange = false;
+
     for (auto &widget:editWidgets)
     {
         widget->hide();
     }
 
+//    //ICONS
+//
+//    QPixmap icons("./icons/mediaplayer.png");
+//    icons.save("hallo");
+//    icons = icons.scaledToHeight(size);
+//
+//    int w = icons.size().width()/3;
+//    int h = icons.size().height()/3;
+//
+//    QRect playRect(w, 0, w, h);
+//    QRect pauseRect(w, 2*h, w, h);
+//    QRect nextRect(w, h, w, h);
+//    QRect prevRect(w, h, w, h);
+//
+//    QIcon playIcon(icons.copy(playRect));
+//    QIcon pauseIcon(icons.copy(pauseRect));
+//    QIcon nextIcon(icons.copy(prevRect));
+//    QIcon prevIcon(icons.copy(nextRect));
+//
+//    playBtn->setIcon(playIcon);
+//    pauseBtn->setIcon(pauseIcon);
+//    skipOne->setIcon(nextIcon);
+//    goBackOne->setIcon(prevIcon);
+//
+//    playBtn->setIconSize(QSize(this->width()/10, size));
+//    pauseBtn->setIconSize(QSize(this->width()/10, size));
+//    skipOne->setIconSize(QSize(this->width()/10, size));
+//    goBackOne->setIconSize(QSize(this->width()/10, size));
+
+    //BUTTONS
     playBtn = new QPushButton("Play", this);
     pauseBtn = new QPushButton("Pause", this);
     QPushButton* skipOne = new QPushButton("Next tick", this);
     QPushButton* goBackOne = new QPushButton("Previous tick", this);
+
+//    playBtn = new QPushButton(this);
+//    pauseBtn = new QPushButton(this);
+//    QPushButton* skipOne = new QPushButton(this);
+//    QPushButton* goBackOne = new QPushButton(this);
 
     playBtn->show();
     pauseBtn->show();
@@ -207,10 +290,10 @@ void Window::showPlayButton()
     skipOne->setFixedHeight(size);
     goBackOne->setFixedHeight(size);
 
-    layout-> addWidget(playBtn, 1, 6 ,1, 1);
-    layout-> addWidget(pauseBtn, 1, 5 ,1, 1);
-    layout-> addWidget(skipOne, 1, 7 ,1, 1);
-    layout-> addWidget(goBackOne, 1, 3 ,1, 1);
+    layout-> addWidget(playBtn, 1, 5 ,1, 1);
+    layout-> addWidget(pauseBtn, 1, 4 ,1, 1);
+    layout-> addWidget(skipOne, 1, 6 ,1, 1);
+    layout-> addWidget(goBackOne, 1, 2 ,1, 1);
 
 
     connect(playBtn, SIGNAL(pressed()), this, SLOT(onPlay()));
@@ -222,19 +305,57 @@ void Window::showPlayButton()
     playBackBtn = new QPushButton("Play Back", this);
     playBackBtn->setFixedHeight(size);
     playBackBtn->show();
-    layout-> addWidget(playBackBtn, 1, 4 ,1, 1);
+    layout-> addWidget(playBackBtn, 1, 3 ,1, 1);
     connect(playBackBtn, SIGNAL(pressed()), this, SLOT(onPlayBack()));
 
-    // slider
     fancySlider = new QSlider(Qt::Orientation::Horizontal, this);
     fancySlider->setSingleStep(1);
     fancySlider->setTickInterval(10);
     fancySlider->setMaximum(110);
     fancySlider->setMinimum(0);
     connect(fancySlider, SIGNAL(valueChanged(int)), this, SLOT(setSliderValue(int)));
-    layout->addWidget(fancySlider,1, 0, 1, 3);
+    layout->addWidget(fancySlider,1, 0, 1, 2);
+
+    labelTicksPassed = new QLabel(this);
+    labelTicksPassed->setText(("Ticks passed:\n" + std::to_string(ticksPassed)).c_str());
+    labelTicksPassed->show();
+    layout-> addWidget(labelTicksPassed, 1, 8 ,1, 1);
+
+    QPushButton * exportButton = new QPushButton("Export current\nstate as layout", this);
+    exportButton->setFixedHeight(size);
+    exportButton->show();
+    layout-> addWidget(exportButton, 1, 7 ,1, 1);
+    connect(exportButton, SIGNAL(pressed()), this, SLOT(onExportLayout()));
 }
 
+std::string Window::askString(std::string example)
+{
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("enter your filename"),
+                                         tr("filename"), QLineEdit::Normal,
+                                         QString(example.c_str()), &ok);
+
+    if (ok && !text.isEmpty())
+        return text.toStdString();
+    else return "";
+}
+
+double Window::askDouble(double min, double max, double step, double example)
+{
+    bool ok;
+    double val = QInputDialog::getDouble(this, tr(""),
+                                         tr("New value:"), example, min, max, step, &ok);
+    if (ok)
+    {
+        return val;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+// ------------------------------------- SLOTS, GETTERS AND SETTERS ----------------------------------------------
 void Window::onPlay()
 {
     crState = play;
@@ -269,53 +390,18 @@ Window::state Window::getState()
 
 void Window::closeEvent([[maybe_unused]] QCloseEvent *event)
 {
-    crState = quit;
+    exit(0);
 }
 
 void Window::setSliderValue(int val)
 {
     fancySlider->setToolTip(QString(std::to_string(sliderValue).c_str()));
-
-    if (sliderValue > 100 and val > sliderValue)
-    {
-        QMessageBox msgBox;
-        msgBox.setText("ARE YOU SURE YOU WANT TO GO MAXIMUM POWER??");
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        [[maybe_unused]] int ret =  msgBox.exec();
-    }
     sliderValue = val;
 }
 
 int Window::getSliderValue() const
 {
     return sliderValue;
-}
-
-std::string Window::askString(std::string example)
-{
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("enter your filename"),
-                                         tr("filename"), QLineEdit::Normal,
-                                         QString(example.c_str()), &ok);
-
-    if (ok && !text.isEmpty())
-        return text.toStdString();
-    else return "";
-}
-
-double Window::askDouble(double min, double max, double step, double example)
-{
-    bool ok;
-    double val = QInputDialog::getDouble(this, tr(""),
-                                       tr("New value:"), example, min, max, step, &ok);
-    if (ok)
-    {
-        return val;
-    }
-    else
-    {
-        return -1;
-    }
 }
 
 void Window::onLoadIniFile()
@@ -326,7 +412,16 @@ void Window::onLoadIniFile()
 
 void Window::onLoadLayout()
 {
-    layoutFilename = askString("./input/thomas_test2/test.csv");
+    std::string fileName = askString("./layout.csv");
+    raster->charCells = CAIO::parseLayout(fileName, raster->xCells, raster->yCells, raster->caMap.size());
+    raster->resync();
+    this->repaint();
+
+}
+void Window::onExportLayout()
+{
+    std::string fileName = askString("layout");
+    CAIO::exportCA(raster->charCells, raster->xCells, raster->yCells, fileName);
 }
 void Window::onStartSimulation()
 {
@@ -344,6 +439,15 @@ void Window::setInitialized(bool initialized) {
     Window::initialized = initialized;
 }
 
-const std::string &Window::getLayoutFilename() const {
-    return layoutFilename;
+const std::vector<char>& Window::getStartVec() const
+{
+    return raster->charCells;
+}
+
+uint32_t Window::getTicksPassed() const {
+    return ticksPassed;
+}
+
+void Window::setTicksPassed(uint32_t ticksPassed) {
+    Window::ticksPassed = ticksPassed;
 }
