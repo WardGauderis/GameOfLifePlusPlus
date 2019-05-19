@@ -36,11 +36,6 @@ private:
     static bool automatic(const ini::Configuration &conf);
 
     static std::vector<std::string> byCharacter(const std::string &str, const char &ch);
-
-    static std::vector<char>
-    parseLayout(const std::string &fileName, const int width, const int height, const int amount);
-
-    static bool exportCA(const std::vector<char> &CA, int width, int height, const std::string &fileName);
 };
 
 
