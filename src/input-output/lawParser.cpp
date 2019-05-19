@@ -138,7 +138,7 @@ void LawParser::generateDFAPlusPlus() {
         auto temp = generatePerState(state);
 
         DFAPlusPlus::states.insert(DFAPlusPlus::states.end(), std::make_move_iterator(temp.states.begin()),
-                  std::make_move_iterator(temp.states.end()));
+                                   std::make_move_iterator(temp.states.end()));
         temp.states.erase(temp.states.begin(), temp.states.end());
 
         DFAPlusPlus::transition.map.merge(temp.transition.map);
@@ -209,7 +209,8 @@ Color LawParser::readColor(std::string str) {
 }
 
 TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, char> &state) {
-    char def = std::get<3>(state);
+//    char def = std::get<3>(state);
+    char def = 'a' - 1;     //default value for unfilled states
     Section laws;
     try {
         laws = getSection(std::get<0>(state));
@@ -217,8 +218,9 @@ TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, c
             throw std::exception();
         }
     } catch (const std::exception &exception) {
-        std::cerr << "No rules were specified for state '" + std::get<0>(state) + "' : its transition will default to '" +
-                     states.name(std::get<3>(state)) + "'\n";
+        std::cerr
+                << "No rules were specified for state '" + std::get<0>(state) + "' : its transition will default to '" +
+                   states.name(std::get<3>(state)) + "'\n";
         TempDFA temp;
         temp.start = new StatePlusPlus(def);
         temp.states.emplace_back(temp.start);
@@ -230,9 +232,13 @@ TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, c
         dfas.emplace_back(generateLaw(law, def));
     }
     TempDFA temp = dfas[0];
+
     for (unsigned int i = 1; i < dfas.size(); ++i) {
         temp = temp.multiply(dfas[i], def, prioritizedUnion);
     }
+
+    for (auto &tempState: temp.states) if (tempState->type == 'a' - 1) tempState->type = std::get<3>(state);  //fill in the default value with the true default
+
     return temp;
 }
 
