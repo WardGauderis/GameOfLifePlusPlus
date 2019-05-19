@@ -19,6 +19,7 @@ bool LawParser::parseLaws(const std::string &fileName) {
         parseSections(fileName);
         parseStates();
         generateDFAPlusPlus();
+        return true;
     }
     catch (const std::exception &ex) {
         std::cerr << "Error parsing file " << fileName << ": " << ex.what() << std::endl;
@@ -130,10 +131,22 @@ std::pair<std::string, std::string> LawParser::splitBrackets(const std::string &
 }
 
 void LawParser::generateDFAPlusPlus() {
-    std::vector<TempDFA> dfas;
+    DFAPlusPlus::start = new StatePlusPlus('a' - 1);
+    DFAPlusPlus::states.emplace_back(DFAPlusPlus::start);
+
     for (const auto &state: states) {
-        dfas.emplace_back(generatePerState(state));
+        auto temp = generatePerState(state);
+
+        DFAPlusPlus::states.insert(DFAPlusPlus::states.end(), std::make_move_iterator(temp.states.begin()),
+                  std::make_move_iterator(temp.states.end()));
+        temp.states.erase(temp.states.begin(), temp.states.end());
+
+        DFAPlusPlus::transition.map.merge(temp.transition.map);
+        DFAPlusPlus::transition[{std::get<1>(state), DFAPlusPlus::start}] = temp.start;
     }
+    DFAPlusPlus::print("DFA++", states);
+    DFAPlusPlus::TFAPlusPlus();
+    DFAPlusPlus::print("DFA++Minimized", states);
 }
 
 Color LawParser::readColor(std::string str) {
@@ -196,13 +209,31 @@ Color LawParser::readColor(std::string str) {
 }
 
 TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, char> &state) {
-    Section laws = getSection(std::get<0>(state));
     char def = std::get<3>(state);
+    Section laws;
+    try {
+        laws = getSection(std::get<0>(state));
+        if (laws.empty()) {
+            throw std::exception();
+        }
+    } catch (const std::exception &exception) {
+        std::cerr << "No rules were specified for state '" + std::get<0>(state) + "' : its transition will default to '" +
+                     states.name(std::get<3>(state)) + "'\n";
+        TempDFA temp;
+        temp.start = new StatePlusPlus(def);
+        temp.states.emplace_back(temp.start);
+        temp.forAll(temp.start, temp.start);
+        return temp;
+    }
     std::vector<TempDFA> dfas;
     for (const auto &law: laws) {
         dfas.emplace_back(generateLaw(law, def));
     }
-    return TempDFA();
+    TempDFA temp = dfas[0];
+    for (unsigned int i = 1; i < dfas.size(); ++i) {
+        temp = temp.multiply(dfas[i], def, prioritizedUnion);
+    }
+    return temp;
 }
 
 TempDFA LawParser::generateLaw(const std::string &law, const char def) {
@@ -210,9 +241,9 @@ TempDFA LawParser::generateLaw(const std::string &law, const char def) {
     std::string condition = splitBrackets(pair.first).first;
     char next = states.character(pair.second);
     Statement *statement = readCondition(condition, next);
-    auto test = statement->generateTempDFA(def);
-    test.print("TEST", states);
-    return statement->generateTempDFA(def);
+    auto temp = statement->generateTempDFA(def);
+    delete statement;
+    return temp;
 }
 
 std::pair<std::string, std::string> LawParser::splitDoublePoint(const std::string &line) {
@@ -240,7 +271,7 @@ Statement *LawParser::readCondition(std::string condition, const char next) {
         }
     } else if (condition[0] == '!') {
         Statement *statement = readCondition(splitBrackets(condition).first, next);
-        return new NOT(statement);
+        return new NOT(statement, next);
     } else if (condition[0] == '[') {
         auto pair = splitStatement(condition, "==");
         std::size_t index = pair.first.find(']');

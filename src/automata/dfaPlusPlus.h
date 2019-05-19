@@ -21,6 +21,8 @@ struct StateMap : public std::vector<std::tuple<std::string, char, Color, char>>
     char character(const std::string &name) const;
 
     char next(char c) const;
+
+    std::string name(char c) const;
 };
 
 

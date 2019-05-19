@@ -1,20 +1,9 @@
 states
-    (alive): #ffffff, alive
+    (alive): white, alive
     (dead): black, dead
-    (zombie): random, zombie
 
 alive
-    (0 == dead): dead
-    (dead == 4): zombie
-    ((alive == 1) && (zombie == 3)): alive
+    ((alive == [0-1]) || (alive == [4-8])): dead
 
 dead
-    ((5 == zombie) || (4 == zombie)): dead
-    ([1-5]& == alive): alive
-    ([1-5]| == dead): zombie
-    (zombie == [5-7]): alive
-
-zombie
-    (!(5 == dead)): alive
-    (!(dead == 5)): alive
-    (!((alive == [3-5]) || !([0-5]& == dead))): zombie
+    (alive == 3): alive
