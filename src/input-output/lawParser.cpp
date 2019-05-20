@@ -232,7 +232,6 @@ TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, c
     TempDFA temp = dfas[0];
 
     for (unsigned int i = 1; i < dfas.size(); ++i) {
-        dfas[i].TFAPlusPlus();
         temp = temp.multiply(dfas[i], def, prioritizedUnion);
     }
 
