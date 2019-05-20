@@ -230,7 +230,7 @@ void TempDFA::print(const std::string &fileName, const StateMap &stateMap) const
 
     wFile << "}";
     wFile.close();
-    const std::string command = "dot -Tpng " + fileName + ".dot -o" + fileName + ".png\n";
+    const std::string command = "dot -Tpng " + fileName + ".dot -o" + fileName + ".png &\n";
     system(command.c_str());
 }
 

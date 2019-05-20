@@ -144,7 +144,6 @@ void LawParser::generateDFAPlusPlus() {
         DFAPlusPlus::transition.map.merge(temp.transition.map);
         DFAPlusPlus::transition[{std::get<1>(state), DFAPlusPlus::start}] = temp.start;
     }
-    DFAPlusPlus::print("DFA++", states);
     DFAPlusPlus::TFAPlusPlus();
     DFAPlusPlus::print("DFA++Minimized", states);
 }
@@ -209,7 +208,6 @@ Color LawParser::readColor(std::string str) {
 }
 
 TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, char> &state) {
-//    char def = std::get<3>(state);
     char def = 'a' - 1;     //default value for unfilled states
     Section laws;
     try {
@@ -234,10 +232,12 @@ TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, c
     TempDFA temp = dfas[0];
 
     for (unsigned int i = 1; i < dfas.size(); ++i) {
+        dfas[i].TFAPlusPlus();
         temp = temp.multiply(dfas[i], def, prioritizedUnion);
     }
 
     for (auto &tempState: temp.states) if (tempState->type == 'a' - 1) tempState->type = std::get<3>(state);  //fill in the default value with the true default
+    temp.TFAPlusPlus();
 
     return temp;
 }
