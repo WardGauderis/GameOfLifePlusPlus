@@ -37,6 +37,7 @@
 
 #include "color.h"
 #include "../input-output/caio.h"
+#include "../automata/ca.h"
 
 class UIGrid: public QWidget
 {

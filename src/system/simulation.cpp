@@ -22,6 +22,7 @@ Simulation::Simulation()
     }
 
     if(!CAIO::generate(window.getFilename())) exit(69);
+
     window.initCA(CA::getWidth(), CA::getHeight(), CA::getColors());
 
     window.createEditButtons();

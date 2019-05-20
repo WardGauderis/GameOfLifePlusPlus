@@ -210,7 +210,7 @@ bool CAIO::automatic(const ini::Configuration &conf) {
 
     if (success) {
         const std::string file = conf["General"]["layout"].as_string_or_default("");
-        unsigned int amount = DFAPlusPlus::states.size();
+        unsigned int amount = DFAPlusPlus::alphabet.size();
         if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
         const auto layout = parseLayout(file, width, height, amount);
 

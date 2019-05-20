@@ -83,7 +83,7 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Col
     yCells = _yCells;
 
     layout->addWidget(raster, 0, 0, 1, 10);
-    raster->cells = std::vector<char>(xCells*yCells, converter.begin()->first);
+    raster->cells = CA::getData(0);
     raster->converter = converter;
 
     raster->setXCells(xCells);
