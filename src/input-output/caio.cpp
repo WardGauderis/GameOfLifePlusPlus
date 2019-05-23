@@ -14,6 +14,8 @@
 #include "parser.h"
 #include "lawParser.h"
 
+std::string CAIO::layout;
+
 bool CAIO::generate(const std::string &fileName) {
     try {
         ini::Configuration conf;
@@ -43,10 +45,10 @@ void CAIO::manual(const ini::Configuration &conf) {
     const int width = conf["General"]["width"].as_int_or_default(20);
     const int height = conf["General"]["height"].as_int_or_default(20);
 
-    const std::string file = conf["General"]["layout"].as_string_or_default("");
+    layout = conf["General"]["layout"].as_string_or_default("");
     const int amount = conf["States"]["amount"].as_int_or_die();
     if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
-    const auto layout = parseLayout(file, width, height, amount);
+    const auto start = parseLayout(layout, width, height, amount);
 
     const std::string inputs = conf["General"]["inputs"].as_string_or_default(
             "(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)");
@@ -57,7 +59,7 @@ void CAIO::manual(const ini::Configuration &conf) {
     const auto trans = transition(conf, stateData);
 
     CA::init(width, height, neighbours, stateData, trans);
-    CA::setStart(layout);
+    CA::setStart(start);
 }
 
 std::vector<std::string> CAIO::byCharacter(const std::string &str, const char &ch) {
@@ -209,10 +211,10 @@ bool CAIO::automatic(const ini::Configuration &conf) {
     bool success = parser.parseLaws(laws);
 
     if (success) {
-        const std::string file = conf["General"]["layout"].as_string_or_default("");
+        layout = conf["General"]["layout"].as_string_or_default("");
         unsigned int amount = DFAPlusPlus::alphabet.size();
         if (amount < 1) throw std::runtime_error("Amount of states must be greather than 0");
-        const auto layout = parseLayout(file, width, height, amount);
+        const auto start = parseLayout(layout, width, height, amount);
 
         std::map<char, Color> converter;
         for (const auto &state: parser.getStates()) {
@@ -220,7 +222,7 @@ bool CAIO::automatic(const ini::Configuration &conf) {
         }
 
         CA::init(width, height, neighbours, converter);
-        CA::setStart(layout);
+        CA::setStart(start);
     }
     return success;
 }
