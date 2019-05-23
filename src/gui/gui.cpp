@@ -19,7 +19,7 @@ UIGrid::UIGrid(QWidget *parent) : QWidget(parent)
 
 void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
-    if (!initialized) return;
+    if (canChange) return;
     double celWidth  = double(this->size().width() ) / double(xCells);
     double celHeight = double(this->size().height()) / double(yCells);
 
