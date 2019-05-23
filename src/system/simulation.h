@@ -18,7 +18,7 @@ struct Simulation
 {
 
 public:
-    Simulation();
+    Simulation(int argc, char *argv[]);
     ~Simulation() = default;
 
     bool simulate();

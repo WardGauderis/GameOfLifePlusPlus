@@ -56,6 +56,7 @@ public:
     bool& getRepaint();
 
     bool initialized;
+    bool canPaint = false;
     bool canChange = true;
 
     void mousePressEvent(QMouseEvent *event);
@@ -109,6 +110,7 @@ public:
     uint32_t getTicksPassed() const;
     void setTicksPassed(uint32_t ticksPassed);
 
+    std::string defaultFileName;
 private:
 
     const int size = 35;
