@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <fstream>
 
-TM::TM(const std::vector<char>& alphabet, const std::vector<char>& tapeAlphabet, const std::vector<TMState*>& states, const TMTransition& transition) :
+TM::TM(const std::vector<char>& alphabet, const std::vector<char>& tapeAlphabet, const std::vector<const TMState*>& states, const TMTransition& transition) :
     alphabet(alphabet), tapeAlphabet(tapeAlphabet), states(states), transition(transition)
     {
         start = *std::find_if(begin(states), end(states), [](const auto& state){ return state->type == TMState::Type::start; });
@@ -60,11 +60,26 @@ void TM::dot(const std::string& path) const
     file << "NULL [style=invis];\n";
 
     for(const TMState* state: states)
+    {
+        if(state->type == TMState::accept or state->type == TMState::reject) continue;
         for(const char c : alphabet)
         {
             const auto next = transition[{c, state}];
-            file << state->name << " -> " << std::get<0>(next)->name << "[label=\"" << c << " " << std::get<1>(next) << " / " << std::get<2>(next) << "\"];\n";
+            std::string name;
+            switch(std::get<0>(next)->type)
+            {
+                case TMState::reject:
+                    name = "REJECT";
+                    break;
+                case TMState::accept:
+                    name = "ACCEPT";
+                    break;
+                default:
+                    name = std::get<0>(next)->name;
+            }
+            file << state->name << " -> " << name << "[label=\"" << c << " " << std::get<1>(next) << " / " << std::get<2>(next) << "\"];\n";
         }
+    }
 
     file << "}" << std::endl; // Flushing is very important.
     [[maybe_unused]] int res = system(("dot -Tpng " + path + ".dot -o " + path + ".png").c_str());

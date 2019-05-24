@@ -42,6 +42,13 @@ struct Transition
         return map[key];
     }
 
+    // insert if it doesn't exist yet
+    void insert_if_not_found(const Key& key, const Value& value)
+    {
+        if(map.find(key) != end(map)) return;
+        else map[key] = value;
+    }
+
     const std::map<Key, Value>& getMap() const { return map; }
     std::map<Key, Value>& getMap() { return map; }
 

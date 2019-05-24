@@ -36,12 +36,12 @@ public:
 
         std::string type = json["type"];
         if     (type == "dfa") result = parseDFA(path, alphabet);
-        else if(type == "nfa" or type == "enfa") result = DFA::SSC(parseNFA(path, alphabet));
+        else if(type == "nfa" or type == "enfa") result = DFA::minimize(DFA::SSC(parseNFA(path, alphabet)));
         else if(type == "pda") result = parsePDA(path, alphabet);
         else if(type == "tm" ) result = parseTM(path, alphabet);
         else if(type == "pa") result = parsePA(path, alphabet);
         else throw std::runtime_error("unknown automaton type");
-        result->dot(path);
+//        result->dot(path);
         return result;
     }
 
@@ -87,9 +87,9 @@ public:
         auto json = openJson(path);
         checkJsonParams<3>(json, std::array<std::string, 3>{"tape_alphabet", "states", "transitions"}, "main file", path);
 
-        std::vector<char> tapeAlphabet  = parseAlphabet(json["tape_alphabet"], nullptr);
-        std::vector<TMState*> states    = parseTMStates(json["states"]);
-        TMTransition transition         = parseTMTransitions(json["transitions"], json["states"], states, alphabet, path);
+        std::vector<char> tapeAlphabet     = parseAlphabet(json["tape_alphabet"], nullptr);
+        std::vector<const TMState*> states = parseTMStates(json["states"]);
+        TMTransition transition            = parseTMTransitions(json["transitions"], json["states"], states, alphabet, path);
 
         checkStartState(states, path);
 
@@ -167,20 +167,21 @@ private:
         return states;
     }
 
-    static std::vector<TMState*> parseTMStates(const json& state_values)
+    static std::vector<const TMState*> parseTMStates(const json& state_values)
     {
-        std::vector<TMState*> states(state_values.size());
+        std::vector<const TMState*> states(state_values.size());
         for(uint32_t i = 0; i < states.size(); i++)
         {
-            states[i] = new TMState;
-            states[i]->name = state_values[i]["name"];
+            auto newState = new TMState;
+            newState->name = state_values[i]["name"];
 
             const std::string& type = state_values[i]["type"];
-            if     (type == "accepting") states[i]->type = TMState::Type::accept;
-            else if(type == "normal"   ) states[i]->type = TMState::Type::normal;
-            else if(type == "rejecting") states[i]->type = TMState::Type::reject;
-            else if(type == "starting" ) states[i]->type = TMState::Type::start ;
+            if     (type == "accepting") newState->type = TMState::Type::accept;
+            else if(type == "normal"   ) newState->type = TMState::Type::normal;
+            else if(type == "rejecting") newState->type = TMState::Type::reject;
+            else if(type == "starting" ) newState->type = TMState::Type::start ;
             else throw std::runtime_error("unknown TM type\n");
+            states[i] = newState;
         }
         return states;
     }
@@ -274,9 +275,11 @@ private:
         }
         return result;
     }
-    static TMTransition parseTMTransitions(const json& transition_values, const json& state_values, const std::vector<TMState*>& states, const std::map<std::string, char>& alphabet, const std::string& path)
+    static TMTransition parseTMTransitions(const json& transition_values, const json& state_values, const std::vector<const TMState*>& states, const std::map<std::string, char>& alphabet, const std::string& path)
     {
         TMTransition result;
+
+        const TMState* rejecting = *std::find_if(begin(states), end(states), [](const TMState* state){ return state->type == TMState::reject;});
 
         std::map<std::string, uint32_t> converter;
         for(uint32_t i = 0; i < state_values.size(); i++) converter[ state_values[i]["name"] ] = i;
@@ -291,6 +294,12 @@ private:
             char write = static_cast<std::string> (transition["write"    ])[0];
             result.find_if_unique({input, from}) = {to, dir, write};
         }
+
+        for(const auto& elem : alphabet)
+            for(const auto& state : states)
+            {
+                result.insert_if_not_found({elem.second, state}, {rejecting, 's', '|'});
+            }
         return result;
     }
 
