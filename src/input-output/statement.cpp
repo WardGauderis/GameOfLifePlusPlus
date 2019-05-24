@@ -157,6 +157,7 @@ TempDFA AND::generateTempDFA(const char def) {
     auto dfa1 = first->generateTempDFA(def);
     auto dfa2 = second->generateTempDFA(def);
     auto comb = dfa1.multiply(dfa2, def, cross);
+    comb.TFAPlusPlus();
     return comb;
 }
 
@@ -171,6 +172,7 @@ TempDFA OR::generateTempDFA(const char def) {
     auto dfa1 = first->generateTempDFA(def);
     auto dfa2 = second->generateTempDFA(def);
     auto comb = dfa1.multiply(dfa2, def, prioritizedUnion);
+    comb.TFAPlusPlus();
     return comb;
 }
 
@@ -230,7 +232,7 @@ void TempDFA::print(const std::string &fileName, const StateMap &stateMap) const
 
     wFile << "}";
     wFile.close();
-    const std::string command = "dot -Tpng " + fileName + ".dot -o" + fileName + ".png\n";
+    const std::string command = "dot -Tpng " + fileName + ".dot -o" + fileName + ".png &\n";
     system(command.c_str());
 }
 

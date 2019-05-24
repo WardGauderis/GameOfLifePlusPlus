@@ -14,11 +14,13 @@
 
 class CAIO {
 public:
+    static std::string layout;
+
     //True if success, else false and cerr message
     static bool generate(const std::string &fileName);
 
     static std::vector<char>
-    parseLayout(const std::string &fileName, const int width, const int height, const int amount);
+    parseLayout(const std::string &fileName, int width, int height, int amount);
 
     static bool exportCA(const std::vector<char> &CA, int width, int height, const std::string &fileName);
 

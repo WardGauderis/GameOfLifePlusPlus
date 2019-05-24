@@ -19,7 +19,7 @@ UIGrid::UIGrid(QWidget *parent) : QWidget(parent)
 
 void UIGrid::paintEvent([[maybe_unused]] QPaintEvent *event)
 {
-    if (!initialized) return;
+    if (!canPaint) return;
     double celWidth  = double(this->size().width() ) / double(xCells);
     double celHeight = double(this->size().height()) / double(yCells);
 
@@ -83,13 +83,14 @@ void Window::initCA(uint32_t _xCells, uint32_t _yCells, const std::map<char, Col
     yCells = _yCells;
 
     layout->addWidget(raster, 0, 0, 1, 10);
-    raster->cells = std::vector<char>(xCells*yCells, converter.begin()->first);
+    raster->cells = CA::getData(0);
     raster->converter = converter;
 
     raster->setXCells(xCells);
     raster->setYCells(yCells);
 
     raster->initialized = true;
+    raster->canPaint = true;
 }
 
 void Window::paintEvent([[maybe_unused]] QPaintEvent *event)
@@ -359,7 +360,7 @@ const std::vector<char>& Window::getStart() const
 
 void Window::onLoadIniFile()
 {
-    filename = askString("./input/ward_tests/auto.ini");
+    filename = askString(defaultFileName);
     if (!filename.empty()) initialized = true;
 }
 

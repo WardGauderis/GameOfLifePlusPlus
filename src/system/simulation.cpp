@@ -11,8 +11,14 @@
 #include "../input-output/caio.h"
 #include <cassert>
 
-Simulation::Simulation()
+Simulation::Simulation(int argc, char *argv[])
 {
+    if (argc == 2)
+    {
+        window.defaultFileName = argv[1];
+    }
+    else window.defaultFileName = "./input/thomas_test2/test.ini";
+
     window.createIniButtons();
     window.show();
 
@@ -22,6 +28,7 @@ Simulation::Simulation()
     }
 
     if(!CAIO::generate(window.getFilename())) exit(69);
+
     window.initCA(CA::getWidth(), CA::getHeight(), CA::getColors());
 
     window.createEditButtons();
