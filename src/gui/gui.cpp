@@ -372,6 +372,7 @@ void Window::onLoadLayout()
 void Window::onExportLayout()
 {
     std::string fileName = askString(CAIO::layout);
+    if (fileName.empty()) return;
     CAIO::exportCA(raster->cells, raster->xCells, raster->yCells, fileName);
 }
 void Window::onStartSimulation()
