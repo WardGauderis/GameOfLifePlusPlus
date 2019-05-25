@@ -17,7 +17,7 @@ Simulation::Simulation(int argc, char *argv[])
     {
         window.defaultFileName = argv[1];
     }
-    else window.defaultFileName = "./input/thomas_test2/test.ini";
+    else window.defaultFileName = "";
 
     window.createIniButtons();
     window.show();
