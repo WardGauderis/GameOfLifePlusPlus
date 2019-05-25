@@ -1,0 +1,40 @@
+//First, all used states must be initialised in order with their color (hex, common color names, random) and their default transition
+//Lines with '//' in front will be ignored
+
+states
+    (alive): #ffffff, alive
+    (dead): black, dead
+    (zombie): random, dead
+
+//For each state, the transitions are defined in the form of 'if'-statements
+//The higher a statement is in the order, the higher its priority
+//All combinations of statements with logical operators ('!', '&&', '||') must be enclosed within '(' and ')' to make recursive parsing easier
+//This means that "(a && b && c)" must be written as "((a && b) && c)"
+
+alive
+//When a number comes in front of the equal sign, it refers to the input coordinate at that index
+//"If input zero is dead"
+    (0 == dead): dead
+//When a number comes after the equal sign, it refers to an amount
+//"If the amount of dead inputs is 4"
+    (dead == 4): zombie
+//"if the amount of alive inputs is 1 and the amount of zombie inputs is 3"
+    ((alive == 1) && (zombie == 3)): zombie
+
+dead
+//"if input 5 is zombie or input 4 is zombie"
+    ((5 == zombie) || (4 == zombie)): dead
+//"if all inputs between 1 and 5 (1, 2, 3, 4, 5) are alive"
+    ([1-5]& == alive): alive
+//"if one of the inputs between 1 and 5 (1, 2, 3, 4, 5) is dead"
+    ([1-5]| == dead): zombie
+//"if the amount of zombie inputs is between 5 and 7 (5, 6, 7)"
+    (zombie == [5-7]): alive
+
+zombie
+//"if input 5 is not dead"
+    (!(5 == dead)): alive
+//"if the amount of dead inputs is not 5"
+    (!(dead == 5)): alive
+//You get it by now
+    (!((alive == [3-5]) || !([0-5]& == dead))): alive
