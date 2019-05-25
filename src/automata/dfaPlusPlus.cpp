@@ -150,7 +150,8 @@ void DFAPlusPlus::print(const std::string &fileName, const StateMap &stateMap) {
 
     wFile << "}";
     wFile.close();
-    const std::string command = "dot -Tpng " + fileName + ".dot -o" + fileName + ".png &\n";
+    const std::string command =
+            "(dot -Tpng " + fileName + ".dot -o" + fileName + ".png && rm " + fileName + ".dot"") &\n";
     system(command.c_str());
 }
 
