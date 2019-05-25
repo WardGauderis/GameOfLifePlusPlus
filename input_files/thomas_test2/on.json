@@ -1,0 +1,33 @@
+{
+  "type": "pda",
+  "states": [
+    {
+      "name": "on",
+      "starting": true,
+      "accepting": false
+    }
+  ],
+  "transitions": [
+    {
+      "from": "on",
+      "to": "on",
+      "input": "off",
+      "push": "~",
+      "pop": "x"
+    },
+    {
+      "from": "on",
+      "to": "on",
+      "input": "new",
+      "push": "~",
+      "pop": "x"
+    },
+    {
+      "from": "on",
+      "to": "on",
+      "input": "on",
+      "push": "~",
+      "pop": "x"
+    }
+  ]
+}

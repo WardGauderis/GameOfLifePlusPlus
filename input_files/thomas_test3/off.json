@@ -1,0 +1,37 @@
+{
+  "type": "tm",
+  "tape_alphabet":
+  [
+    "|"
+  ],
+  "states": [
+    {
+      "name": "start",
+      "type": "starting"
+    },
+    {
+      "name": "off",
+      "type": "rejecting"
+    },
+    {
+      "name": "on",
+      "type": "accepting"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "start",
+      "to": "on",
+      "input": "new",
+      "direction": "s",
+      "write": "|"
+    },
+    {
+      "from": "start",
+      "to": "on",
+      "input": "on",
+      "direction": "s",
+      "write": "|"
+    }
+  ]
+}

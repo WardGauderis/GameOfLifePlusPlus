@@ -1,0 +1,11 @@
+states
+    (black): random, black
+    (white): random, white
+
+
+
+white
+    (! (white == [1-2]) ): black
+
+black
+    (white == 1): white

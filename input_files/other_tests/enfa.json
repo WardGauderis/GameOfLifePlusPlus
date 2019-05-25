@@ -1,0 +1,54 @@
+{
+  "type": "enfa",
+  "states": [
+    {
+      "name": "1",
+      "starting": false,
+      "accepting": true
+    },
+    {
+      "name": "2",
+      "starting": false,
+      "accepting": true
+    },
+    {
+      "name": "0",
+      "starting": true,
+      "accepting": false
+    }
+  ],
+  "transitions": [
+    {
+      "from": "1",
+      "to": "0",
+      "input": "alive"
+    },
+    {
+      "from": "2",
+      "to": "2",
+      "input": "alive"
+    },
+    {
+      "from": "0",
+      "to": "2",
+      "input": "death"
+    },
+    {
+      "from": "0",
+      "to": "0",
+      "input": "alive"
+    },
+    {
+      "from": "1",
+      "to": "1",
+      "input": "death"
+    },
+    {
+      "from": "2",
+      "to": "1",
+      "input": "~"
+    }
+  ],
+  "epsilon": "e"
+}
+
