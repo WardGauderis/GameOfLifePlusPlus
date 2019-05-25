@@ -1,10 +1,10 @@
 states
-    (white): white, white
-    (black): black, black
+    (white): random, white
+    (black): random, black
 
 
 white
-    (  ((0 == black) && (1 == white) && (2 == white)) || ((0 == white) && (1 == white) && (2 == black)) ): black
+    (  ( ((3 == black) && (4 == white)) && (5 == white)) || (((3 == white) && (4 == white)) && (5 == black)) ): black
 
 black
     (white == 0): black
