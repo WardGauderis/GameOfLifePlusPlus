@@ -176,9 +176,9 @@ CAIO::parseLayout(const std::string &fileName, const int width, const int height
 
 bool CAIO::exportCA(const std::vector<char> &CA, const int width, const int heigth, const std::string &fileName) {
     try {
-        std::ofstream fout(fileName + ".csv");
+        std::ofstream fout(fileName);
         if (!fout.is_open()) {
-            throw std::runtime_error("File " + fileName + ".csv couldn't be opened");
+            throw std::runtime_error("File " + fileName + " couldn't be opened");
         }
         for (int i = 0; i < heigth; ++i) {
             for (int j = 0; j < width; ++j) {

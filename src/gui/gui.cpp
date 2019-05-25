@@ -366,12 +366,12 @@ void Window::onLoadIniFile()
 
 void Window::onLoadLayout()
 {
-    std::string fileName = askString("./layout.csv");
+    std::string fileName = askString(CAIO::layout);
     raster->cells = CAIO::parseLayout(fileName, raster->xCells, raster->yCells, raster->converter.size());
 }
 void Window::onExportLayout()
 {
-    std::string fileName = askString("layout");
+    std::string fileName = askString(CAIO::layout);
     CAIO::exportCA(raster->cells, raster->xCells, raster->yCells, fileName);
 }
 void Window::onStartSimulation()
