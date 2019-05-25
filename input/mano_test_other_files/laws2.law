@@ -1,9 +1,0 @@
-states
-    (dead): black, dead
-    (alive): yellow, alive
-
-alive
-    ((alive == 0) || (alive == 1) || (alive == 2) || (alive == 5)) :dead
-
-dead
-    ((alive == 3) || (alive == 6) || (alive == 7) || (alive == 8)): alive

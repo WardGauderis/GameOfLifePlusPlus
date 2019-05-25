@@ -1,5 +1,0 @@
-0: regenboog met layout0
-1: regenboog met random
-2: Day And Night lifelike CA met regels B34678/S3678
-3: Sierpienski driehoek chaos method
-4: more sierpienskis
