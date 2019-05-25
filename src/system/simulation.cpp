@@ -99,5 +99,5 @@ void Simulation::draw(uint32_t iteration)
 uint32_t Simulation::getDelay(uint32_t val)
 {
     if(val > 100) return 0;
-    else return 50 + static_cast<uint32_t>(std::pow((100-val), 1.2) * 5);
+    else return 10 + static_cast<uint32_t>(std::pow((100-val), 1.2));
 }
