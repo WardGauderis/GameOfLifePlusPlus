@@ -1,0 +1,11 @@
+states
+    (white): white, white
+    (black): black, black
+
+
+white
+    (  (0 == black) && (1 == white) && (2 == white) ): black
+    (  (0 == white) && (1 == white) && (2 == black) ): black
+
+black
+    (white == 0): black
