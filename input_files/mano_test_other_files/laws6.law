@@ -1,0 +1,19 @@
+states
+    (death): random, death
+    (alive): random, alive
+    (drie): random, drie
+    (vier): random, vier
+
+
+alive
+     ( ( ( ( ( (alive == 1) || (alive == 2)) || (alive == 4)) || (alive == 5)) || (alive == 6)) || (alive == 8) ): death
+death
+     ( ( ( ( ( ( ( (alive == 1) || (alive == 2)) || (alive == 3) ) || (alive == 4)) || (alive == 5)) || (alive == 6)) || (alive == 7)) || (alive == 8) ): alive
+     ( ( ( ( ( (death == 1) || (death == 2)) || (death == 4)) || (death == 5)) || (death == 6)) || (death == 8) ): drie
+
+drie
+    ( ( ( ( ( (drie == 1) || (drie == 2)) || (drie == 4)) || (drie == 5)) || (drie == 6)) || (drie == 8) ): vier
+    ( ( ( ( ( ( ( (death == 1) || (death == 2)) || (death == 3) ) || (death == 4)) || (death == 5)) || (death == 6)) || (death == 7)) || (death == 8) ): death
+
+vier
+    ( ( ( ( ( ( ( (drie == 1) || (drie == 2)) || (drie == 3) ) || (drie == 4)) || (drie == 5)) || (drie == 6)) || (drie == 7)) || (drie == 8) ): drie
