@@ -216,6 +216,7 @@ TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, c
             throw std::exception();
         }
     } catch (const std::exception &exception) {
+        def = std::get<3>(state);
         std::cerr
                 << "No rules were specified for state '" + std::get<0>(state) + "' : its transition will default to '" +
                    states.name(std::get<3>(state)) + "'\n";

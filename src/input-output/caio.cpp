@@ -174,15 +174,15 @@ CAIO::parseLayout(const std::string &fileName, const int width, const int height
     return layout;
 }
 
-bool CAIO::exportCA(const std::vector<char> &CA, const int width, const int heigth, const std::string &fileName) {
+bool CAIO::exportCA(const std::vector<char> &CA, const int width, const int height, const std::string &fileName) {
     try {
         std::ofstream fout(fileName);
         if (!fout.is_open()) {
             throw std::runtime_error("File " + fileName + " couldn't be opened");
         }
-        for (int i = 0; i < heigth; ++i) {
+        for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
-                fout << std::to_string(CA[i * heigth + j] - 'a') << (j == width - 1 ? "" : ",");
+                fout << std::to_string(CA[i * width + j] - 'a') << (j == width - 1 ? "" : ",");
             }
             fout << '\n';
         }
