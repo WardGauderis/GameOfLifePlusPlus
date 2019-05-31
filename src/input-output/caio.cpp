@@ -168,7 +168,7 @@ CAIO::parseLayout(const std::string &fileName, const int width, const int height
         for (int j = 0; j < width; ++j) {
             if (!getline(lineStream, value, ',')) value = "0";
             try { layout.emplace_back('a' + std::max(std::min(std::stoi(value), amount - 1), 0)); }
-            catch (const std::invalid_argument &ex) { layout.push_back('a'); }
+            catch (...) { layout.push_back('a'); }
         }
     }
     return layout;
