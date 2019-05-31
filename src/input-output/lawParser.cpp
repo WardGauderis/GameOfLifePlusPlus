@@ -22,7 +22,7 @@ bool LawParser::parseLaws(const std::string &fileName) {
         return true;
     }
     catch (const std::exception &ex) {
-        std::cerr << "Error parsing file " << fileName << ": " << ex.what() << std::endl;
+        std::cerr << "Error parsing file '" << fileName << "': " << ex.what() << std::endl;
         return false;
     }
 }

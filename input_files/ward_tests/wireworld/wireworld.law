@@ -1,8 +1,8 @@
 states
-	(empty): black, empty
-	(conductor): #303030, conductor
-	(electron_head): orange, electron_tail
-	(electron_tail): red, conductor
+	(e): black, e
+	(c): #303030, c
+	(h): orange, t
+	(t): red, c
 
-conductor
-	(electron_head == [1-2]): electron_head
+c
+	(h == [1-2]): h

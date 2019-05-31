@@ -34,7 +34,7 @@ bool CAIO::generate(const std::string &fileName) {
         return true;
     }
     catch (const std::exception &ex) {
-        std::cerr << "Error parsing file " << fileName << ": " << ex.what() << std::endl;
+        std::cerr << "Error parsing file '" << fileName << "': " << ex.what() << std::endl;
         return false;
     }
 }
@@ -158,6 +158,8 @@ CAIO::parseLayout(const std::string &fileName, const int width, const int height
     std::ifstream fin(fileName);
     if (!fin.is_open()) {
         layout.resize(width * height, 'a');
+        if (!fileName.empty())
+            std::cerr << "Failed to parse layout from file '" + fileName + "': default layout is used\n";
         return layout;
     }
     std::string line;
@@ -189,7 +191,7 @@ bool CAIO::exportCA(const std::vector<char> &CA, const int width, const int heig
         fout.close();
         return true;
     } catch (const std::exception &ex) {
-        std::cerr << "Error exporting to file " << fileName << ": " << ex.what() << std::endl;
+        std::cerr << "Error exporting to file '" << fileName << "': " << ex.what() << std::endl;
         return false;
     }
 }

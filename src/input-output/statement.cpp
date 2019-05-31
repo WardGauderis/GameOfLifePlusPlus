@@ -199,7 +199,7 @@ Statement::~Statement() {}
 void TempDFA::print(const std::string &fileName, const StateMap &stateMap) const {
     std::ofstream wFile(fileName + ".dot");
     if (!wFile.is_open()) {
-        std::cerr << "Error opening file " + fileName + ".dot\n";
+        std::cerr << "Error opening file '" + fileName + ".dot'\n";
         return;
     }
 

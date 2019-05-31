@@ -117,7 +117,7 @@ StatePlusPlus *DFAPlusPlus::upgradeToMin(DFAPlusPlusTransition &minTransition, s
 void DFAPlusPlus::print(const std::string &fileName, const StateMap &stateMap) {
     std::ofstream wFile(fileName + ".dot");
     if (!wFile.is_open()) {
-        std::cerr << "Error opening file " + fileName + ".dot\n";
+        std::cerr << "Error opening file '" + fileName + ".dot'\n";
         return;
     }
 
@@ -158,7 +158,7 @@ void DFAPlusPlus::print(const std::string &fileName, const StateMap &stateMap) {
 DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
     std::ifstream rFile(fileName);
     if (!rFile.is_open()) {
-        std::cerr << "Error opening file " + fileName + ": no such file\n";
+        std::cerr << "Error opening file '" + fileName + "': no such file\n";
         return;
     }
 
@@ -166,7 +166,7 @@ DFAPlusPlus::DFAPlusPlus(const std::string &fileName) {
     const std::string automaton = parser["type"];
 
     if (automaton != "DFAPlusPlus") {
-        std::cerr << "Error parsing file " + fileName + ": type isn't DFAPlusPlus\n";
+        std::cerr << "Error parsing file '" + fileName + "': type isn't DFAPlusPlus\n";
         return;
     }
     std::vector<std::string> alpha = parser["alphabet"];
