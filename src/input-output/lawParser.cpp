@@ -219,7 +219,7 @@ TempDFA LawParser::generatePerState(const std::tuple<std::string, char, Color, c
         def = std::get<3>(state);
         std::cerr
                 << "No rules were specified for state '" + std::get<0>(state) + "' : its transition will default to '" +
-                   states.name(std::get<3>(state)) + "'\n";
+                   states.name(def) + "'\n";
         TempDFA temp;
         temp.start = new StatePlusPlus(def);
         temp.states.emplace_back(temp.start);
