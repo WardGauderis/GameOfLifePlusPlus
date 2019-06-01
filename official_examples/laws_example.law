@@ -42,3 +42,5 @@ zombie
     (!(dead == 5)): alive
 //You get it by now
     (!((alive == [3-5]) || !([0-5]& == dead))): alive
+
+//The generated DFA++ will be exported to "DFA++Minimized.png"
