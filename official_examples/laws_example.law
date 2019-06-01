@@ -10,6 +10,7 @@ states
 //The higher a statement is in the order, the higher its priority
 //All combinations of statements with logical operators ('!', '&&', '||') must be enclosed within '(' and ')' to make recursive parsing easier
 //This means that "(a && b && c)" must be written as "((a && b) && c)"
+//This also means there is no order of operations
 
 alive
 //When a number comes in front of the equal sign, it refers to the input coordinate at that index
