@@ -28,6 +28,9 @@ dead
     ([1-5]& == alive): alive
 //"if one of the inputs between 1 and 5 (1, 2, 3, 4, 5) is dead"
     ([1-5]| == dead): zombie
+
+//Not all transitions for a state must be defined in the same section
+alive
 //"if the amount of zombie inputs is between 5 and 7 (5, 6, 7)"
     (zombie == [5-7]): alive
 
