@@ -19,7 +19,7 @@ alive
 //"If the amount of dead inputs is 4"
     (dead == 4): zombie
 //"if the amount of alive inputs is 1 and the amount of zombie inputs is 3"
-    ((alive == 1) && (zombie == 3)): zombie
+    ((1 == alive) && (zombie == 3)): zombie
 
 dead
 //"if input 5 is zombie or input 4 is zombie"
