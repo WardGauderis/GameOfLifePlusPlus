@@ -1,0 +1,11 @@
+digraph G {
+NULL -> "{off}";
+NULL [style=invis];
+"{off}" -> "{on}"[label="c"];
+"{off}" -> "{off}"[label="a"];
+"{off}" -> "{on}"[label="b"];
+"{on}" -> "{on}"[label="c"];
+"{on}" -> "{on}"[label="a"];
+"{on}" -> "{on}"[label="b"];
+"{on}"[peripheries=2];
+}

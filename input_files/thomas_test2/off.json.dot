@@ -1,0 +1,12 @@
+digraph G {
+NULL -> off;
+NULL [style=invis];
+off -> on[label="c, 1"];
+off -> off[label="a, 0.9999"];
+off -> on[label="a, 0.0001"];
+off -> on[label="b, 1"];
+on -> on[label="c, 1"];
+on -> on[label="a, 1"];
+on -> on[label="b, 1"];
+on[peripheries=2];
+}

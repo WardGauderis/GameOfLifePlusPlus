@@ -1,0 +1,7 @@
+digraph G {
+NULL -> "{on}";
+NULL [style=invis];
+"{on}" -> "{on}"[label="c"];
+"{on}" -> "{on}"[label="a"];
+"{on}" -> "{on}"[label="b"];
+}
