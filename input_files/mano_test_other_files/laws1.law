@@ -1,0 +1,11 @@
+states
+	(black): black, red
+	(red): red, orange
+        (orange): orange, yellow
+        (yellow): yellow, lightgreen
+        (lightgreen): white, green
+        (green): green, lightblue
+        (lightblue): blue, blue
+        (blue): purple, red
+black
+    (red == 0): black

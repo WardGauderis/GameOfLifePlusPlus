@@ -38,7 +38,7 @@ for i in {0..6}
 do
 	./GOL "input_files/mano_test_inis/test$i.ini" > /dev/null 2>&1 &
 	read -p "Press enter to view png and code"
-	xdg-open "input_files/mano_test_inis/test$i.ini"
+	xdg-open "input_files/mano_test_other_files/laws$i.law"
 	xdg-open DFA++Minimized.png
 	read -p "Press enter to continue"
 	killall GOL > /dev/null 2>&1
