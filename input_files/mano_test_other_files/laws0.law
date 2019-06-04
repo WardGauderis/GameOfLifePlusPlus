@@ -1,34 +1,11 @@
 states
-    (black): black, black
-    (red): red, red
-        (orange): orange, orange
-        (yellow): yellow, yellow
-        (lightgreen): white, lightgreen
-        (green): green, green
-        (lightblue): blue, lightblue
-        (blue): purple, blue
+	(black): black, red
+	(red): red, orange
+        (orange): orange, yellow
+        (yellow): yellow, lightgreen
+        (lightgreen): white, green
+        (green): green, lightblue
+        (lightblue): blue, blue
+        (blue): purple, red
 black
     (red == 0): black
-    (red == [1-9]): red
-
-red
-    (red == [0-9]): orange
-
-orange
-    (orange == [0-9]): yellow
-
-yellow
-    (yellow == [0-9]): lightgreen
-
-lightgreen
-    (lightgreen == [0-9]): green
-
-green
-    (green == [0-9]): lightblue
-lightblue
-    (lightblue == [0-9]): blue
-blue
-    (blue == [0-9]): red
-
-
-

@@ -5,7 +5,7 @@ states
 
 
 white
-    (! (white == [1-2]) ): black
+    (!(white == [1-2])): black
 
 black
     (white == 1): white
