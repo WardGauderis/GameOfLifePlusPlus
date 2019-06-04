@@ -1,11 +1,12 @@
+//B12345678/s37
+
 states
     (death): random, death
     (alive): random, alive
 
-
 alive
      ( ( ( ( ( (alive == 1) || (alive == 2)) || (alive == 4)) || (alive == 5)) || (alive == 6)) || (alive == 8) ): death
+
 death
      ( ( ( ( ( ( ( (alive == 1) || (alive == 2)) || (alive == 3) ) || (alive == 4)) || (alive == 5)) || (alive == 6)) || (alive == 7)) || (alive == 8) ): alive
 
-B12345678/s37

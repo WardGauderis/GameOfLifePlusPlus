@@ -3,7 +3,7 @@ states
     (alive): yellow, alive
 
 alive
-    ((alive == 0) || (alive == 1) || (alive == 2) || (alive == 5)) :dead
+    (alive == [0-1]): dead
 
 dead
-    ((alive == 3) || (alive == 6) || (alive == 7) || (alive == 8)): alive
+    ((alive == 3) || (alive == 6)): alive
